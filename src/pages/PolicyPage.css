@@ -1,0 +1,259 @@
+/* Shared styles for Contact, StoreLocations, Terms, RefundPolicy */
+
+.policy-page { min-height: 80vh; }
+
+/* ── Page hero ─────────────────────────────────── */
+.policy-hero {
+  background: var(--green-deep);
+  padding: 60px 0 48px;
+  text-align: center;
+}
+.policy-eyebrow {
+  display: block;
+  font-family: var(--font-ui);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 12px;
+}
+.policy-hero h1 {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 400;
+  color: var(--ivory);
+  margin-bottom: 12px;
+}
+.policy-hero p {
+  color: var(--ivory-dark);
+  font-size: 1rem;
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+/* ── Page body ─────────────────────────────────── */
+.policy-body { padding: 60px 0 80px; }
+
+/* ── Policy sections (Terms, Refund) ───────────── */
+.policy-sections { max-width: 820px; margin: 0 auto; }
+
+.policy-section {
+  margin-bottom: 36px;
+  padding-bottom: 36px;
+  border-bottom: 1px solid var(--ivory-deep);
+}
+.policy-section:last-child { border-bottom: none; margin-bottom: 0; }
+
+.policy-section h2 {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--green-deep);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+.policy-num {
+  font-family: var(--font-ui);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 0.1em;
+  flex-shrink: 0;
+}
+.policy-section p {
+  color: var(--text-mid);
+  line-height: 1.8;
+  font-size: 1rem;
+}
+
+/* ── Contact page ──────────────────────────────── */
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  align-items: start;
+}
+
+.contact-info-card {
+  background: var(--white);
+  border: 1px solid var(--ivory-deep);
+  border-radius: var(--radius-lg);
+  padding: 40px;
+  box-shadow: var(--shadow-sm);
+}
+.contact-info-card h2 {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  color: var(--green-deep);
+  margin-bottom: 28px;
+}
+.contact-detail {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+  align-items: flex-start;
+}
+.contact-detail-icon {
+  width: 40px;
+  height: 40px;
+  background: var(--ivory-dark);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+.contact-detail-text strong {
+  display: block;
+  font-family: var(--font-ui);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 4px;
+}
+.contact-detail-text span,
+.contact-detail-text a {
+  font-size: 0.95rem;
+  color: var(--text-mid);
+  line-height: 1.5;
+  text-decoration: none;
+}
+.contact-detail-text a:hover { color: var(--green-deep); text-decoration: underline; }
+
+.contact-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 32px; }
+
+.contact-form-card {
+  background: var(--white);
+  border: 1px solid var(--ivory-deep);
+  border-radius: var(--radius-lg);
+  padding: 40px;
+  box-shadow: var(--shadow-sm);
+}
+.contact-form-card h2 {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  color: var(--green-deep);
+  margin-bottom: 24px;
+}
+.form-group { margin-bottom: 20px; }
+.form-group label {
+  display: block;
+  font-family: var(--font-ui);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-mid);
+  margin-bottom: 6px;
+}
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid var(--ivory-deep);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  color: var(--text-dark);
+  background: var(--ivory);
+  transition: border-color 0.2s;
+  outline: none;
+}
+.form-group input:focus,
+.form-group textarea:focus { border-color: var(--green-mid); }
+.form-group textarea { resize: vertical; min-height: 120px; }
+
+/* ── Store locations ───────────────────────────── */
+.stores-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+}
+.store-card {
+  background: var(--white);
+  border: 1px solid var(--ivory-deep);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+}
+.store-card:hover { box-shadow: var(--shadow-gold); border-color: var(--gold-light); }
+
+.store-badge {
+  display: inline-block;
+  background: var(--green-deep);
+  color: var(--gold-light);
+  font-family: var(--font-ui);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 100px;
+  margin-bottom: 16px;
+}
+.store-card h3 {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  color: var(--green-deep);
+  margin-bottom: 20px;
+}
+.store-detail {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 14px;
+  font-size: 0.9rem;
+  color: var(--text-mid);
+  line-height: 1.5;
+  align-items: flex-start;
+}
+.store-detail-icon { flex-shrink: 0; font-size: 1rem; margin-top: 1px; }
+.store-detail a { color: var(--green-mid); text-decoration: none; }
+.store-detail a:hover { text-decoration: underline; }
+.store-map-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 20px;
+  font-family: var(--font-ui);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gold);
+  text-decoration: none;
+  transition: var(--transition);
+}
+.store-map-link:hover { color: var(--gold-light); }
+
+.store-hours-banner {
+  background: var(--green-deep);
+  border-radius: var(--radius-md);
+  padding: 24px 32px;
+  margin-top: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.store-hours-banner p { color: var(--ivory-dark); margin: 0; font-size: 0.95rem; }
+.store-hours-banner strong { color: var(--gold); font-family: var(--font-ui); }
+
+/* ── Responsive ────────────────────────────────── */
+@media (max-width: 900px) {
+  .stores-grid { grid-template-columns: 1fr 1fr; }
+  .contact-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 600px) {
+  .stores-grid { grid-template-columns: 1fr; }
+  .contact-info-card, .contact-form-card { padding: 24px; }
+  .store-card { padding: 24px; }
+}
