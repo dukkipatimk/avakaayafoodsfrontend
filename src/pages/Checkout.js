@@ -134,6 +134,17 @@ const Checkout = () => {
     return () => clearTimeout(timer);
   }, [address.pincode, address.country]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Load Razorpay checkout script once
+  useEffect(() => {
+    if (window.Razorpay) return;
+    if (document.getElementById('razorpay-checkout-js')) return;
+    const s = document.createElement('script');
+    s.id = 'razorpay-checkout-js';
+    s.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    s.async = true;
+    document.body.appendChild(s);
+  }, []);
+
   const handleAddressChange = e => {
     setAddress(prev => ({ ...prev, [e.target.name]: e.target.value }));
   };
@@ -339,8 +350,6 @@ const Checkout = () => {
 
   return (
     <div className="checkout-page">
-      {/* Razorpay script */}
-      <script src="https://checkout.razorpay.com/v1/checkout.js" async />
 
       <div className="container">
         <h1 className="checkout-title">Checkout</h1>
