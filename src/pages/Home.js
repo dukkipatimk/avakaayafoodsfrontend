@@ -134,7 +134,16 @@ const Home = () => {
         <div className="banner-slider">
           <div className="banner-track" style={{ transform: `translateX(-${bannerIdx * 100}%)` }}>
             {BANNERS.map((src, i) => (
-              <img key={i} src={src} alt={`Avakaaya offer ${i + 1}`} className="banner-slide-img" />
+              <img
+                key={i}
+                src={src}
+                alt={`Avakaaya offer ${i + 1}`}
+                className="banner-slide-img"
+                loading={i === 0 ? 'eager' : 'lazy'}
+                decoding="async"
+                fetchpriority={i === 0 ? 'high' : 'auto'}
+                draggable="false"
+              />
             ))}
           </div>
           <button className="banner-btn banner-btn--prev" onClick={prevBanner} aria-label="Previous">&#8249;</button>

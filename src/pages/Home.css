@@ -59,20 +59,31 @@
 
 /* ── Hero split (banner + brand story) ───────────── */
 /* ── Banner Slider ────────────────────────────────── */
-.banner-slider-section { line-height: 0; }
+.banner-slider-section {
+  line-height: 0;
+  padding: 24px clamp(12px, 3vw, 40px) 8px;
+  background: linear-gradient(180deg, var(--ivory, #faf6ec) 0%, #fff 100%);
+}
 
 .banner-slider {
   position: relative;
   overflow: hidden;
   width: 100%;
-  height: clamp(200px, 38vw, 460px);
-  background: #111;
+  max-width: 1400px;
+  margin: 0 auto;
+  height: clamp(220px, 40vw, 480px);
+  background: #0a0a0a;
+  border-radius: 18px;
+  box-shadow:
+    0 14px 32px -12px rgba(20, 20, 20, 0.28),
+    0 4px 10px -4px rgba(20, 20, 20, 0.12);
+  isolation: isolate;
 }
 
 .banner-track {
   display: flex;
   height: 100%;
-  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
   will-change: transform;
 }
 
@@ -81,53 +92,99 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: top center;
+  object-position: center center;
   display: block;
+  image-rendering: -webkit-optimize-contrast;
+  filter: saturate(1.08) contrast(1.04);
+  transform: scale(1.04);
+  animation: bannerZoom 14s ease-in-out infinite alternate;
+  backface-visibility: hidden;
+}
+
+@keyframes bannerZoom {
+  0%   { transform: scale(1.04) translate(0, 0); }
+  100% { transform: scale(1.10) translate(-0.5%, -0.5%); }
+}
+
+/* Subtle vignette so controls/dots stay legible without dimming the photo */
+.banner-slider::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(120% 80% at 50% 100%, rgba(0,0,0,0.28) 0%, transparent 55%),
+    linear-gradient(180deg, rgba(0,0,0,0.04) 0%, transparent 30%);
+  z-index: 1;
 }
 
 .banner-btn {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  background: rgba(0,0,0,0.32);
+  background: rgba(255, 255, 255, 0.18);
+  -webkit-backdrop-filter: blur(10px) saturate(140%);
+  backdrop-filter: blur(10px) saturate(140%);
   color: #fff;
-  border: none;
-  width: 44px;
-  height: 44px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  width: 46px;
+  height: 46px;
   border-radius: 50%;
-  font-size: 1.9rem;
+  font-size: 1.7rem;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 10;
-  transition: background 0.2s;
+  transition: background 0.25s, transform 0.25s, box-shadow 0.25s;
   line-height: 1;
   padding-bottom: 2px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.22);
 }
-.banner-btn:hover { background: rgba(0,0,0,0.6); }
-.banner-btn--prev { left: 14px; }
-.banner-btn--next { right: 14px; }
+.banner-btn:hover {
+  background: rgba(255, 255, 255, 0.32);
+  transform: translateY(-50%) scale(1.06);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.3);
+}
+.banner-btn:active { transform: translateY(-50%) scale(0.98); }
+.banner-btn--prev { left: 18px; }
+.banner-btn--next { right: 18px; }
 
 .banner-dots {
   position: absolute;
-  bottom: 12px;
+  bottom: 16px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
-  gap: 7px;
+  gap: 8px;
   z-index: 10;
+  padding: 6px 10px;
+  background: rgba(0, 0, 0, 0.22);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  border-radius: 999px;
 }
 .banner-dot {
-  width: 8px; height: 8px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
   border: none;
-  background: rgba(255,255,255,0.4);
+  background: rgba(255, 255, 255, 0.55);
   cursor: pointer;
   padding: 0;
-  transition: all 0.3s;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.banner-dot.active { background: #fff; width: 24px; border-radius: 4px; }
+.banner-dot:hover { background: rgba(255, 255, 255, 0.85); }
+.banner-dot.active {
+  background: #fff;
+  width: 26px;
+  border-radius: 999px;
+  box-shadow: 0 0 0 2px rgba(255,255,255,0.18);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .banner-slide-img { animation: none; transform: none; }
+}
 
 /* ── Trust bar ────────────────────────────────────── */
 .trust-bar {
@@ -992,7 +1049,12 @@
   .qb-tab { padding: 6px 12px; font-size: 0.72rem; }
   .products-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
   .sec-head.centered { margin-bottom: 24px; }
-  .banner-slider { height: clamp(160px, 50vw, 300px); }
+  .banner-slider-section { padding: 14px 10px 6px; }
+  .banner-slider { height: clamp(170px, 52vw, 320px); border-radius: 14px; }
+  .banner-btn { width: 38px; height: 38px; font-size: 1.4rem; }
+  .banner-btn--prev { left: 10px; }
+  .banner-btn--next { right: 10px; }
+  .banner-dot.active { width: 22px; }
 }
 
 .new-arrivals-section { padding: 64px 0; background: var(--ivory); }

@@ -275,18 +275,6 @@ const Checkout = () => {
           paylater: false,
           emi: false,
         },
-        config: {
-          display: {
-            blocks: {
-              upi: {
-                name: 'Pay using UPI',
-                instruments: [{ method: 'upi' }],
-              },
-            },
-            sequence: ['block.upi'],
-            preferences: { show_default_blocks: false },
-          },
-        },
         prefill: {
           name: address.fullName,
           email: address.email,
@@ -306,6 +294,11 @@ const Checkout = () => {
             toast.error('Payment cancelled. Your order is saved — you can retry.');
           }
         }
+      });
+
+      rzp.on('payment.failed', (response) => {
+        const reason = response?.error?.description || response?.error?.reason || 'Payment failed';
+        toast.error(`Payment failed: ${reason}`);
       });
 
       rzp.open();
