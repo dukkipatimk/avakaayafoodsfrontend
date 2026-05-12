@@ -479,3 +479,63 @@
 .coupon-applied { display: flex; align-items: center; justify-content: space-between; background: #e8f5e9; border: 1px solid #a5d6a7; border-radius: var(--radius-sm); padding: 8px 12px; font-family: var(--font-ui); font-size: 0.85rem; color: #2e7d32; font-weight: 600; }
 .coupon-remove { background: none; border: none; color: #999; cursor: pointer; font-size: 1rem; padding: 0 4px; }
 .summary-line--green { color: #2e7d32 !important; font-weight: 600; }
+
+/* ===== UPI Direct payment modal ===== */
+.upi-modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.55);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 1000; padding: 16px; overflow-y: auto;
+}
+.upi-modal {
+  background: #fff; border-radius: 12px; width: 100%; max-width: 460px;
+  max-height: 92vh; overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+}
+.upi-modal-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 20px; border-bottom: 1px solid #eee;
+  position: sticky; top: 0; background: #fff; z-index: 1;
+}
+.upi-modal-header h2 { margin: 0; font-size: 1.25rem; }
+.upi-modal-close {
+  background: none; border: none; font-size: 1.25rem; cursor: pointer;
+  color: #777; padding: 4px 8px; border-radius: 4px;
+}
+.upi-modal-close:hover { background: #f3f3f3; color: #000; }
+.upi-modal-body { padding: 20px; }
+.upi-modal-amount { margin: 0 0 4px; font-size: 1rem; }
+.upi-modal-amount strong { font-size: 1.4rem; color: #1a2e1a; }
+.upi-modal-ref { margin: 0 0 16px; color: #666; font-size: 0.85rem; }
+.upi-modal-ref code {
+  background: #f3f3f3; padding: 2px 6px; border-radius: 4px; font-size: 0.8rem;
+}
+.upi-qr-wrap { text-align: center; margin: 8px 0 12px; }
+.upi-qr {
+  width: 220px; height: 220px; border: 1px solid #eee; border-radius: 8px;
+  padding: 6px; background: #fff;
+}
+.upi-qr-hint { margin: 8px 0 0; color: #666; font-size: 0.85rem; }
+.upi-or {
+  text-align: center; color: #999; margin: 16px 0; font-size: 0.85rem;
+  letter-spacing: 0.08em;
+}
+.upi-deeplink-row { margin-bottom: 16px; }
+.upi-hint { margin: 6px 0 0; color: #666; font-size: 0.8rem; text-align: center; }
+.upi-vpa-row {
+  display: flex; align-items: center; justify-content: space-between;
+  background: #f7f7f5; border: 1px solid #eee; border-radius: 8px;
+  padding: 10px 14px; margin-bottom: 20px;
+}
+.upi-vpa-label { font-size: 0.75rem; color: #777; text-transform: uppercase; letter-spacing: 0.08em; }
+.upi-vpa-value { font-family: monospace; font-size: 0.95rem; color: #1a2e1a; font-weight: 600; }
+.upi-claim {
+  border-top: 1px solid #eee; padding-top: 16px;
+}
+.upi-claim h3 { margin: 0 0 4px; font-size: 1rem; }
+.upi-claim-hint { margin: 0 0 12px; color: #666; font-size: 0.85rem; line-height: 1.5; }
+.upi-input {
+  width: 100%; padding: 10px 12px; border: 1.5px solid #ddd; border-radius: 6px;
+  font-size: 0.95rem; margin-bottom: 10px; outline: none; box-sizing: border-box;
+}
+.upi-input:focus { border-color: #1a2e1a; }
+.btn-block { display: block; width: 100%; text-align: center; text-decoration: none; }

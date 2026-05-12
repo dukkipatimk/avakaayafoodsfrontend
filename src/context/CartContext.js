@@ -5,7 +5,8 @@ const CartContext = createContext();
 export const CartProvider = ({ children }) => {
   const [items, setItems] = useState(() => {
     try {
-      return JSON.parse(localStorage.getItem('akf_cart')) || [];
+      const raw = JSON.parse(localStorage.getItem('akf_cart')) || [];
+      return raw.filter(i => i && i.productId != null && i.weight);
     } catch { return []; }
   });
 
@@ -16,8 +17,13 @@ export const CartProvider = ({ children }) => {
   const getKey = (productId, weight) => `${productId}_${weight}`;
 
   const addItem = (product, variant, quantity = 1) => {
+    const pid = product._id ?? product.id;
+    if (pid == null) {
+      console.error('addItem: product is missing both _id and id', product);
+      return;
+    }
     setItems(prev => {
-      const key = getKey(product._id, variant.weight);
+      const key = getKey(pid, variant.weight);
       const existing = prev.find(i => getKey(i.productId, i.weight) === key);
       if (existing) {
         return prev.map(i => getKey(i.productId, i.weight) === key
@@ -26,7 +32,7 @@ export const CartProvider = ({ children }) => {
         );
       }
       return [...prev, {
-        productId: product._id,
+        productId: pid,
         name: product.name,
         thumbnail: product.thumbnail,
         slug: product.slug,

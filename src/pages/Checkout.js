@@ -54,6 +54,10 @@ const Checkout = () => {
   });
 
   const [paymentMethod, setPaymentMethod] = useState('razorpay');
+  const [upiPayment, setUpiPayment] = useState(null); // { order, upiUrl, qrCodeUrl, vpa, payeeName, amount, reference }
+  const [upiTxnRef, setUpiTxnRef] = useState('');
+  const [upiPayerVpa, setUpiPayerVpa] = useState('');
+  const [upiClaiming, setUpiClaiming] = useState(false);
 
   // Address search (Nominatim / OpenStreetMap)
   const [addrQuery, setAddrQuery] = useState('');
@@ -209,6 +213,15 @@ const Checkout = () => {
         return;
       }
 
+      if (paymentMethod === 'upi') {
+        const upiRes = await api.post('/payment/upi/initiate', {
+          orderId: order._id,
+          amount: total,
+        });
+        setUpiPayment({ order, ...upiRes.data });
+        return;
+      }
+
       // 2. Create Razorpay order (ICICI bank gateway)
       const payRes = await api.post('/payment/create-order', {
         orderId: order._id,
@@ -243,6 +256,26 @@ const Checkout = () => {
         name: 'Avakaaya Foods',
         description: `Order #${order.orderNumber}`,
         order_id: payRes.data.order.id,
+        method: {
+          upi: true,
+          card: false,
+          netbanking: false,
+          wallet: false,
+          paylater: false,
+          emi: false,
+        },
+        config: {
+          display: {
+            blocks: {
+              upi: {
+                name: 'Pay using UPI',
+                instruments: [{ method: 'upi' }],
+              },
+            },
+            sequence: ['block.upi'],
+            preferences: { show_default_blocks: false },
+          },
+        },
         prefill: {
           name: address.fullName,
           email: address.email,
@@ -270,6 +303,33 @@ const Checkout = () => {
     } finally {
       setProcessing(false);
     }
+  };
+
+  const claimUpiPayment = async () => {
+    if (!upiTxnRef.trim()) {
+      toast.error('Enter the UPI transaction reference shown in your UPI app');
+      return;
+    }
+    setUpiClaiming(true);
+    try {
+      await api.post('/payment/upi/claim', {
+        orderId: upiPayment.order._id,
+        upiTxnRef: upiTxnRef.trim(),
+        payerVpa: upiPayerVpa.trim() || undefined,
+      });
+      clearCart();
+      toast.success('Thanks! We\'ll verify your payment and confirm the order shortly.');
+      navigate(`/order/success?orderId=${upiPayment.order._id}&orderNumber=${upiPayment.order.orderNumber}&pendingVerification=1`);
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Could not record payment claim. Try again.');
+    } finally {
+      setUpiClaiming(false);
+    }
+  };
+
+  const copyToClipboard = (text, label) => {
+    navigator.clipboard?.writeText(text);
+    toast.success(`${label} copied`);
   };
 
   if (items.length === 0) {
@@ -494,30 +554,19 @@ const Checkout = () => {
                 <h2 className="checkout-card-title">Payment Method</h2>
 
                 <div className="payment-options">
-                  <label className={`payment-option ${paymentMethod === 'razorpay' ? 'active' : ''}`}>
-                    <input type="radio" name="payment" value="razorpay" checked={paymentMethod === 'razorpay'} onChange={() => setPaymentMethod('razorpay')} />
+                  <label className="payment-option active">
+                    <input type="radio" name="payment" value="razorpay" checked readOnly />
                     <div className="payment-option-info">
-                      <strong>💳 Credit / Debit Card / UPI / Net Banking</strong>
-                      <span>ICICI Bank Payment Gateway (Powered by Razorpay) · Secure & Encrypted</span>
+                      <strong>📱 UPI</strong>
+                      <span>Pay via GPay · PhonePe · Paytm · BHIM · any UPI app · Secured by Razorpay</span>
                     </div>
                   </label>
-
-                  {isIndia && (
-                    <label className={`payment-option ${paymentMethod === 'cod' ? 'active' : ''}`}>
-                      <input type="radio" name="payment" value="cod" checked={paymentMethod === 'cod'} onChange={() => setPaymentMethod('cod')} />
-                      <div className="payment-option-info">
-                        <strong>🏠 Cash on Delivery</strong>
-                        <span>Pay in cash when your order arrives · Available within India only</span>
-                      </div>
-                    </label>
-                  )}
                 </div>
 
-                {paymentMethod === 'razorpay' && (
-                  <div className="payment-security-note">
-                    🔒 Your payment is secured with 256-bit SSL encryption via ICICI Bank's payment gateway. We never store your card details.
-                  </div>
-                )}
+                <div className="payment-security-note">
+                  🔒 Payment is auto-verified the moment your UPI app confirms the transfer.
+                </div>
+
 
                 <div className="checkout-step-btns">
                   <button className="btn btn-outline" onClick={() => setStep(1)}>← Back</button>
@@ -549,7 +598,11 @@ const Checkout = () => {
                   </div>
                   <div className="review-row">
                     <span className="review-key">Payment</span>
-                    <span className="review-val">{paymentMethod === 'cod' ? 'Cash on Delivery' : 'Online Payment (ICICI)'}</span>
+                    <span className="review-val">{
+                      paymentMethod === 'cod' ? 'Cash on Delivery'
+                      : paymentMethod === 'upi' ? 'UPI (Direct)'
+                      : 'UPI (via Razorpay)'
+                    }</span>
                     <button className="review-edit" onClick={() => setStep(2)}>Edit</button>
                   </div>
                 </div>
@@ -641,6 +694,84 @@ const Checkout = () => {
           </div>
         </div>
       </div>
+
+      {upiPayment && (
+        <div className="upi-modal-overlay" role="dialog" aria-modal="true">
+          <div className="upi-modal">
+            <div className="upi-modal-header">
+              <h2>Pay via UPI</h2>
+              <button
+                className="upi-modal-close"
+                onClick={() => setUpiPayment(null)}
+                aria-label="Close"
+              >✕</button>
+            </div>
+
+            <div className="upi-modal-body">
+              <p className="upi-modal-amount">
+                Amount: <strong>₹{upiPayment.amount}</strong>
+              </p>
+              <p className="upi-modal-ref">
+                Reference: <code>{upiPayment.reference}</code>
+              </p>
+
+              <div className="upi-qr-wrap">
+                <img src={upiPayment.qrCodeUrl} alt="UPI QR" className="upi-qr" />
+                <p className="upi-qr-hint">Scan with any UPI app</p>
+              </div>
+
+              <div className="upi-or">— or —</div>
+
+              <div className="upi-deeplink-row">
+                <a href={upiPayment.upiUrl} className="btn btn-primary btn-block">
+                  Open in UPI app
+                </a>
+                <p className="upi-hint">Works on mobile. Returns you here after payment.</p>
+              </div>
+
+              <div className="upi-vpa-row">
+                <div>
+                  <div className="upi-vpa-label">UPI ID</div>
+                  <div className="upi-vpa-value">{upiPayment.vpa}</div>
+                </div>
+                <button
+                  className="btn btn-outline btn-sm"
+                  onClick={() => copyToClipboard(upiPayment.vpa, 'UPI ID')}
+                >Copy</button>
+              </div>
+
+              <div className="upi-claim">
+                <h3>After paying, confirm here</h3>
+                <p className="upi-claim-hint">
+                  Enter the transaction reference / UTR shown in your UPI app.
+                  We&apos;ll verify and confirm your order shortly.
+                </p>
+                <input
+                  type="text"
+                  className="upi-input"
+                  placeholder="UPI transaction reference / UTR"
+                  value={upiTxnRef}
+                  onChange={e => setUpiTxnRef(e.target.value)}
+                />
+                <input
+                  type="text"
+                  className="upi-input"
+                  placeholder="Your UPI ID (optional)"
+                  value={upiPayerVpa}
+                  onChange={e => setUpiPayerVpa(e.target.value)}
+                />
+                <button
+                  className="btn btn-primary btn-lg btn-block"
+                  disabled={upiClaiming}
+                  onClick={claimUpiPayment}
+                >
+                  {upiClaiming ? 'Submitting…' : 'I have paid'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
