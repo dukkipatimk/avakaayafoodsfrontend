@@ -118,7 +118,7 @@ const Header = () => {
         <div className="header-inner container">
           {/* Logo */}
           <Link to="/" className="logo">
-            <img src="/avakaay-logo.png" alt="Avakaaya Foods" className="logo-img" />
+            <img src="/avakaaya-logo.png" alt="Avakaaya Foods" className="logo-img" />
           </Link>
 
           {/* Nav */}

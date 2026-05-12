@@ -81,7 +81,7 @@ const Login = () => {
 
         <div className="auth-demo">
           <p className="demo-label">Demo credentials</p>
-          <code>admin@avakaayfoods.com / admin123</code>
+          <code>admin@avakaayafoods.com / admin123</code>
         </div>
       </div>
     </div>

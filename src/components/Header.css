@@ -54,10 +54,15 @@
 }
 
 .logo-img {
-  height: 52px;
+  height: 88px;
   width: auto;
+  max-width: 220px;
   display: block;
   object-fit: contain;
+}
+
+@media (max-width: 768px) {
+  .logo-img { height: 64px; max-width: 160px; }
 }
 
 

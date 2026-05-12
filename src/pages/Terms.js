@@ -70,7 +70,7 @@ const SECTIONS = [
   {
     num: '14',
     title: 'Notices',
-    body: 'All notices and communications relating to these terms shall be in writing and considered duly given when delivered in person, sent via registered mail, or sent via email to care@avakaayfoods.com.',
+    body: 'All notices and communications relating to these terms shall be in writing and considered duly given when delivered in person, sent via registered mail, or sent via email to care@avakaayafoods.com.',
   },
 ];
 

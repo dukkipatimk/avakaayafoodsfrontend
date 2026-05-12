@@ -47,7 +47,7 @@ const Contact = () => {
               <div className="contact-detail-icon">✉️</div>
               <div className="contact-detail-text">
                 <strong>Email</strong>
-                <a href="mailto:care@avakaayfoods.com">care@avakaayfoods.com</a>
+                <a href="mailto:care@avakaayafoods.com">care@avakaayafoods.com</a>
               </div>
             </div>
 
@@ -60,7 +60,7 @@ const Contact = () => {
             </div>
 
             <div className="contact-actions">
-              <a href="mailto:care@avakaayfoods.com" className="btn btn-primary">
+              <a href="mailto:care@avakaayafoods.com" className="btn btn-primary">
                 📧 Send Email
               </a>
               <a

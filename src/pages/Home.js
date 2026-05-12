@@ -368,7 +368,7 @@ const Home = () => {
       <section className="brand-split anim">
         <div className="container brand-split-inner">
           <div className="brand-split-img-col">
-            <img src="/avakaay-logo.png" alt="Avakaaya Pickles House" className="brand-split-img" />
+            <img src="/avakaaya-logo.png" alt="Avakaaya Pickles House" className="brand-split-img" />
             <div className="brand-since-badge">
               <span>Making pickles since</span>
               <strong>1980s</strong>

@@ -106,7 +106,7 @@ const About = () => {
       <section className="about-section about-story-section" id="story">
         <div className="container about-story-grid">
           <div className="about-story-img-col">
-            <img src="/avakaay-logo.png" alt="Avakaaya Pickles House" className="about-story-img" />
+            <img src="/avakaaya-logo.png" alt="Avakaaya Pickles House" className="about-story-img" />
             <div className="about-story-since">
               <span className="since-label">Making pickles since</span>
               <strong className="since-year">1980s</strong>

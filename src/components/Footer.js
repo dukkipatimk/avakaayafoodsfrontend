@@ -10,7 +10,7 @@ const Footer = () => {
           {/* Brand */}
           <div className="footer-brand">
             <Link to="/" className="footer-logo">
-              <img src="/avakaay-logo.png" alt="Avakaaya Foods" className="footer-logo-img" />
+              <img src="/avakaaya-logo.png" alt="Avakaaya Foods" className="footer-logo-img" />
             </Link>
             <p className="footer-tagline">
               Authentic Andhra flavours, crafted with love in Hyderabad since generations.
@@ -61,7 +61,7 @@ const Footer = () => {
               <li><Link to="/shipping-info">Shipping Information</Link></li>
               <li><Link to="/refund-policy">Refund &amp; Cancellation</Link></li>
               <li><Link to="/terms">Terms &amp; Conditions</Link></li>
-              <li><a href="mailto:care@avakaayfoods.com">care@avakaayfoods.com</a></li>
+              <li><a href="mailto:care@avakaayafoods.com">care@avakaayafoods.com</a></li>
               <li><a href="tel:+919105299399">+91 91052 99399</a></li>
               <li><a href="https://wa.me/919105299399">WhatsApp Support</a></li>
             </ul>

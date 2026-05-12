@@ -25,13 +25,18 @@
 }
 
 .footer-logo-img {
-  height: 48px;
+  height: 96px;
   width: auto;
+  max-width: 200px;
   display: block;
   object-fit: contain;
   background: white;
-  padding: 6px 14px;
-  border-radius: 8px;
+  padding: 10px 16px;
+  border-radius: 12px;
+}
+
+@media (max-width: 768px) {
+  .footer-logo-img { height: 72px; max-width: 160px; padding: 8px 12px; }
 }
 
 .footer-tagline {

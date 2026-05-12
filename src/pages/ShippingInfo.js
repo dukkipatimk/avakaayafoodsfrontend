@@ -74,7 +74,7 @@ const ShippingInfo = () => {
               { title: 'Order Processing Time', body: 'Orders are typically processed within 1–2 business days after they are placed. This processing time may vary during peak seasons or due to unforeseen circumstances.' },
               { title: 'Shipping Methods & Timelines', body: 'We offer standard and expedited shipping options based on your location and preferences. Estimated delivery times are shown during checkout and depend on the shipping method selected and your delivery address.' },
               { title: 'Shipping Costs', body: 'Shipping costs are calculated based on the method chosen, the weight of the package, and the destination address. You can view the exact shipping cost during checkout before finalising your order.' },
-              { title: 'Delivery Destinations', body: 'We currently deliver to India, United States, United Kingdom, Singapore, Australia, and Malaysia. If your location is not listed, please contact us at care@avakaayfoods.com for assistance.' },
+              { title: 'Delivery Destinations', body: 'We currently deliver to India, United States, United Kingdom, Singapore, Australia, and Malaysia. If your location is not listed, please contact us at care@avakaayafoods.com for assistance.' },
               { title: 'Order Tracking', body: 'Once your order is shipped, you will receive a shipping confirmation email and/or SMS with tracking information. You can also track your order from the "My Orders" section in your account.' },
               { title: 'International Shipping', body: 'For international orders, additional customs duties, taxes, or fees may apply depending on your country\'s regulations. These charges are the responsibility of the recipient and are not included in product or shipping costs.' },
               { title: 'Returns Due to Shipping Issues', body: 'If your order is returned to us due to an incorrect address or failure to receive the package, additional shipping fees may apply for reshipment. Please ensure your shipping information is accurate when placing your order.' },
@@ -130,7 +130,7 @@ const ShippingInfo = () => {
               },
               {
                 q: 'What if my order arrives damaged?',
-                a: 'Please photograph the damaged item and contact us within 48 hours of delivery at care@avakaayfoods.com or WhatsApp. We will replace the item or issue a full refund.'
+                a: 'Please photograph the damaged item and contact us within 48 hours of delivery at care@avakaayafoods.com or WhatsApp. We will replace the item or issue a full refund.'
               },
               {
                 q: 'Can I change my delivery address after placing an order?',
@@ -155,8 +155,8 @@ const ShippingInfo = () => {
             <h3>Need Help?</h3>
             <p>Our team is available Mon–Sat, 9am–7pm IST.</p>
             <div className="contact-options">
-              <a href="mailto:care@avakaayfoods.com" className="contact-btn email">
-                📧 care@avakaayfoods.com
+              <a href="mailto:care@avakaayafoods.com" className="contact-btn email">
+                📧 care@avakaayafoods.com
               </a>
               <a href="https://wa.me/919000000000" target="_blank" rel="noopener noreferrer" className="contact-btn whatsapp">
                 💬 WhatsApp Us

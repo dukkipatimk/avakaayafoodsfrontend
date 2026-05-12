@@ -101,7 +101,7 @@ const OrderSuccess = () => {
         <div className="share-section">
           <p>Love our pickles? Share with friends!</p>
           <div className="share-buttons">
-            <a href={`https://wa.me/?text=I just ordered authentic Andhra pickles from Avakaaya Foods! Check them out at avakaayfoods.com`}
+            <a href={`https://wa.me/?text=I just ordered authentic Andhra pickles from Avakaaya Foods! Check them out at avakaayafoods.com`}
               target="_blank" rel="noopener noreferrer" className="share-btn whatsapp">
               Share on WhatsApp
             </a>

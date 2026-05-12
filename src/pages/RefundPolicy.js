@@ -8,7 +8,7 @@ const SECTIONS = [
   },
   {
     title: 'Cancellation Policy',
-    body: 'You may cancel an order before it is shipped. To cancel your order, please contact us as soon as possible at care@avakaayfoods.com or via WhatsApp. Once an order has been shipped, it cannot be cancelled; however, you may be eligible for a return under our Refund Policy. If you have ordered a custom or personalised item (such as a gift hamper), please contact us directly to discuss cancellation options, as these may have different terms.',
+    body: 'You may cancel an order before it is shipped. To cancel your order, please contact us as soon as possible at care@avakaayafoods.com or via WhatsApp. Once an order has been shipped, it cannot be cancelled; however, you may be eligible for a return under our Refund Policy. If you have ordered a custom or personalised item (such as a gift hamper), please contact us directly to discuss cancellation options, as these may have different terms.',
   },
   {
     title: 'Return Shipping',
@@ -16,7 +16,7 @@ const SECTIONS = [
   },
   {
     title: 'Damaged or Defective Items',
-    body: 'In the case of receiving damaged or defective items, please contact us within 48 hours of delivery at care@avakaayfoods.com or via WhatsApp. We may require photographic evidence of the damage or defect to process your refund or replacement. We will replace the item or issue a full refund at our discretion.',
+    body: 'In the case of receiving damaged or defective items, please contact us within 48 hours of delivery at care@avakaayafoods.com or via WhatsApp. We may require photographic evidence of the damage or defect to process your refund or replacement. We will replace the item or issue a full refund at our discretion.',
   },
   {
     title: 'Refusal of Refunds',
@@ -24,7 +24,7 @@ const SECTIONS = [
   },
   {
     title: 'Contact Us',
-    body: 'If you have any questions or require further assistance regarding our Refund and Cancellation Policy, please contact our customer service team at care@avakaayfoods.com or call +91 91052 99399. Our team is available every day from 9:00 AM to 10:00 PM IST.',
+    body: 'If you have any questions or require further assistance regarding our Refund and Cancellation Policy, please contact our customer service team at care@avakaayafoods.com or call +91 91052 99399. Our team is available every day from 9:00 AM to 10:00 PM IST.',
   },
 ];
 
