@@ -5,19 +5,21 @@ import ProductCard from '../components/ProductCard';
 import './Home.css';
 
 const BANNERS = [
-  '/images/banners/banner_preservatives.jpg',
-  '/images/banners/banner_recipes.jpg',
-  '/images/banners/banner_smallbatch.jpg',
-  '/images/banners/banner_worldwide.jpg',
-];
-
-const ANNOUNCE_ITEMS = [
-  '🎉 Use code FIRST10 for 10% off your first order',
-  '🚚 Free shipping above ₹999 within India',
-  '🌿 No preservatives — 100% natural ingredients',
-  '🌍 Delivering to USA · UK · Singapore · Australia · Malaysia',
-  '⭐ 10,000+ happy customers worldwide',
-  '📦 FSSAI certified · Small batches · Traditional recipes',
+  {
+    src: '/images/banners/quality.jpg',
+    align: 'none',
+    fit: 'fill',
+  },
+  {
+    src: '/images/banners/banner_worldwide.jpg',
+    align: 'none',
+    fit: 'fill',
+  },
+  {
+    src: '/images/banners/banner_festivals.jpg',
+    align: 'none',
+    fit: 'fill',
+  },
 ];
 
 const USPS = [
@@ -59,6 +61,7 @@ const Home = () => {
   const [igPosts, setIgPosts] = useState([]);
   const [igLoading, setIgLoading] = useState(true);
   const [bannerIdx, setBannerIdx] = useState(0);
+  const [categoryIdx, setCategoryIdx] = useState(0);
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
   const [activeCategory, setActiveCategory] = useState('all');
@@ -93,7 +96,12 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
-    const t = setInterval(() => setBannerIdx(i => (i + 1) % BANNERS.length), 4500);
+    const t = setInterval(() => setBannerIdx(i => (i + 1) % BANNERS.length), 8500);
+    return () => clearInterval(t);
+  }, []);
+
+  useEffect(() => {
+    const t = setInterval(() => setCategoryIdx(i => (i + 1) % CATEGORIES.length), 4000);
     return () => clearInterval(t);
   }, []);
 
@@ -108,8 +116,6 @@ const Home = () => {
     return () => observer.disconnect();
   }, [featured, igPosts]);
 
-  const prevBanner = () => setBannerIdx(i => (i - 1 + BANNERS.length) % BANNERS.length);
-  const nextBanner = () => setBannerIdx(i => (i + 1) % BANNERS.length);
   const handleSubscribe = e => { e.preventDefault(); if (email) { setSubscribed(true); setEmail(''); } };
 
   const displayProducts = activeCategory === 'all' ? featured : tabProducts;
@@ -120,63 +126,89 @@ const Home = () => {
   return (
     <div className="home">
 
-      {/* ── Announcement bar ─────────────────────── */}
-      <div className="announce-bar">
-        <div className="announce-track">
-          {[...ANNOUNCE_ITEMS, ...ANNOUNCE_ITEMS].map((item, i) => (
-            <span key={i} className="announce-item">{item}<span className="announce-sep">✦</span></span>
-          ))}
-        </div>
-      </div>
+      {/* ── Hero: split layout (left pitch + right slider) ───────────── */}
+      <section className="hero-split">
+        <div className="hero-split-inner">
 
-      {/* ── Banner slider (full width) ───────────── */}
-      <section className="banner-slider-section">
-        <div className="banner-slider">
-          <div className="banner-track" style={{ transform: `translateX(-${bannerIdx * 100}%)` }}>
-            {BANNERS.map((src, i) => (
-              <img
-                key={i}
-                src={src}
-                alt={`Avakaaya offer ${i + 1}`}
-                className="banner-slide-img"
-                loading={i === 0 ? 'eager' : 'lazy'}
-                decoding="async"
-                fetchpriority={i === 0 ? 'high' : 'auto'}
-                draggable="false"
-              />
-            ))}
+          {/* Left: shop by categories slider */}
+          <div className="category-slider">
+            <span className="category-slider-badge">Shop By Category</span>
+            <div
+              className="category-track"
+              style={{ transform: `translateY(-${categoryIdx * 100}%)` }}
+            >
+              {CATEGORIES.map(c => (
+                <Link
+                  key={c.slug}
+                  to={`/products?category=${c.slug}`}
+                  className="category-slide"
+                >
+                  <div className="category-slide-imgwrap">
+                    <img src={c.image} alt={c.name} loading="lazy" decoding="async" />
+                  </div>
+                  <div className="category-slide-info">
+                    <span className="category-slide-name">{c.name}</span>
+                    <span className="category-slide-count">{c.count}</span>
+                    <span className="category-slide-cta">Shop {c.name} →</span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+            <div className="category-dots">
+              {CATEGORIES.map((_, i) => (
+                <button
+                  key={i}
+                  className={`category-dot${i === categoryIdx ? ' active' : ''}`}
+                  onClick={() => setCategoryIdx(i)}
+                  aria-label={`Category ${i + 1}`}
+                />
+              ))}
+            </div>
           </div>
-          <button className="banner-btn banner-btn--prev" onClick={prevBanner} aria-label="Previous">&#8249;</button>
-          <button className="banner-btn banner-btn--next" onClick={nextBanner} aria-label="Next">&#8250;</button>
-          <div className="banner-dots">
-            {BANNERS.map((_, i) => (
-              <button key={i} className={`banner-dot${i === bannerIdx ? ' active' : ''}`} onClick={() => setBannerIdx(i)} aria-label={`Slide ${i + 1}`} />
-            ))}
+
+          {/* Right: banner slider */}
+          <div className="banner-slider">
+            <div className="banner-track" style={{ transform: `translateX(-${bannerIdx * 100}%)` }}>
+              {BANNERS.map((b, i) => (
+                <div key={i} className={`banner-slide banner-slide--${b.align || 'left'}${b.fit ? ` banner-slide--fit-${b.fit}` : ''}`}>
+                  <img
+                    src={b.src}
+                    alt={b.headline || 'Avakaaya banner'}
+                    className="banner-slide-img"
+                    loading={i === 0 ? 'eager' : 'lazy'}
+                    decoding="async"
+                    fetchpriority={i === 0 ? 'high' : 'auto'}
+                    draggable="false"
+                  />
+                  {b.overlay && (
+                    <img
+                      src={b.overlay}
+                      alt=""
+                      className={`banner-overlay-img banner-overlay-img--${b.overlayAlign || 'left'}`}
+                      loading="lazy"
+                      decoding="async"
+                      draggable="false"
+                    />
+                  )}
+                  {(b.eyebrow || b.headline || b.subhead) && (
+                    <div className={`banner-caption${i === bannerIdx ? ' is-active' : ''}`}>
+                      {b.eyebrow && <span className="banner-eyebrow">{b.eyebrow}</span>}
+                      {b.headline && <h2 className="banner-headline">{b.headline}</h2>}
+                      {b.subhead && <p className="banner-subhead">{b.subhead}</p>}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+            <div className="banner-dots">
+              {BANNERS.map((_, i) => (
+                <button key={i} className={`banner-dot${i === bannerIdx ? ' active' : ''}`} onClick={() => setBannerIdx(i)} aria-label={`Slide ${i + 1}`} />
+              ))}
+            </div>
           </div>
+
         </div>
       </section>
-
-      {/* ── Trust bar ────────────────────────────── */}
-      <div className="trust-bar">
-        <div className="container trust-strip">
-          {[
-            { icon: '🏛️', label: 'FSSAI Certified' },
-            { icon: '🌿', label: 'No Preservatives' },
-            { icon: '👩‍🍳', label: 'Traditional Recipes' },
-            { icon: '🚚', label: 'Free Shipping ₹999+' },
-            { icon: '⭐', label: '10,000+ Orders' },
-            { icon: '🌍', label: 'Ships Worldwide' },
-          ].map((t, i, arr) => (
-            <React.Fragment key={t.label}>
-              <div className="trust-item">
-                <span className="trust-icon">{t.icon}</span>
-                <span className="trust-label">{t.label}</span>
-              </div>
-              {i < arr.length - 1 && <div className="trust-divider" />}
-            </React.Fragment>
-          ))}
-        </div>
-      </div>
 
       {/* ── USP strip ────────────────────────────── */}
       <div className="usp-strip">
@@ -206,33 +238,6 @@ const Home = () => {
           <Link to="/products" className="btn btn-gold btn-sm">Shop Now →</Link>
         </div>
       </div>
-
-      {/* ── Shop by Category ─────────────────────── */}
-      <section className="categories-section">
-        <div className="container">
-          <div className="sec-head anim">
-            <div>
-              <span className="home-sec-label">Explore</span>
-              <h2>Shop by Category</h2>
-            </div>
-            <Link to="/products" className="btn btn-outline">All Products →</Link>
-          </div>
-          <div className="categories-grid stagger">
-            {CATEGORIES.map(cat => (
-              <Link key={cat.slug} to={`/products?category=${cat.slug}`} className="cat-card" data-cat={cat.slug}>
-                <div className="cat-img-wrap">
-                  <img src={cat.image} alt={cat.name} className="cat-img" />
-                </div>
-                <div className="cat-info">
-                  <h3 className="cat-name">{cat.name}</h3>
-                  <span className="cat-count">{cat.count}</span>
-                  <span className="cat-arrow">→</span>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* ── Quick Buy Products ───────────────────── */}
       <section className="quickbuy-section">

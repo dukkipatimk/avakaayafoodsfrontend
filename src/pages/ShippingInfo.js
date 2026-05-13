@@ -66,6 +66,35 @@ const ShippingInfo = () => {
 
       <div className="container shipping-content">
 
+        {/* Shipping partner */}
+        <div className="shipping-partner">
+          <div className="shipping-partner-text">
+            <span className="shipping-partner-eyebrow">Logistics Partner</span>
+            <h2 className="shipping-partner-title">
+              Powered by <a href="https://avakaaya.com" target="_blank" rel="noopener noreferrer">Avakaaya.com</a> International Courier
+            </h2>
+            <p className="shipping-partner-body">
+              Every shipment is handled by our trusted logistics partner with end-to-end
+              tracking, food-grade temperature care, and customs-cleared delivery in over
+              200 destinations worldwide.
+            </p>
+            <ul className="shipping-partner-list">
+              <li>Focus on Quality &amp; FSSAI-compliant handling</li>
+              <li>Global reach across 6 primary &amp; 200+ secondary destinations</li>
+              <li>Specialized care for sensitive food items</li>
+              <li>24/7 support &amp; customs assistance</li>
+            </ul>
+          </div>
+          <div className="shipping-partner-image">
+            <img
+              src="/images/shipping/courier-capabilities.png"
+              alt="Avakaaya.com International Courier capabilities: Focus on Quality, Global Reach, Customized Solutions, Extensive Branch Network, Satisfied Customers, 24/7 Support, Specialized Care, Wide Network"
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
+        </div>
+
         {/* Policy sections */}
         <div className="shipping-policy">
           <h2 className="faq-title">Delivery &amp; Shipping Policy</h2>

@@ -6,6 +6,15 @@ import MiniCart from './MiniCart';
 import toast from 'react-hot-toast';
 import './Header.css';
 
+const ANNOUNCE_ITEMS = [
+  '🎉 Use code FIRST10 for 10% off your first order',
+  '🚚 Free shipping above ₹999 within India',
+  '🌿 No preservatives — 100% natural ingredients',
+  '🌍 Delivering to USA · UK · Singapore · Australia · Malaysia',
+  '⭐ 10,000+ happy customers worldwide',
+  '📦 FSSAI certified · Small batches · Traditional recipes',
+];
+
 const Header = () => {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -109,9 +118,15 @@ const Header = () => {
 
   return (
     <>
-      {/* Top banner */}
+      {/* Top scrolling announcement bar */}
       <div className="header-banner">
-        <span>🌶️ Free shipping on orders above ₹999 within India &nbsp;|&nbsp; 🌍 We ship to USA, UK, Singapore, Australia & Malaysia</span>
+        <div className="header-banner-track">
+          {[...ANNOUNCE_ITEMS, ...ANNOUNCE_ITEMS].map((item, i) => (
+            <span key={i} className="header-banner-item">
+              {item}<span className="header-banner-sep">✦</span>
+            </span>
+          ))}
+        </div>
       </div>
 
       <header className={`header ${scrolled ? 'header--scrolled' : ''}`}>
