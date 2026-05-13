@@ -5,7 +5,6 @@ import './MiniCart.css';
 
 const MiniCart = ({ isOpen, onClose }) => {
   const { items, updateQuantity, removeItem, subtotal, savings, totalItems } = useCart();
-  const freeShippingLeft = Math.max(0, 999 - subtotal);
 
   return (
     <>
@@ -79,24 +78,10 @@ const MiniCart = ({ isOpen, onClose }) => {
             </div>
 
             <div className="mini-cart-footer">
-              {/* Free shipping bar */}
-              {freeShippingLeft > 0 ? (
-                <div className="mini-shipping-bar">
-                  <p className="mini-shipping-bar-text">
-                    Add <strong>₹{freeShippingLeft}</strong> more for free shipping within India
-                  </p>
-                  <div className="mini-shipping-track">
-                    <div
-                      className="mini-shipping-fill"
-                      style={{ width: `${Math.min(100, (subtotal / 999) * 100)}%` }}
-                    />
-                  </div>
-                </div>
-              ) : (
-                <div className="mini-shipping-bar mini-shipping-bar--free">
-                  🎉 You've unlocked <strong>FREE shipping</strong> within India!
-                </div>
-              )}
+              {/* Delivery info */}
+              <div className="mini-shipping-bar mini-shipping-bar--free">
+                🚚 <strong>1–2 day delivery</strong> within India · <strong>3–7 days</strong> international
+              </div>
 
               {savings > 0 && (
                 <div className="mini-cart-savings">

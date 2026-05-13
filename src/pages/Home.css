@@ -1116,7 +1116,10 @@
   padding: 12px 20px;
 }
 
-/* ── WhatsApp floating button ─────────────────────── */
+/* ── WhatsApp floating button (mobile only — desktop uses side menu) ─── */
+@media (min-width: 1024px) {
+  .whatsapp-float { display: none !important; }
+}
 .whatsapp-float {
   position: fixed;
   bottom: 28px;

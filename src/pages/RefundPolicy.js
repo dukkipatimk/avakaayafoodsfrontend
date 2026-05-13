@@ -24,7 +24,7 @@ const SECTIONS = [
   },
   {
     title: 'Contact Us',
-    body: 'If you have any questions or require further assistance regarding our Refund and Cancellation Policy, please contact our customer service team at care@avakaayafoods.com or call +91 91052 99399. Our team is available every day from 9:00 AM to 10:00 PM IST.',
+    body: 'If you have any questions or require further assistance regarding our Refund and Cancellation Policy, please contact our customer service team at care@avakaayafoods.com or call +91 91155 95959. Our team is available every day from 9:00 AM to 10:00 PM IST.',
   },
 ];
 

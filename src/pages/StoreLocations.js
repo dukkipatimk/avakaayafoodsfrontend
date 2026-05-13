@@ -6,7 +6,7 @@ const BRANCHES = [
     badge: 'Main Branch',
     name: 'Kukatpally, Hyderabad',
     address: 'LIG-75, 1st Phase, Dharma Reddy Colony Phase I, Kukatpally, Hyderabad, Telangana 500072',
-    phone: '+91 91052 99399',
+    phone: '+91 91155 95959',
     email: 'avakaayapickleshouse@gmail.com',
     mapsQuery: 'LIG-75+Dharma+Reddy+Colony+Kukatpally+Hyderabad',
   },
@@ -14,7 +14,7 @@ const BRANCHES = [
     badge: 'Branch',
     name: 'Chanda Nagar, Hyderabad',
     address: 'Under Shoe Lala Building, H.3-10, Near RS Brothers, Gangaram, Chanda Nagar, Hyderabad, Telangana 500050',
-    phone: '+91 91052 99399',
+    phone: '+91 91155 95959',
     email: 'avakaayapickleshousechd@gmail.com',
     mapsQuery: 'H.3-10+near+RS+Brothers+Chanda+Nagar+Hyderabad',
   },
@@ -77,7 +77,7 @@ const StoreLocations = () => (
             <p style={{ marginTop: 4 }}>9:00 AM – 10:00 PM IST</p>
           </div>
           <a
-            href="https://wa.me/919105299399"
+            href="https://wa.me/919115595959"
             target="_blank"
             rel="noopener noreferrer"
             className="btn btn-gold"

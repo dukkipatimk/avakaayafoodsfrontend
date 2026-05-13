@@ -32,7 +32,6 @@ const Cart = () => {
     );
   }
 
-  const freeShippingLeft = Math.max(0, 999 - subtotal);
   const totalWeightGrams = items.reduce((sum, i) => sum + parseWeightGrams(i.weight) * (i.quantity || 1), 0);
 
   return (
@@ -40,22 +39,10 @@ const Cart = () => {
       <div className="container">
         <h1 className="cart-title">Your Cart <span className="cart-count">({items.length} items)</span></h1>
 
-        {/* Free shipping bar */}
-        {freeShippingLeft > 0 && (
-          <div className="shipping-bar">
-            <div className="shipping-bar-text">
-              Add ₹{freeShippingLeft} more for <strong>FREE shipping</strong> within India 🚚
-            </div>
-            <div className="shipping-bar-track">
-              <div className="shipping-bar-fill" style={{ width: `${Math.min(100, (subtotal / 999) * 100)}%` }} />
-            </div>
-          </div>
-        )}
-        {freeShippingLeft === 0 && (
-          <div className="shipping-bar shipping-bar--achieved">
-            🎉 You've unlocked <strong>FREE shipping</strong> within India!
-          </div>
-        )}
+        {/* Delivery time info */}
+        <div className="shipping-bar shipping-bar--achieved">
+          🚚 <strong>1–2 day delivery</strong> within India · <strong>3–7 days</strong> international
+        </div>
 
         <div className="cart-layout">
           {/* Items */}

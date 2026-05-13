@@ -51,7 +51,7 @@ const TESTIMONIALS = [
   { name: 'Sunitha Devi', location: 'Singapore',       initials: 'SD', rating: 5, text: 'Fast shipping, beautiful packaging, 100% authentic taste. My go-to for Andhra food.' },
 ];
 
-const WHATSAPP_NUMBER = '919999999999';
+const WHATSAPP_NUMBER = '919115595959';
 
 const Home = () => {
   const [featured, setFeatured] = useState([]);
@@ -229,11 +229,11 @@ const Home = () => {
       <div className="promo-callout">
         <div className="container promo-callout-inner">
           <div className="promo-callout-items">
-            <span>🚚 <strong>Free shipping</strong> on orders above ₹999 within India</span>
+            <span>🚚 <strong>Delivery in 1–2 days</strong> within India</span>
             <span className="promo-sep">|</span>
             <span>🎁 <strong>Festival hampers</strong> now available for Diwali &amp; Sankranthi</span>
             <span className="promo-sep">|</span>
-            <span>🌍 <strong>International orders</strong> shipped with DHL Express</span>
+            <span>🌍 <strong>International delivery</strong> in 3–7 business days</span>
           </div>
           <Link to="/products" className="btn btn-gold btn-sm">Shop Now →</Link>
         </div>

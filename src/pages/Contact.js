@@ -39,7 +39,7 @@ const Contact = () => {
               <div className="contact-detail-icon">📞</div>
               <div className="contact-detail-text">
                 <strong>Phone</strong>
-                <a href="tel:+919105299399">+91 91052 99399</a>
+                <a href="tel:+919115595959">+91 91155 95959</a>
               </div>
             </div>
 
@@ -64,7 +64,7 @@ const Contact = () => {
                 📧 Send Email
               </a>
               <a
-                href="https://wa.me/919105299399"
+                href="https://wa.me/919115595959"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn btn-outline"

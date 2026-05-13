@@ -3,51 +3,33 @@ import './ShippingInfo.css';
 
 const zones = [
   {
-    flag: '🇮🇳', name: 'India', currency: '₹', color: '#ff9933',
-    methods: [
-      { name: 'Standard', time: '3–5 business days', rate: 'Free above ₹999 | ₹80 below' },
-      { name: 'Express', time: '1–2 business days', rate: '₹150' },
-    ],
+    flag: '🇮🇳', name: 'India', color: '#ff9933',
+    deliveryTime: '1–2 business days',
     note: 'We ship across all Indian states. Tracking provided via SMS and email.',
   },
   {
-    flag: '🇺🇸', name: 'United States', currency: '$', color: '#3c3b6e',
-    methods: [
-      { name: 'Standard', time: '10–14 business days', rate: '$25' },
-      { name: 'Express', time: '5–7 business days', rate: '$45' },
-    ],
+    flag: '🇺🇸', name: 'United States', color: '#3c3b6e',
+    deliveryTime: '3–7 business days',
     note: 'Shipped via registered international post with full tracking. Customs duties may apply.',
   },
   {
-    flag: '🇬🇧', name: 'United Kingdom', currency: '£', color: '#012169',
-    methods: [
-      { name: 'Standard', time: '10–14 business days', rate: '£20' },
-      { name: 'Express', time: '5–7 business days', rate: '£35' },
-    ],
+    flag: '🇬🇧', name: 'United Kingdom', color: '#012169',
+    deliveryTime: '3–7 business days',
     note: 'Post-Brexit customs: recipients may be charged import VAT on delivery.',
   },
   {
-    flag: '🇸🇬', name: 'Singapore', currency: 'S$', color: '#ef3340',
-    methods: [
-      { name: 'Standard', time: '7–10 business days', rate: 'S$18' },
-      { name: 'Express', time: '4–6 business days', rate: 'S$30' },
-    ],
+    flag: '🇸🇬', name: 'Singapore', color: '#ef3340',
+    deliveryTime: '3–7 business days',
     note: 'Excellent connectivity from Hyderabad. Most orders arrive within 7 days.',
   },
   {
-    flag: '🇦🇺', name: 'Australia', currency: 'A$', color: '#00008b',
-    methods: [
-      { name: 'Standard', time: '10–14 business days', rate: 'A$28' },
-      { name: 'Express', time: '6–8 business days', rate: 'A$50' },
-    ],
+    flag: '🇦🇺', name: 'Australia', color: '#00008b',
+    deliveryTime: '3–7 business days',
     note: 'All food items comply with DAFF import regulations for condiments and pickles.',
   },
   {
-    flag: '🇲🇾', name: 'Malaysia', currency: 'RM', color: '#cc0001',
-    methods: [
-      { name: 'Standard', time: '7–10 business days', rate: 'RM45' },
-      { name: 'Express', time: '4–6 business days', rate: 'RM80' },
-    ],
+    flag: '🇲🇾', name: 'Malaysia', color: '#cc0001',
+    deliveryTime: '3–7 business days',
     note: 'Food import regulations apply. Products are properly labelled and certified.',
   },
 ];
@@ -101,8 +83,7 @@ const ShippingInfo = () => {
           <div className="policy-items">
             {[
               { title: 'Order Processing Time', body: 'Orders are typically processed within 1–2 business days after they are placed. This processing time may vary during peak seasons or due to unforeseen circumstances.' },
-              { title: 'Shipping Methods & Timelines', body: 'We offer standard and expedited shipping options based on your location and preferences. Estimated delivery times are shown during checkout and depend on the shipping method selected and your delivery address.' },
-              { title: 'Shipping Costs', body: 'Shipping costs are calculated based on the method chosen, the weight of the package, and the destination address. You can view the exact shipping cost during checkout before finalising your order.' },
+              { title: 'Delivery Timelines', body: 'Orders within India are delivered in 1–2 business days. International orders to the United States, United Kingdom, Singapore, Australia, and Malaysia are delivered in 3–7 business days.' },
               { title: 'Delivery Destinations', body: 'We currently deliver to India, United States, United Kingdom, Singapore, Australia, and Malaysia. If your location is not listed, please contact us at care@avakaayafoods.com for assistance.' },
               { title: 'Order Tracking', body: 'Once your order is shipped, you will receive a shipping confirmation email and/or SMS with tracking information. You can also track your order from the "My Orders" section in your account.' },
               { title: 'International Shipping', body: 'For international orders, additional customs duties, taxes, or fees may apply depending on your country\'s regulations. These charges are the responsibility of the recipient and are not included in product or shipping costs.' },
@@ -124,16 +105,9 @@ const ShippingInfo = () => {
                 <span className="zone-flag">{zone.flag}</span>
                 <h3 className="zone-name">{zone.name}</h3>
               </div>
-              <div className="zone-methods">
-                {zone.methods.map(m => (
-                  <div key={m.name} className="method-row">
-                    <div className="method-info">
-                      <span className="method-name">{m.name}</span>
-                      <span className="method-time">⏱ {m.time}</span>
-                    </div>
-                    <span className="method-rate">{m.rate}</span>
-                  </div>
-                ))}
+              <div className="zone-delivery">
+                <span className="zone-delivery-icon">⏱</span>
+                <span className="zone-delivery-time">{zone.deliveryTime}</span>
               </div>
               <p className="zone-note">{zone.note}</p>
             </div>
@@ -187,7 +161,7 @@ const ShippingInfo = () => {
               <a href="mailto:care@avakaayafoods.com" className="contact-btn email">
                 📧 care@avakaayafoods.com
               </a>
-              <a href="https://wa.me/919000000000" target="_blank" rel="noopener noreferrer" className="contact-btn whatsapp">
+              <a href="https://wa.me/919115595959" target="_blank" rel="noopener noreferrer" className="contact-btn whatsapp">
                 💬 WhatsApp Us
               </a>
             </div>

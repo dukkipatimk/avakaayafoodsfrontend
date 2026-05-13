@@ -267,14 +267,6 @@ const Checkout = () => {
         name: 'Avakaaya Foods',
         description: `Order #${order.orderNumber}`,
         order_id: payRes.data.order.id,
-        method: {
-          upi: true,
-          card: false,
-          netbanking: false,
-          wallet: false,
-          paylater: false,
-          emi: false,
-        },
         prefill: {
           name: address.fullName,
           email: address.email,
@@ -511,17 +503,15 @@ const Checkout = () => {
                     </div>
                   ) : isFreeShipping ? (
                     <div className="shipping-free-note">
-                      🎉 Your order qualifies for <strong>free shipping</strong> (orders above ₹999 within India)
+                      🚚 Delivery in <strong>{isIndia ? '1–2 business days' : '3–7 business days'}</strong>
                     </div>
                   ) : selectedService ? (
                     <div className="addr-shipping-preview">
                       <span className="addr-shipping-icon">🚚</span>
                       <div className="addr-shipping-info">
                         <strong>Avakaaya.com Delivery</strong>
-                        <span>{selectedService.displayDays ? `${selectedService.displayDays} days` : (isIndia ? '3-5 business days' : '7-14 business days')} · Tracked delivery</span>
-                        <span className="shipping-rate-breakdown">₹{selectedService.amount.toFixed(2)} + ₹{selectedService.tax.toFixed(2)} GST</span>
+                        <span>{isIndia ? '1–2 business days' : '3–7 business days'} · Tracked delivery</span>
                       </div>
-                      <span className="addr-shipping-cost">₹{selectedService.total.toLocaleString()}</span>
                     </div>
                   ) : liveRates !== null ? (
                     <div className="shipping-error">
@@ -559,8 +549,8 @@ const Checkout = () => {
                   <label className="payment-option active">
                     <input type="radio" name="payment" value="razorpay" checked readOnly />
                     <div className="payment-option-info">
-                      <strong>📱 UPI</strong>
-                      <span>Pay via GPay · PhonePe · Paytm · BHIM · any UPI app · Secured by Razorpay</span>
+                      <strong>💳 Pay Online</strong>
+                      <span>UPI · Card · Netbanking · Wallets · Secured by Razorpay</span>
                     </div>
                   </label>
                 </div>

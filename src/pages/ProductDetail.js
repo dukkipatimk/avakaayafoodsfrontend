@@ -240,7 +240,7 @@ const ProductDetail = () => {
 
             {/* Trust signals */}
             <div className="product-trust">
-              <div className="trust-row">🚚 <span>Free shipping on orders above ₹999 (India)</span></div>
+              <div className="trust-row">🚚 <span>Delivery in 1–2 days within India</span></div>
               <div className="trust-row">🌍 <span>Ships to USA, UK, Singapore, Australia, Malaysia</span></div>
               <div className="trust-row">🌿 <span>No artificial preservatives or colors</span></div>
               <div className="trust-row">📦 <span>Shelf life: {product.shelfLife}</span></div>
@@ -300,15 +300,15 @@ const ProductDetail = () => {
                 <h3>Shipping Information</h3>
                 <table className="shipping-table">
                   <thead>
-                    <tr><th>Country</th><th>Standard</th><th>Express</th><th>Free Shipping</th></tr>
+                    <tr><th>Destination</th><th>Delivery Time</th></tr>
                   </thead>
                   <tbody>
-                    <tr><td>🇮🇳 India</td><td>3-5 days (₹80)</td><td>1-2 days (₹150)</td><td>Above ₹999</td></tr>
-                    <tr><td>🇺🇸 USA</td><td>10-14 days ($25)</td><td>5-7 days ($45)</td><td>—</td></tr>
-                    <tr><td>🇬🇧 UK</td><td>10-14 days (£20)</td><td>5-7 days (£35)</td><td>—</td></tr>
-                    <tr><td>🇸🇬 Singapore</td><td>7-10 days (S$18)</td><td>4-6 days (S$30)</td><td>—</td></tr>
-                    <tr><td>🇦🇺 Australia</td><td>10-14 days (A$28)</td><td>6-8 days (A$50)</td><td>—</td></tr>
-                    <tr><td>🇲🇾 Malaysia</td><td>7-10 days (RM45)</td><td>4-6 days (RM80)</td><td>—</td></tr>
+                    <tr><td>🇮🇳 India</td><td>1–2 business days</td></tr>
+                    <tr><td>🇺🇸 USA</td><td>3–7 business days</td></tr>
+                    <tr><td>🇬🇧 UK</td><td>3–7 business days</td></tr>
+                    <tr><td>🇸🇬 Singapore</td><td>3–7 business days</td></tr>
+                    <tr><td>🇦🇺 Australia</td><td>3–7 business days</td></tr>
+                    <tr><td>🇲🇾 Malaysia</td><td>3–7 business days</td></tr>
                   </tbody>
                 </table>
               </div>
