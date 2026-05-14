@@ -1116,31 +1116,8 @@
   padding: 12px 20px;
 }
 
-/* ── WhatsApp floating button (mobile only — desktop uses side menu) ─── */
-@media (min-width: 1024px) {
-  .whatsapp-float { display: none !important; }
-}
-.whatsapp-float {
-  position: fixed;
-  bottom: 28px;
-  right: 28px;
-  z-index: 999;
-  background: #25d366;
-  color: #fff;
-  border-radius: 100px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 12px 18px 12px 14px;
-  text-decoration: none;
-  box-shadow: 0 4px 20px rgba(37,211,102,0.4);
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-.whatsapp-float:hover {
-  transform: translateY(-3px) scale(1.03);
-  box-shadow: 0 8px 28px rgba(37,211,102,0.5);
-  color: #fff;
-}
+/* ── WhatsApp floating button — replaced by side menu (desktop) and bottom toolbar (mobile) ─── */
+.whatsapp-float { display: none !important; }
 .whatsapp-label {
   font-family: var(--font-ui);
   font-size: 0.82rem;

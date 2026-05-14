@@ -53,6 +53,11 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* Reserve space at the bottom on mobile so the toolbar doesn't cover content */
+@media (max-width: 1023px) {
+  body { padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px)); }
+}
+
 /* Typography */
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-display);

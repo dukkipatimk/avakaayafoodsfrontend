@@ -105,21 +105,64 @@
 .page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
 @media (max-width: 1024px) {
-  .products-grid { grid-template-columns: repeat(2, 1fr); }
+  .products-grid { grid-template-columns: repeat(3, 1fr); }
 }
 
-@media (max-width: 768px) {
-  .products-layout { grid-template-columns: 1fr; }
-  .filters-sidebar { position: static; display: flex; gap: 8px; flex-wrap: wrap; }
-  .filters-title { display: none; }
-  .filter-btn { width: auto; }
-  .products-page-header { flex-direction: column; align-items: flex-start; gap: 16px; }
+@media (max-width: 900px) {
   .products-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 768px) {
+  .products-page { padding: 20px 0 24px; }
+  .products-page-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    margin-bottom: 16px;
+    padding-bottom: 14px;
+  }
+  .products-page-header h1 { font-size: 1.4rem; }
+  .products-controls { width: 100%; }
+  .sort-select { width: 100%; padding: 9px 12px; }
+
+  /* Layout collapses to single column; filter sidebar becomes a horizontal pill scroller */
+  .products-layout { grid-template-columns: 1fr; gap: 16px; }
+  .filters-sidebar {
+    position: static;
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 4px 4px 8px;
+    margin: 0 -16px;
+    padding-left: 16px;
+    padding-right: 16px;
+    scrollbar-width: none;
+  }
+  .filters-sidebar::-webkit-scrollbar { display: none; }
+  .filters-title,
+  .price-range-inputs,
+  .filter-checkbox { display: none; }
+  .filter-btn[style] { display: none; }   /* hides the inline-styled "Clear price filter" */
+  .filter-btn {
+    width: auto;
+    flex-shrink: 0;
+    padding: 8px 14px;
+    font-size: 0.8rem;
+    margin: 0;
+    border: 1px solid var(--ivory-deep);
+    white-space: nowrap;
+  }
+  .filter-btn.active { border-color: var(--green-deep); }
+
+  .products-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .pagination { gap: 4px; flex-wrap: wrap; }
+  .page-btn { padding: 7px 10px; font-size: 0.78rem; }
+}
+
+@media (max-width: 380px) {
   .products-grid { grid-template-columns: 1fr; }
-  .products-page { padding: 24px 0 48px; }
 }
 
 .price-range-inputs { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
