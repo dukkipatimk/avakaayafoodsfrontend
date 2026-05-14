@@ -260,6 +260,14 @@ const Checkout = () => {
         return;
       }
 
+      // Razorpay callback URL — used as a fallback if the JS handler fails
+      // (popup blocker, iframe restrictions, network issue). The backend route
+      // verifies the signature and redirects the user back to /order/success.
+      const apiBase = process.env.REACT_APP_API_URL || '/api';
+      const callbackUrl = apiBase.startsWith('http')
+        ? `${apiBase.replace(/\/$/, '')}/payment/callback`
+        : `${window.location.origin}${apiBase.replace(/\/$/, '')}/payment/callback`;
+
       const rzp = new Razorpay({
         key: payRes.data.keyId,
         amount: payRes.data.order.amount,
@@ -267,6 +275,7 @@ const Checkout = () => {
         name: 'Avakaaya Foods',
         description: `Order #${order.orderNumber}`,
         order_id: payRes.data.order.id,
+        callback_url: callbackUrl,
         prefill: {
           name: address.fullName,
           email: address.email,
