@@ -13,6 +13,8 @@ import Checkout from './pages/Checkout';
 import OrderSuccess from './pages/OrderSuccess';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 import Account from './pages/Account';
 import Orders from './pages/Orders';
 import AdminDashboard from './pages/AdminDashboard';
@@ -59,6 +61,8 @@ function App() {
               <Route path="/order/success" element={<OrderSuccess />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/reset-password" element={<ResetPassword />} />
               <Route path="/shipping-info" element={<ShippingInfo />} />
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />

@@ -76,12 +76,8 @@ const Login = () => {
         </form>
 
         <div className="auth-footer">
+          <p><Link to="/forgot-password">Forgot your password?</Link></p>
           <p>Don't have an account? <Link to="/register">Create one</Link></p>
-        </div>
-
-        <div className="auth-demo">
-          <p className="demo-label">Demo credentials</p>
-          <code>admin@avakaayafoods.com / admin123</code>
         </div>
       </div>
     </div>

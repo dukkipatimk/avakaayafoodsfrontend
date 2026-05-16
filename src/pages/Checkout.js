@@ -15,20 +15,7 @@ const COUNTRIES = [
   { value: 'Malaysia',       label: '🇲🇾 Malaysia',       currency: 'MYR', zone: 'malaysia' },
 ];
 
-function parseWeightGrams(w) {
-  if (!w) return 500;
-  if (String(w).endsWith('kg')) return parseFloat(w) * 1000;
-  if (String(w).endsWith('g'))  return parseFloat(w);
-  return 500;
-}
-
-function formatWeight(grams) {
-  if (grams >= 1000) return `${(grams / 1000).toFixed(2).replace(/\.?0+$/, '')} kg`;
-  return `${grams}g`;
-}
-
-
-const STEPS = ['Address', 'Shipping', 'Payment', 'Review'];
+const STEPS = ['Address', 'Review'];
 
 const Checkout = () => {
   const { items, subtotal, clearCart } = useCart();
@@ -74,8 +61,14 @@ const Checkout = () => {
   const isIndia = countryConfig.zone === 'india';
   const isFreeShipping = isIndia && subtotal >= 999;
 
-  // Total estimated shipment weight from cart items
-  const totalWeightGrams = items.reduce((sum, i) => sum + parseWeightGrams(i.weight) * (i.quantity || 1), 0);
+  // Estimated delivery time: 2 hrs in Hyderabad, 1–2 days rest of India, 3–7 days international
+  const isHyderabad = isIndia && (
+    /hyderabad|secunderabad/i.test(address.city || '') ||
+    /^(500|501|502|503)/.test(String(address.pincode || '').trim())
+  );
+  const deliveryEstimate = !isIndia
+    ? '3–7 business days'
+    : isHyderabad ? 'within 2 hours' : '1–2 business days';
 
   // shippingCost is only known once a service is selected
   const shippingConfirmed = selectedService !== null || isFreeShipping;
@@ -196,6 +189,16 @@ const Checkout = () => {
       }
     }
     return true;
+  };
+
+  const goToReview = () => {
+    if (!validateAddress()) return;
+    if (liveRatesLoading) { toast.error('Please wait — checking shipping rates'); return; }
+    if (!isFreeShipping && !selectedService) {
+      toast.error('Could not get a shipping rate for this pincode. Please recheck it.');
+      return;
+    }
+    setStep(1);
   };
 
   const placeOrder = async () => {
@@ -458,7 +461,7 @@ const Checkout = () => {
                       <span className="addr-shipping-icon">🚚</span>
                       <div className="addr-shipping-info">
                         <strong>Avakaaya.com Delivery</strong>
-                        <span>{svc.displayDays ? `${svc.displayDays} days` : (isIndia ? '3-5 business days' : '7-14 business days')}</span>
+                        <span>{deliveryEstimate}</span>
                       </div>
                       <span className="addr-shipping-cost">
                         {cost === 0
@@ -476,108 +479,15 @@ const Checkout = () => {
 
                 <button
                   className="btn btn-primary btn-lg checkout-next-btn"
-                  onClick={() => validateAddress() && setStep(1)}
+                  onClick={goToReview}
                 >
-                  Continue to Shipping →
+                  {liveRatesLoading ? 'Checking shipping…' : 'Review Order →'}
                 </button>
               </div>
             )}
 
-            {/* Step 1: Shipping */}
+            {/* Step 1: Review */}
             {step === 1 && (
-              <div className="checkout-card">
-                <h2 className="checkout-card-title">Shipping Method</h2>
-                <div className="shipping-to-row">
-                  <span>Shipping to: <strong>{address.city}, {address.country}</strong></span>
-                  <div className="shipping-pincode-edit">
-                    <label>{isIndia ? 'PIN Code' : 'ZIP / Postal Code'}</label>
-                    <input
-                      className="pincode-input"
-                      value={address.pincode}
-                      onChange={e => setAddress(prev => ({ ...prev, pincode: e.target.value }))}
-                      placeholder={isIndia ? '6-digit PIN' : 'Postal code'}
-                    />
-                  </div>
-                </div>
-
-                <div className="shipping-weight-info">
-                  📦 Estimated shipment weight: <strong>{formatWeight(totalWeightGrams)}</strong>
-                </div>
-
-                <div className="shipping-options">
-                  {liveRatesLoading ? (
-                    <div className="shipping-fetching">
-                      <span className="shipping-spinner" />
-                      Fetching live shipping rates…
-                    </div>
-                  ) : isFreeShipping ? (
-                    <div className="shipping-free-note">
-                      🚚 Delivery in <strong>{isIndia ? '1–2 business days' : '3–7 business days'}</strong>
-                    </div>
-                  ) : selectedService ? (
-                    <div className="addr-shipping-preview">
-                      <span className="addr-shipping-icon">🚚</span>
-                      <div className="addr-shipping-info">
-                        <strong>Avakaaya.com Delivery</strong>
-                        <span>{isIndia ? '1–2 business days' : '3–7 business days'} · Tracked delivery</span>
-                      </div>
-                    </div>
-                  ) : liveRates !== null ? (
-                    <div className="shipping-error">
-                      <p>Could not fetch shipping rates for this pincode. Please check the pincode or try again.</p>
-                      <button className="btn btn-outline btn-sm" onClick={fetchLiveRates}>↺ Retry</button>
-                    </div>
-                  ) : null}
-                </div>
-
-                {!isIndia && (
-                  <div className="customs-note">
-                    <strong>📦 International Shipping Note:</strong> All pickles are packed in compliance with food safety and customs regulations. Delivery times may vary due to customs clearance. Import duties (if any) are the responsibility of the recipient.
-                  </div>
-                )}
-
-                <div className="checkout-step-btns">
-                  <button className="btn btn-outline" onClick={() => setStep(0)}>← Back</button>
-                  <button
-                    className="btn btn-primary btn-lg"
-                    disabled={liveRatesLoading || (!isFreeShipping && !selectedService)}
-                    onClick={() => setStep(2)}
-                  >
-                    Continue to Payment →
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* Step 2: Payment */}
-            {step === 2 && (
-              <div className="checkout-card">
-                <h2 className="checkout-card-title">Payment Method</h2>
-
-                <div className="payment-options">
-                  <label className="payment-option active">
-                    <input type="radio" name="payment" value="razorpay" checked readOnly />
-                    <div className="payment-option-info">
-                      <strong>💳 Pay Online</strong>
-                      <span>UPI · Card · Netbanking · Wallets · Secured by Razorpay</span>
-                    </div>
-                  </label>
-                </div>
-
-                <div className="payment-security-note">
-                  🔒 Payment is auto-verified the moment your UPI app confirms the transfer.
-                </div>
-
-
-                <div className="checkout-step-btns">
-                  <button className="btn btn-outline" onClick={() => setStep(1)}>← Back</button>
-                  <button className="btn btn-primary btn-lg" onClick={() => setStep(3)}>Review Order →</button>
-                </div>
-              </div>
-            )}
-
-            {/* Step 3: Review */}
-            {step === 3 && (
               <div className="checkout-card">
                 <h2 className="checkout-card-title">Review & Confirm</h2>
 
@@ -592,21 +502,22 @@ const Checkout = () => {
                   <div className="review-row">
                     <span className="review-key">Shipping</span>
                     <span className="review-val">
-                      {selectedService ? 'Avakaaya.com Delivery' : 'Avakaaya.com Delivery'}
+                      Avakaaya.com Delivery · {deliveryEstimate}
                       {shippingCost === 0 && shippingConfirmed && <span style={{ color: '#2e7d32', marginLeft: 8 }}>FREE</span>}
                     </span>
-                    <button className="review-edit" onClick={() => setStep(1)}>Edit</button>
+                    <button className="review-edit" onClick={() => setStep(0)}>Edit</button>
                   </div>
                   <div className="review-row">
                     <span className="review-key">Payment</span>
-                    <span className="review-val">{
-                      paymentMethod === 'cod' ? 'Cash on Delivery'
-                      : paymentMethod === 'upi' ? 'UPI (Direct)'
-                      : 'UPI (via Razorpay)'
-                    }</span>
-                    <button className="review-edit" onClick={() => setStep(2)}>Edit</button>
+                    <span className="review-val">💳 Pay Online · UPI · Card · Netbanking · Wallets</span>
                   </div>
                 </div>
+
+                {!isIndia && (
+                  <div className="customs-note">
+                    <strong>📦 International Shipping Note:</strong> All pickles are packed in compliance with food safety and customs regulations. Delivery times may vary due to customs clearance. Import duties (if any) are the responsibility of the recipient.
+                  </div>
+                )}
 
                 <div className="checkout-items-preview">
                   {items.map(item => (
@@ -620,8 +531,12 @@ const Checkout = () => {
                   ))}
                 </div>
 
+                <div className="payment-security-note">
+                  🔒 Secured by Razorpay — payment is auto-verified the moment your transfer confirms.
+                </div>
+
                 <div className="checkout-step-btns">
-                  <button className="btn btn-outline" onClick={() => setStep(2)}>← Back</button>
+                  <button className="btn btn-outline" onClick={() => setStep(0)}>← Back</button>
                   <button
                     className="btn btn-gold btn-lg"
                     onClick={placeOrder}

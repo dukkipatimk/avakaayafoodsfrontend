@@ -5,7 +5,7 @@ import api from '../utils/api';
 import './Account.css';
 
 const Account = () => {
-  const { user, logout, updateProfile } = useAuth();
+  const { user, logout, refreshUser } = useAuth();
   const navigate = useNavigate();
   const [tab, setTab] = useState('profile');
   const [form, setForm] = useState({ name: user?.name || '', phone: user?.phone || '' });
@@ -13,7 +13,7 @@ const Account = () => {
   const [saved, setSaved] = useState(false);
   const [addingAddress, setAddingAddress] = useState(false);
   const [addrForm, setAddrForm] = useState({
-    label: 'Home', name: '', phone: '', line1: '', line2: '', city: '', state: '', pincode: '', country: 'India'
+    label: 'Home', fullName: '', phone: '', line1: '', line2: '', city: '', state: '', pincode: '', country: 'India'
   });
 
   const handleLogout = () => {
@@ -26,6 +26,7 @@ const Account = () => {
     setSaving(true);
     try {
       await api.put('/auth/profile', form);
+      await refreshUser();
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
     } catch (err) {
@@ -39,8 +40,9 @@ const Account = () => {
     e.preventDefault();
     try {
       await api.post('/auth/address', addrForm);
+      await refreshUser();
       setAddingAddress(false);
-      setAddrForm({ label: 'Home', name: '', phone: '', line1: '', line2: '', city: '', state: '', pincode: '', country: 'India' });
+      setAddrForm({ label: 'Home', fullName: '', phone: '', line1: '', line2: '', city: '', state: '', pincode: '', country: 'India' });
     } catch (err) {
       console.error(err);
     }
@@ -142,8 +144,8 @@ const Account = () => {
                       </div>
                       <div className="form-group">
                         <label>Full Name</label>
-                        <input type="text" required value={addrForm.name}
-                          onChange={e => setAddrForm({ ...addrForm, name: e.target.value })} />
+                        <input type="text" required value={addrForm.fullName}
+                          onChange={e => setAddrForm({ ...addrForm, fullName: e.target.value })} />
                       </div>
                     </div>
                     <div className="form-group">
@@ -202,7 +204,7 @@ const Account = () => {
                   {user?.addresses?.map((addr, i) => (
                     <div key={i} className="address-card">
                       <div className="addr-label-badge">{addr.label || 'Address'}</div>
-                      <p className="addr-name">{addr.name}</p>
+                      <p className="addr-name">{addr.fullName}</p>
                       <p className="addr-lines">
                         {addr.line1}{addr.line2 ? `, ${addr.line2}` : ''}<br />
                         {addr.city}, {addr.state} {addr.pincode}<br />

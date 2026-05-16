@@ -74,6 +74,19 @@
   font-size: 0.875rem;
 }
 
+.auth-success {
+  background: #f0fdf4;
+  border: 1px solid #86efac;
+  color: #15803d;
+  padding: 1rem 1.125rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.auth-success p { margin: 0 0 0.5rem; }
+.auth-success p:last-child { margin-bottom: 0; }
+
 .form-group {
   display: flex;
   flex-direction: column;
@@ -143,30 +156,6 @@
 
 .auth-footer a:hover {
   color: var(--color-gold, #c9a84c);
-}
-
-.auth-demo {
-  margin-top: 1.25rem;
-  padding: 0.875rem;
-  background: rgba(26, 46, 26, 0.05);
-  border-radius: 6px;
-  text-align: center;
-  border: 1px dashed rgba(26, 46, 26, 0.2);
-}
-
-.demo-label {
-  font-size: 0.7rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--color-text-muted, #6b6b6b);
-  margin: 0 0 0.25rem;
-  font-family: 'Josefin Sans', sans-serif;
-}
-
-.auth-demo code {
-  font-size: 0.8rem;
-  color: var(--color-forest, #1a2e1a);
-  font-weight: 600;
 }
 
 @media (max-width: 480px) {

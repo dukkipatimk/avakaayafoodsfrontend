@@ -7,14 +7,30 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // Pull the full user record (including saved addresses) from the API.
+  const refreshUser = async () => {
+    try {
+      const { data } = await api.get('/auth/me');
+      if (data?.success && data.user) {
+        localStorage.setItem('akf_user', JSON.stringify(data.user));
+        setUser(data.user);
+        return data.user;
+      }
+    } catch (e) {
+      // keep existing session/user on failure
+    }
+  };
+
   useEffect(() => {
     const token = localStorage.getItem('akf_token');
     const savedUser = localStorage.getItem('akf_user');
     if (token && savedUser) {
       setUser(JSON.parse(savedUser));
       api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      refreshUser();
     }
     setLoading(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const login = async (email, password) => {
@@ -32,6 +48,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem('akf_user', JSON.stringify(data.user));
     api.defaults.headers.common['Authorization'] = `Bearer ${data.token}`;
     setUser(data.user);
+    refreshUser(); // pull the address created during registration
     return data;
   };
 
@@ -43,7 +60,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout, isAdmin: user?.role === 'admin' }}>
+    <AuthContext.Provider value={{ user, loading, login, register, logout, refreshUser, isAdmin: user?.role === 'admin' }}>
       {children}
     </AuthContext.Provider>
   );
