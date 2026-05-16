@@ -4,21 +4,43 @@ import api from '../utils/api';
 import ProductCard from '../components/ProductCard';
 import './Home.css';
 
+// Desktop: widened 3.5:1 artwork (src) with an HTML caption panel.
+// Mobile: the original complete designs (srcMobile) shown whole, no caption.
 const BANNERS = [
   {
     src: '/images/banners/quality.jpg',
-    align: 'none',
-    fit: 'fill',
+    srcMobile: '/images/banners/quality_m.jpg',
+    alt: 'Pure ingredients, perfect hygiene — FSSAI-certified Andhra pickles',
+    headline: 'Andhra\'s finest,\nin every jar',
+    cta: 'Shop Now',
+    ctaLink: '/products',
+    capSide: 'left',
+    panelTheme: 'on-light',
   },
   {
     src: '/images/banners/banner_worldwide.jpg',
-    align: 'none',
-    fit: 'fill',
+    srcMobile: '/images/banners/banner_worldwide_m.jpg',
+    alt: 'Authentic Andhra taste, shipped worldwide',
+    headline: 'From our kitchen\nto your doorstep',
+    points: [
+      { icon: '⚡', text: '2 hours in Hyderabad' },
+      { icon: '🚚', text: '1–2 business days across India' },
+      { icon: '✈️', text: '3–7 business days international' },
+    ],
+    cta: 'Shop Now',
+    ctaLink: '/products',
+    capSide: 'right',
+    panelTheme: 'on-light',
   },
   {
     src: '/images/banners/banner_festivals.jpg',
-    align: 'none',
-    fit: 'fill',
+    srcMobile: '/images/banners/banner_festivals_m.jpg',
+    alt: 'Festive gift hampers — pickles, sweets & snacks',
+    headline: 'Gift the\nfestive joy',
+    cta: 'Shop Hampers',
+    ctaLink: '/products?category=gift-hampers',
+    capSide: 'left',
+    panelTheme: 'on-dark',
   },
 ];
 
@@ -54,33 +76,37 @@ const TESTIMONIALS = [
 const WHATSAPP_NUMBER = '919115595959';
 
 const Home = () => {
-  const [featured, setFeatured] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [tabProducts, setTabProducts] = useState([]);
-  const [tabLoading, setTabLoading] = useState(false);
   const [igPosts, setIgPosts] = useState([]);
   const [igLoading, setIgLoading] = useState(true);
   const [bannerIdx, setBannerIdx] = useState(0);
-  const [categoryIdx, setCategoryIdx] = useState(0);
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
   const [activeCategory, setActiveCategory] = useState('all');
   const [newArrivals, setNewArrivals] = useState([]);
+  const [catalog, setCatalog] = useState([]);
+  const [catalogPage, setCatalogPage] = useState(1);
+  const [catalogPages, setCatalogPages] = useState(1);
+  const [catalogLoading, setCatalogLoading] = useState(false);
 
+  // Full paginated catalog — sorted by popularity so bestsellers surface first
   useEffect(() => {
-    api.get('/products/featured')
-      .then(r => { setFeatured(r.data.products || []); setLoading(false); })
-      .catch(() => setLoading(false));
-  }, []);
+    setCatalogLoading(true);
+    const params = new URLSearchParams({ page: catalogPage, limit: 12, sort: 'popular' });
+    if (activeCategory !== 'all') params.set('category', activeCategory);
+    api.get(`/products?${params}`)
+      .then(r => {
+        const list = r.data.products || [];
+        setCatalog(prev => (catalogPage === 1 ? list : [...prev, ...list]));
+        setCatalogPages(r.data.pages || 1);
+      })
+      .catch(() => { if (catalogPage === 1) setCatalog([]); })
+      .finally(() => setCatalogLoading(false));
+  }, [activeCategory, catalogPage]);
 
-  useEffect(() => {
-    if (activeCategory === 'all') { setTabProducts([]); return; }
-    setTabLoading(true);
-    api.get(`/products?category=${activeCategory}&limit=8&sort=popular`)
-      .then(r => setTabProducts(r.data.products || []))
-      .catch(() => setTabProducts([]))
-      .finally(() => setTabLoading(false));
-  }, [activeCategory]);
+  const selectCategory = (tab) => {
+    setActiveCategory(tab);
+    setCatalogPage(1);
+  };
 
   useEffect(() => {
     api.get('/instagram/feed')
@@ -101,11 +127,6 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
-    const t = setInterval(() => setCategoryIdx(i => (i + 1) % CATEGORIES.length), 4000);
-    return () => clearInterval(t);
-  }, []);
-
-  useEffect(() => {
     const observer = new IntersectionObserver(
       entries => entries.forEach(e => {
         if (e.isIntersecting) { e.target.classList.add('in-view'); observer.unobserve(e.target); }
@@ -114,99 +135,99 @@ const Home = () => {
     );
     document.querySelectorAll('.anim, .stagger').forEach(el => observer.observe(el));
     return () => observer.disconnect();
-  }, [featured, igPosts]);
+  }, [catalog, igPosts]);
+
+  // Lightweight scroll parallax — rAF-throttled, honors reduced-motion
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const els = Array.from(document.querySelectorAll('[data-parallax]'));
+    if (!els.length) return;
+
+    let raf = null;
+    const update = () => {
+      const vh = window.innerHeight;
+      els.forEach(el => {
+        const speed = parseFloat(el.dataset.parallax) || 0.1;
+        const rect = el.getBoundingClientRect();
+        // 0 when element center is at viewport center; +/- as it scrolls away
+        const fromCenter = rect.top + rect.height / 2 - vh / 2;
+        el.style.transform = `translate3d(0, ${(-fromCenter * speed).toFixed(1)}px, 0)`;
+      });
+      raf = null;
+    };
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(update); };
+
+    update();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, [catalog, newArrivals, igPosts]);
 
   const handleSubscribe = e => { e.preventDefault(); if (email) { setSubscribed(true); setEmail(''); } };
-
-  const displayProducts = activeCategory === 'all' ? featured : tabProducts;
-  const isTabLoading = activeCategory === 'all' ? loading : tabLoading;
 
   const categoryTabs = ['all', ...CATEGORIES.map(c => c.slug)];
 
   return (
     <div className="home">
 
-      {/* ── Hero: split layout (left pitch + right slider) ───────────── */}
+      {/* ── Hero banner (designed-artwork slider, natural aspect) ───────────── */}
       <section className="hero-split">
-        <div className="hero-split-inner">
-
-          {/* Left: shop by categories slider */}
-          <div className="category-slider">
-            <span className="category-slider-badge">Shop By Category</span>
-            <div
-              className="category-track"
-              style={{ transform: `translateY(-${categoryIdx * 100}%)` }}
-            >
-              {CATEGORIES.map(c => (
-                <Link
-                  key={c.slug}
-                  to={`/products?category=${c.slug}`}
-                  className="category-slide"
-                >
-                  <div className="category-slide-imgwrap">
-                    <img src={c.image} alt={c.name} loading="lazy" decoding="async" />
-                  </div>
-                  <div className="category-slide-info">
-                    <span className="category-slide-name">{c.name}</span>
-                    <span className="category-slide-count">{c.count}</span>
-                    <span className="category-slide-cta">Shop {c.name} →</span>
-                  </div>
-                </Link>
-              ))}
-            </div>
-            <div className="category-dots">
-              {CATEGORIES.map((_, i) => (
-                <button
-                  key={i}
-                  className={`category-dot${i === categoryIdx ? ' active' : ''}`}
-                  onClick={() => setCategoryIdx(i)}
-                  aria-label={`Category ${i + 1}`}
-                />
-              ))}
-            </div>
-          </div>
-
-          {/* Right: banner slider */}
-          <div className="banner-slider">
-            <div className="banner-track" style={{ transform: `translateX(-${bannerIdx * 100}%)` }}>
-              {BANNERS.map((b, i) => (
-                <div key={i} className={`banner-slide banner-slide--${b.align || 'left'}${b.fit ? ` banner-slide--fit-${b.fit}` : ''}`}>
+        <div className="banner-slider">
+          <div className="banner-track">
+            {BANNERS.map((b, i) => (
+              <Link
+                key={i}
+                to={b.ctaLink || '/products'}
+                className={`banner-slide${i === bannerIdx ? ' is-active' : ''}`}
+              >
+                <picture>
+                  {b.srcMobile && (
+                    <source media="(max-width: 768px)" srcSet={b.srcMobile} />
+                  )}
                   <img
                     src={b.src}
-                    alt={b.headline || 'Avakaaya banner'}
+                    alt={b.alt || 'Avakaaya banner'}
                     className="banner-slide-img"
                     loading={i === 0 ? 'eager' : 'lazy'}
                     decoding="async"
                     fetchpriority={i === 0 ? 'high' : 'auto'}
                     draggable="false"
                   />
-                  {b.overlay && (
-                    <img
-                      src={b.overlay}
-                      alt=""
-                      className={`banner-overlay-img banner-overlay-img--${b.overlayAlign || 'left'}`}
-                      loading="lazy"
-                      decoding="async"
-                      draggable="false"
-                    />
-                  )}
-                  {(b.eyebrow || b.headline || b.subhead) && (
-                    <div className={`banner-caption${i === bannerIdx ? ' is-active' : ''}`}>
-                      {b.eyebrow && <span className="banner-eyebrow">{b.eyebrow}</span>}
-                      {b.headline && <h2 className="banner-headline">{b.headline}</h2>}
-                      {b.subhead && <p className="banner-subhead">{b.subhead}</p>}
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-            <div className="banner-dots">
-              {BANNERS.map((_, i) => (
-                <button key={i} className={`banner-dot${i === bannerIdx ? ' active' : ''}`} onClick={() => setBannerIdx(i)} aria-label={`Slide ${i + 1}`} />
-              ))}
-            </div>
+                </picture>
+                {b.headline && (
+                  <div className={`banner-cap banner-cap--${b.panelTheme || 'on-light'} banner-cap--side-${b.capSide || 'right'}`}>
+                    <h2 className="banner-cap-title">
+                      {b.headline.split('\n').map((line, li) => (
+                        <span key={li}>{line}</span>
+                      ))}
+                    </h2>
+                    {b.points && (
+                      <ul className="banner-cap-points">
+                        {b.points.map((p, pi) => (
+                          <li key={pi}>
+                            <span className="banner-cap-point-icon">{p.icon}</span>
+                            {p.text}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                    <span className="banner-cap-btn">
+                      {b.cta || 'Shop Now'} <span aria-hidden="true">→</span>
+                    </span>
+                  </div>
+                )}
+              </Link>
+            ))}
           </div>
-
+          <div className="banner-dots">
+            {BANNERS.map((_, i) => (
+              <button key={i} className={`banner-dot${i === bannerIdx ? ' active' : ''}`} onClick={() => setBannerIdx(i)} aria-label={`Slide ${i + 1}`} />
+            ))}
+          </div>
         </div>
       </section>
 
@@ -239,15 +260,14 @@ const Home = () => {
         </div>
       </div>
 
-      {/* ── Quick Buy Products ───────────────────── */}
+      {/* ── Full Product Catalog (bestsellers first) ─────────────── */}
       <section className="quickbuy-section">
         <div className="container">
           <div className="sec-head anim">
             <div>
-              <span className="home-sec-label">Quick Buy</span>
-              <h2>Bestsellers</h2>
+              <span className="home-sec-label">Shop</span>
+              <h2>Our Products</h2>
             </div>
-            <Link to="/products" className="btn btn-outline">View All →</Link>
           </div>
 
           {/* Category filter tabs */}
@@ -256,7 +276,7 @@ const Home = () => {
               <button
                 key={tab}
                 className={`qb-tab${activeCategory === tab ? ' active' : ''}`}
-                onClick={() => setActiveCategory(tab)}
+                onClick={() => selectCategory(tab)}
               >
                 {tab === 'all' ? 'All' : tab.charAt(0).toUpperCase() + tab.slice(1)}
               </button>
@@ -264,11 +284,24 @@ const Home = () => {
           </div>
 
           <div className="products-grid stagger">
-            {isTabLoading
-              ? Array(8).fill(0).map((_, i) => <div key={i} className="product-skeleton skeleton" />)
-              : displayProducts.map(p => <ProductCard key={p._id} product={p} />)
-            }
+            {catalog.map(p => <ProductCard key={p._id} product={p} />)}
+            {catalogLoading && catalog.length === 0 &&
+              Array(8).fill(0).map((_, i) => <div key={i} className="product-skeleton skeleton" />)}
           </div>
+          {!catalogLoading && catalog.length === 0 && (
+            <p className="catalog-empty">No products found in this category.</p>
+          )}
+          {catalogPage < catalogPages && (
+            <div className="catalog-more">
+              <button
+                className="btn btn-outline"
+                disabled={catalogLoading}
+                onClick={() => setCatalogPage(p => p + 1)}
+              >
+                {catalogLoading ? 'Loading…' : 'Load More Products'}
+              </button>
+            </div>
+          )}
         </div>
       </section>
 
@@ -373,8 +406,13 @@ const Home = () => {
       <section className="brand-split anim">
         <div className="container brand-split-inner">
           <div className="brand-split-img-col">
-            <img src="/avakaaya-logo.png" alt="Avakaaya Pickles House" className="brand-split-img" />
-            <div className="brand-since-badge">
+            <img
+              src="/avakaaya-logo.png"
+              alt="Avakaaya Pickles House"
+              className="brand-split-img"
+              data-parallax="0.08"
+            />
+            <div className="brand-since-badge" data-parallax="-0.05">
               <span>Making pickles since</span>
               <strong>1980s</strong>
             </div>

@@ -7,6 +7,23 @@ import toast from 'react-hot-toast';
 import ProductCard from '../components/ProductCard';
 import './ProductDetail.css';
 
+// Some API rows return JSON array columns as raw strings — coerce to arrays.
+const asArray = (v) => {
+  if (Array.isArray(v)) return v;
+  if (typeof v === 'string') {
+    try { const p = JSON.parse(v); return Array.isArray(p) ? p : []; } catch { return []; }
+  }
+  return [];
+};
+
+const normalizeProduct = (p) => p && ({
+  ...p,
+  images: asArray(p.images),
+  ingredients: asArray(p.ingredients),
+  allergens: asArray(p.allergens),
+  tags: asArray(p.tags),
+});
+
 const getDeliveryDate = (country) => {
   const today = new Date();
   const days = country === 'India' ? 5 : country === 'Singapore' || country === 'Malaysia' ? 10 : 14;
@@ -41,10 +58,11 @@ const ProductDetail = () => {
 
   const fetchProduct = (productSlug) => {
     return api.get(`/products/${productSlug}`).then(r => {
-      setProduct(r.data.product);
-      setSelectedVariant(r.data.product.variants[0]);
+      const p = normalizeProduct(r.data.product);
+      setProduct(p);
+      setSelectedVariant(p.variants?.[0] || null);
       setLoading(false);
-      return r.data.product;
+      return p;
     }).catch(() => setLoading(false));
   };
 

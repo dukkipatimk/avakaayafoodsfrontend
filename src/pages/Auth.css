@@ -174,3 +174,99 @@
   .form-row { grid-template-columns: 1fr; }
   .auth-page { padding: 24px 0; }
 }
+
+/* ===== Section divider inside auth forms (e.g., Address group on Register) ===== */
+.auth-section-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 16px 0 8px;
+  font-family: var(--font-ui);
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--green-deep, #1c4a0e);
+}
+.auth-section-divider::before,
+.auth-section-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--ivory-deep, #e8d8c0);
+}
+.auth-section-divider .optional {
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 500;
+  color: var(--text-light, #999);
+  font-size: 0.72rem;
+}
+
+/* Style native select to match the input look */
+.form-group select {
+  padding: 11px 14px;
+  border: 1.5px solid var(--ivory-deep, #e8d8c0);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-ui);
+  font-size: 0.95rem;
+  background: var(--white, #fff);
+  color: var(--text-dark);
+  outline: none;
+  transition: border-color 0.2s;
+  appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path d='M1 1l4 4 4-4' stroke='%231c4a0e' stroke-width='1.5' fill='none'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 32px;
+}
+.form-group select:focus { border-color: var(--green-mid, #2d6e1a); }
+
+/* ===== Address smart-search ===== */
+.addr-search-wrap { position: relative; }
+.addr-search-loading {
+  position: absolute;
+  right: 14px;
+  top: 38px;
+  font-family: var(--font-ui);
+  font-size: 0.78rem;
+  color: var(--text-light, #999);
+  pointer-events: none;
+}
+.addr-search-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: 4px;
+  background: var(--white, #fff);
+  border: 1px solid var(--ivory-deep, #e8d8c0);
+  border-radius: var(--radius-sm, 8px);
+  box-shadow: 0 12px 28px -10px rgba(20, 20, 20, 0.18), 0 4px 10px -4px rgba(20, 20, 20, 0.08);
+  z-index: 100;
+  list-style: none;
+  padding: 4px;
+  margin-block-start: 4px;
+  margin-block-end: 0;
+  max-height: 280px;
+  overflow-y: auto;
+}
+.addr-search-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: var(--font-ui);
+  font-size: 0.86rem;
+  color: var(--text-mid, #5a5d4e);
+  line-height: 1.4;
+  transition: background 0.15s, color 0.15s;
+}
+.addr-search-item:hover {
+  background: var(--ivory, #faf6ed);
+  color: var(--green-deep, #1c4a0e);
+}
+.addr-search-pin { flex-shrink: 0; line-height: 1.4; }
+.addr-search-text { flex: 1; }

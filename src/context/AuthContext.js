@@ -26,8 +26,8 @@ export const AuthProvider = ({ children }) => {
     return data;
   };
 
-  const register = async (name, email, password, phone) => {
-    const { data } = await api.post('/auth/register', { name, email, password, phone });
+  const register = async (name, email, password, phone, address) => {
+    const { data } = await api.post('/auth/register', { name, email, password, phone, address });
     localStorage.setItem('akf_token', data.token);
     localStorage.setItem('akf_user', JSON.stringify(data.user));
     api.defaults.headers.common['Authorization'] = `Bearer ${data.token}`;
