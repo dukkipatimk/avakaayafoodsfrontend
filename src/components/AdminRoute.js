@@ -2,7 +2,9 @@ import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
-const AdminRoute = ({ children }) => {
+// `roles` — which roles may view the wrapped page. Defaults to admin-only.
+// Store managers are granted access only to pages that explicitly list them.
+const AdminRoute = ({ children, roles = ['admin'] }) => {
   const { user, loading } = useAuth();
 
   if (loading) {
@@ -13,7 +15,7 @@ const AdminRoute = ({ children }) => {
     );
   }
 
-  if (!user || user.role !== 'admin') {
+  if (!user || !roles.includes(user.role)) {
     return <Navigate to="/" replace />;
   }
 

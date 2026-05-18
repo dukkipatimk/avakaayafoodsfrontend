@@ -19,6 +19,8 @@ import Account from './pages/Account';
 import Orders from './pages/Orders';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminProducts from './pages/AdminProducts';
+import AdminCustomers from './pages/AdminCustomers';
+import AdminUsers from './pages/AdminUsers';
 import ShippingInfo from './pages/ShippingInfo';
 import About from './pages/About';
 import Contact from './pages/Contact';
@@ -73,8 +75,10 @@ function App() {
               <Route path="/my-orders" element={<ProtectedRoute><Orders /></ProtectedRoute>} />
               <Route path="/wishlist" element={<ProtectedRoute><Wishlist /></ProtectedRoute>} />
               <Route path="/gift-hamper" element={<GiftHamper />} />
-              <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+              <Route path="/admin" element={<AdminRoute roles={['admin', 'store_manager']}><AdminDashboard /></AdminRoute>} />
               <Route path="/admin/products" element={<AdminRoute><AdminProducts /></AdminRoute>} />
+              <Route path="/admin/customers" element={<AdminRoute><AdminCustomers /></AdminRoute>} />
+              <Route path="/admin/users" element={<AdminRoute><AdminUsers /></AdminRoute>} />
             </Routes>
           </main>
           <Footer />

@@ -1,0 +1,19 @@
+.customer-search {
+  margin-bottom: 1rem;
+}
+
+.customer-search input {
+  width: 100%;
+  max-width: 340px;
+  padding: 0.5rem 0.9rem;
+  border-radius: 8px;
+  border: 1.5px solid #d1d5db;
+  background: #fff;
+  font-family: 'Josefin Sans', sans-serif;
+  font-size: 0.8rem;
+}
+
+.customer-search input:focus {
+  outline: none;
+  border-color: var(--color-forest, #1a2e1a);
+}

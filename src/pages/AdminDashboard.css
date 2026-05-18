@@ -213,34 +213,43 @@
 /* ── Order filter buttons ── */
 .order-filters {
   display: flex;
-  flex-wrap: wrap;
+  align-items: center;
   gap: 0.5rem;
   margin-bottom: 1rem;
 }
 
-.filter-btn {
-  padding: 0.3rem 0.85rem;
-  border-radius: 20px;
-  border: 1.5px solid #d1d5db;
-  background: #fff;
-  color: var(--color-text-muted, #6b6b6b);
+.order-filter-label {
   font-family: 'Josefin Sans', sans-serif;
   font-size: 0.7rem;
   letter-spacing: 0.08em;
-  text-transform: capitalize;
+  text-transform: uppercase;
+  color: var(--color-text-muted, #6b6b6b);
+}
+
+.order-filter-select {
+  padding: 0.35rem 2rem 0.35rem 0.85rem;
+  border-radius: 20px;
+  border: 1.5px solid #d1d5db;
+  background: #fff;
+  color: var(--color-forest, #1a2e1a);
+  font-family: 'Josefin Sans', sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
   cursor: pointer;
   transition: all 0.15s;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%231a2e1a%22%20stroke-width%3D%222%22%3E%3Cpath%20d%3D%22M6%209l6%206%206-6%22%2F%3E%3C%2Fsvg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.6rem center;
+  background-size: 0.85rem;
 }
 
-.filter-btn:hover {
+.order-filter-select:hover,
+.order-filter-select:focus {
   border-color: var(--color-forest, #1a2e1a);
-  color: var(--color-forest, #1a2e1a);
-}
-
-.filter-btn.active {
-  background: var(--color-forest, #1a2e1a);
-  border-color: var(--color-forest, #1a2e1a);
-  color: #fff;
+  outline: none;
 }
 
 /* ── Clickable order row ── */
@@ -395,6 +404,118 @@
   color: var(--color-forest, #1a2e1a);
 }
 .omd-items-table tr:last-child td { border-bottom: none; }
+
+/* ── Item editing ── */
+.omd-section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.omd-edit-toggle {
+  background: none;
+  border: 1.5px solid var(--color-forest, #1a2e1a);
+  color: var(--color-forest, #1a2e1a);
+  border-radius: 5px;
+  padding: 0.25rem 0.7rem;
+  font-family: 'Josefin Sans', sans-serif;
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.omd-edit-toggle:hover { background: var(--color-forest, #1a2e1a); color: #fff; }
+
+.omd-qty-input {
+  width: 56px;
+  padding: 0.2rem 0.35rem;
+  border: 1.5px solid #d1d5db;
+  border-radius: 5px;
+  font-family: 'Josefin Sans', sans-serif;
+  font-size: 0.8rem;
+}
+
+.omd-item-remove {
+  background: #ef444415;
+  color: #dc2626;
+  border: none;
+  border-radius: 5px;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  font-size: 0.75rem;
+  line-height: 1;
+}
+.omd-item-remove:hover { background: #ef444430; }
+
+.omd-empty-items {
+  text-align: center;
+  color: var(--color-text-muted, #6b6b6b);
+  font-style: italic;
+  padding: 0.9rem !important;
+}
+
+.omd-add-row {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin: 0.75rem 0;
+}
+
+.omd-add-select {
+  flex: 1;
+  min-width: 120px;
+  padding: 0.4rem 0.6rem;
+  border: 1.5px solid #d1d5db;
+  border-radius: 6px;
+  font-family: 'Josefin Sans', sans-serif;
+  font-size: 0.8rem;
+  background: #fff;
+}
+.omd-add-select:disabled { background: #f3f4f6; cursor: not-allowed; }
+
+/* ── Totals + difference panel ── */
+.omd-totals {
+  margin-top: 0.85rem;
+  border-top: 1.5px solid #e5e7eb;
+  padding-top: 0.6rem;
+}
+
+.omd-totals-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: var(--color-text-muted, #6b6b6b);
+  padding: 0.18rem 0;
+}
+
+.omd-totals-grand {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-forest, #1a2e1a);
+  border-top: 1px solid #e5e7eb;
+  margin-top: 0.25rem;
+  padding-top: 0.4rem;
+}
+
+.omd-totals-old { color: #9ca3af; }
+
+.omd-diff {
+  font-weight: 700;
+  border-top: 1px dashed #d1d5db;
+  margin-top: 0.25rem;
+  padding-top: 0.4rem;
+}
+.omd-diff.up   span:last-child { color: #dc2626; }
+.omd-diff.down span:last-child { color: #059669; }
+
+.omd-edit-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.6rem;
+  margin-top: 0.85rem;
+}
 
 /* ── Status update form ── */
 .omd-status-form {

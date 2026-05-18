@@ -173,7 +173,7 @@ const Header = () => {
                   <span className="dropdown-name">Hi, {user.name.split(' ')[0]}</span>
                   <Link to="/account" className="dropdown-item">My Account</Link>
                   <Link to="/my-orders" className="dropdown-item">My Orders</Link>
-                  {user.role === 'admin' && <Link to="/admin" className="dropdown-item">Admin Panel</Link>}
+                  {(user.role === 'admin' || user.role === 'store_manager') && <Link to="/admin" className="dropdown-item">Admin Panel</Link>}
                   <button onClick={logout} className="dropdown-item dropdown-item--danger">Logout</button>
                 </div>
               </div>

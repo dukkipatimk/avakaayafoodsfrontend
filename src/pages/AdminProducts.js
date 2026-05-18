@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import api from '../utils/api';
+import AdminTabs from '../components/AdminTabs';
 import './AdminProducts.css';
 
 const WEIGHTS = ['100g', '200g', '250g', '500g', '1kg'];
@@ -9,7 +10,7 @@ const emptyVariant = w => ({ weight: w, price: '', mrp: '', stock: 100, sku: '' 
 
 const emptyProduct = {
   name: '', description: '', category: 'pickles', isVeg: true, isFeatured: false,
-  ingredients: '', shippingType: 'both',
+  ingredients: '', shippingType: 'both', thumbnail: '', images: [],
   variants: WEIGHTS.map(emptyVariant)
 };
 
@@ -104,6 +105,7 @@ const AdminProducts = () => {
   const [saving, setSaving] = useState(false);
   const [search, setSearch] = useState('');
   const [bulkStockProductId, setBulkStockProductId] = useState(null);
+  const [uploading, setUploading] = useState(false);
 
   const fetchProducts = () => {
     api.get('/products?limit=100').then(res => {
@@ -123,6 +125,8 @@ const AdminProducts = () => {
   const openEdit = product => {
     setForm({
       ...product,
+      thumbnail: product.thumbnail || '',
+      images: Array.isArray(product.images) ? product.images : [],
       variants: WEIGHTS.map(w => {
         const v = product.variants?.find(v => v.weight === w);
         return v ? { ...v } : emptyVariant(w);
@@ -131,6 +135,48 @@ const AdminProducts = () => {
     setEditing(product._id);
     setShowForm(true);
     setBulkStockProductId(null);
+  };
+
+  const uploadImage = async file => {
+    const fd = new FormData();
+    fd.append('image', file);
+    const { data } = await api.post('/products/upload', fd);
+    return data.url;
+  };
+
+  const handleThumbUpload = async e => {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+    setUploading(true);
+    try {
+      const url = await uploadImage(file);
+      setForm(prev => ({ ...prev, thumbnail: url }));
+    } catch (err) {
+      alert(err.response?.data?.message || 'Image upload failed');
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleGalleryUpload = async e => {
+    const files = Array.from(e.target.files || []);
+    e.target.value = '';
+    if (!files.length) return;
+    setUploading(true);
+    try {
+      const urls = [];
+      for (const f of files) urls.push(await uploadImage(f));
+      setForm(prev => ({ ...prev, images: [...(prev.images || []), ...urls] }));
+    } catch (err) {
+      alert(err.response?.data?.message || 'Image upload failed');
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const removeGalleryImage = url => {
+    setForm(prev => ({ ...prev, images: (prev.images || []).filter(u => u !== url) }));
   };
 
   const handleVariantChange = (weight, field, value) => {
@@ -185,7 +231,13 @@ const AdminProducts = () => {
     <div className="admin-products-page">
       <div className="container">
         <div className="admin-header">
-          <h1 className="admin-title">Products</h1>
+          <h1 className="admin-title">Admin Dashboard</h1>
+        </div>
+
+        <AdminTabs />
+
+        <div className="section-header-row">
+          <h2 className="section-title">Products</h2>
           <button className="btn btn-primary" onClick={openNew}>+ Add Product</button>
         </div>
 
@@ -344,6 +396,44 @@ const AdminProducts = () => {
                 </div>
               </div>
 
+              {/* Images */}
+              <div className="form-group">
+                <label>Main Image (thumbnail)</label>
+                <div className="img-upload-row">
+                  {form.thumbnail ? (
+                    <div className="img-thumb-preview">
+                      <img src={form.thumbnail} alt="thumbnail" />
+                      <button type="button" className="img-remove"
+                        onClick={() => setForm({ ...form, thumbnail: '' })}>✕</button>
+                    </div>
+                  ) : (
+                    <div className="img-thumb-empty">No image</div>
+                  )}
+                  <label className="btn btn-outline btn-sm img-upload-btn">
+                    {form.thumbnail ? 'Replace' : 'Upload'}
+                    <input type="file" accept="image/*" hidden onChange={handleThumbUpload} />
+                  </label>
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label>Gallery Images</label>
+                <div className="img-gallery">
+                  {(form.images || []).map(url => (
+                    <div key={url} className="img-thumb-preview">
+                      <img src={url} alt="" />
+                      <button type="button" className="img-remove"
+                        onClick={() => removeGalleryImage(url)}>✕</button>
+                    </div>
+                  ))}
+                  <label className="img-add-tile" title="Add image(s)">
+                    +
+                    <input type="file" accept="image/*" multiple hidden onChange={handleGalleryUpload} />
+                  </label>
+                </div>
+                {uploading && <p className="field-note">Uploading…</p>}
+              </div>
+
               {/* Variants */}
               <div className="variants-section">
                 <h3 className="variants-title">Variants — fill Price & MRP to activate</h3>
@@ -375,8 +465,8 @@ const AdminProducts = () => {
                 <button type="button" className="btn btn-outline" onClick={() => setShowForm(false)}>
                   Cancel
                 </button>
-                <button type="submit" className="btn btn-primary" disabled={saving}>
-                  {saving ? 'Saving…' : editing ? 'Update Product' : 'Add Product'}
+                <button type="submit" className="btn btn-primary" disabled={saving || uploading}>
+                  {saving ? 'Saving…' : uploading ? 'Uploading…' : editing ? 'Update Product' : 'Add Product'}
                 </button>
               </div>
             </form>
