@@ -1324,6 +1324,121 @@
   color: var(--gold-light);
 }
 
+/* ── Available Offers ─────────────────────────────── */
+.coupons-section {
+  padding: var(--home-section-y) 0;
+  background: var(--ivory, #faf6ed);
+}
+
+.coupons-subtitle {
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
+  color: #6b6b6b;
+  margin-top: 8px;
+}
+
+.coupons-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  gap: 22px;
+}
+
+.coupon-card {
+  display: flex;
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.07);
+  border: 1px solid #ece4d2;
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.coupon-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+}
+
+.coupon-card-left {
+  flex: 1;
+  padding: 20px 22px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+}
+
+.coupon-discount {
+  font-family: var(--font-display);
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: var(--green-forest, #1a2e1a);
+  line-height: 1.1;
+}
+
+.coupon-cond {
+  font-family: var(--font-ui);
+  font-size: 0.76rem;
+  color: #6b6b6b;
+}
+
+.coupon-expiry {
+  font-family: var(--font-ui);
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #b08a2e;
+  margin-top: 2px;
+}
+
+.coupon-card-right {
+  width: 134px;
+  flex-shrink: 0;
+  background: var(--ivory, #faf6ed);
+  border-left: 2px dashed #d8cdb0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 16px 8px;
+}
+
+.coupon-code-label {
+  font-family: var(--font-ui);
+  font-size: 0.58rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #9a8f74;
+}
+
+.coupon-code-value {
+  font-family: var(--font-ui);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--green-forest, #1a2e1a);
+  text-align: center;
+  word-break: break-word;
+}
+
+.coupon-copy-btn {
+  margin-top: 3px;
+  font-family: var(--font-ui);
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--green-deep, #1c4a0e);
+  background: var(--gold, #c9a84c);
+  border: none;
+  border-radius: 999px;
+  padding: 7px 14px;
+  cursor: pointer;
+  transition: background 0.18s, transform 0.18s;
+}
+.coupon-copy-btn:hover {
+  background: var(--gold-light, #e4c87a);
+  transform: translateY(-1px);
+}
+
 /* ── Responsive ───────────────────────────────────── */
 @media (max-width: 1100px) {
   .festivals-grid { grid-template-columns: repeat(3, 1fr); }

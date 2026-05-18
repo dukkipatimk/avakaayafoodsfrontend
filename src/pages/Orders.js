@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 import './Orders.css';
 
 const STATUS_COLORS = {
+  awaiting_payment: '#f59e0b',
   pending: '#f59e0b',
   placed: '#f59e0b',
   confirmed: '#3b82f6',
@@ -18,11 +20,19 @@ const STATUS_COLORS = {
   returned: '#6b7280',
 };
 
+// "awaiting_payment" → "Awaiting payment"
+const prettyStatus = s => (s || '')
+  .replace(/[-_]/g, ' ')
+  .replace(/^\w/, c => c.toUpperCase());
+
 const Orders = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [expanded, setExpanded] = useState(null);
+  const [payingId, setPayingId] = useState(null);
   const { addItem } = useCart();
+  const { user } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     api.get('/orders/my')
@@ -30,6 +40,86 @@ const Orders = () => {
       .catch(console.error)
       .finally(() => setLoading(false));
   }, []);
+
+  // Load the Razorpay checkout script once, so "Pay Now" can open the dialog.
+  useEffect(() => {
+    if (window.Razorpay || document.getElementById('razorpay-checkout-js')) return;
+    const s = document.createElement('script');
+    s.id = 'razorpay-checkout-js';
+    s.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    s.async = true;
+    document.body.appendChild(s);
+  }, []);
+
+  // Complete payment for an order that was saved but never paid (awaiting_payment).
+  // Routes through Razorpay checkout, which itself covers UPI, cards, netbanking & wallets.
+  const handlePayNow = async (order) => {
+    setPayingId(order._id);
+    try {
+      const payRes = await api.post('/payment/create-order', {
+        orderId: order._id,
+        amount: Number(order.total),
+        currency: order.currency || 'INR',
+      });
+
+      // Dev / unconfigured-gateway mode — simulate a successful payment.
+      if (payRes.data.mock) {
+        await api.post('/payment/verify', {
+          razorpay_order_id: payRes.data.order.id,
+          razorpay_payment_id: 'mock_pay_' + Date.now(),
+          razorpay_signature: 'mock_sig',
+          orderId: order._id,
+        });
+        toast.success('Payment successful!');
+        navigate(`/order/success?orderId=${order._id}&orderNumber=${order.orderNumber}`);
+        return;
+      }
+
+      const Razorpay = window.Razorpay;
+      if (!Razorpay) {
+        toast.error('Payment gateway not loaded. Please refresh and try again.');
+        return;
+      }
+
+      const apiBase = process.env.REACT_APP_API_URL || '/api';
+      const callbackUrl = apiBase.startsWith('http')
+        ? `${apiBase.replace(/\/$/, '')}/payment/callback`
+        : `${window.location.origin}${apiBase.replace(/\/$/, '')}/payment/callback`;
+
+      const addr = order.shippingAddress || {};
+      const rzp = new Razorpay({
+        key: payRes.data.keyId,
+        amount: payRes.data.order.amount,
+        currency: order.currency || 'INR',
+        name: 'Avakaaya Foods',
+        description: `Order #${order.orderNumber}`,
+        order_id: payRes.data.order.id,
+        callback_url: callbackUrl,
+        prefill: {
+          name: addr.fullName || user?.name,
+          email: addr.email || user?.email,
+          contact: addr.phone || user?.phone,
+        },
+        theme: { color: '#1a2e1a' },
+        handler: async (response) => {
+          await api.post('/payment/verify', { ...response, orderId: order._id });
+          toast.success('Payment successful!');
+          navigate(`/order/success?orderId=${order._id}&orderNumber=${order.orderNumber}`);
+        },
+        modal: {
+          ondismiss: () => toast('Payment cancelled — your order is still saved.'),
+        },
+      });
+      rzp.on('payment.failed', (resp) => {
+        toast.error(`Payment failed: ${resp?.error?.description || 'Please try again'}`);
+      });
+      rzp.open();
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Could not start payment. Please try again.');
+    } finally {
+      setPayingId(null);
+    }
+  };
 
   const handleReorder = (order) => {
     order.items?.forEach(item => {
@@ -72,8 +162,10 @@ const Orders = () => {
           </div>
         ) : (
           <div className="orders-list">
-            {orders.map(order => (
-              <div key={order._id} className="order-card">
+            {orders.map(order => {
+              const unpaid = order.orderStatus === 'awaiting_payment';
+              return (
+              <div key={order._id} className={`order-card${unpaid ? ' order-card--unpaid' : ''}`}>
                 <div className="order-card-header" onClick={() => setExpanded(expanded === order._id ? null : order._id)}>
                   <div className="order-meta">
                     <div>
@@ -92,8 +184,18 @@ const Orders = () => {
                   <div className="order-header-right">
                     <span className="order-status-badge"
                       style={{ background: (STATUS_COLORS[order.orderStatus] || '#999') + '22', color: STATUS_COLORS[order.orderStatus] || '#999' }}>
-                      {order.orderStatus?.charAt(0).toUpperCase() + order.orderStatus?.slice(1)}
+                      {prettyStatus(order.orderStatus)}
                     </span>
+                    {unpaid && (
+                      <button
+                        className="btn btn-gold btn-sm pay-now-btn"
+                        onClick={e => { e.stopPropagation(); handlePayNow(order); }}
+                        disabled={payingId === order._id}
+                        title="Complete payment for this order"
+                      >
+                        {payingId === order._id ? '⏳ Processing…' : '💳 Pay Now'}
+                      </button>
+                    )}
                     <button
                       className="btn btn-outline btn-sm"
                       onClick={e => { e.stopPropagation(); handleReorder(order); }}
@@ -170,7 +272,7 @@ const Orders = () => {
                             <div className="timeline-dot" style={{ background: STATUS_COLORS[s.status] || '#999' }} />
                             <div className="timeline-content">
                               <span className="timeline-status">
-                                {s.status?.charAt(0).toUpperCase() + s.status?.slice(1)}
+                                {prettyStatus(s.status)}
                               </span>
                               <span className="timeline-date">
                                 {new Date(s.timestamp).toLocaleDateString('en-IN', {
@@ -186,7 +288,8 @@ const Orders = () => {
                   </div>
                 )}
               </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>

@@ -55,6 +55,16 @@
   box-shadow: 0 2px 12px rgba(0,0,0,0.06);
 }
 
+/* Order saved but not yet paid — draw attention with a warm accent. */
+.order-card--unpaid {
+  border-left: 4px solid #f59e0b;
+  box-shadow: 0 2px 12px rgba(245, 158, 11, 0.18);
+}
+
+.pay-now-btn {
+  white-space: nowrap;
+}
+
 .order-card-header {
   display: flex;
   align-items: center;
