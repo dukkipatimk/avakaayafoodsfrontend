@@ -487,6 +487,7 @@
   z-index: 998;
   display: flex;
   flex-direction: column;
+  align-items: flex-end;
   gap: 14px;
 }
 .side-menu-btn {
@@ -523,6 +524,9 @@
   background: #245c14;
   box-shadow: 0 12px 28px rgba(28, 74, 14, 0.35);
 }
+/* Offers button in the header — always visible, gold-accented */
+.offers-icon-btn { color: var(--gold, #c9a84c); }
+.offers-icon-btn:hover { color: #b08a2e; }
 
 .side-menu-badge {
   position: absolute;

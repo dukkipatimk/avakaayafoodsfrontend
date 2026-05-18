@@ -13,6 +13,7 @@ const AdminTabs = () => {
     tabs.push(
       { to: '/admin/products', label: 'Products' },
       { to: '/admin/coupons', label: 'Coupons' },
+      { to: '/admin/stores', label: 'Stores' },
       { to: '/admin/customers', label: 'Customers' },
       { to: '/admin/users', label: 'Users' },
     );

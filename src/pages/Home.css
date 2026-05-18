@@ -1324,72 +1324,118 @@
   color: var(--gold-light);
 }
 
-/* ── Available Offers ─────────────────────────────── */
+/* ── Available Offers (single-row band) ───────────── */
 .coupons-section {
-  padding: var(--home-section-y) 0;
+  padding: clamp(22px, 3.2vw, 40px) 0;
   background: var(--ivory, #faf6ed);
 }
 
-.coupons-subtitle {
-  font-family: var(--font-ui);
-  font-size: 0.85rem;
-  color: #6b6b6b;
-  margin-top: 8px;
+.coupons-row {
+  display: flex;
+  align-items: center;
+  gap: 24px;
 }
 
-.coupons-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
-  gap: 22px;
+.stores-col {
+  flex-shrink: 0;
+  width: 188px;
+}
+.stores-col .home-sec-label { margin-bottom: 8px; }
+
+.stores-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.store-link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-ui, 'Josefin Sans', sans-serif);
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: var(--green-forest, #1a2e1a);
+  text-decoration: none;
+  transition: color 0.18s;
+}
+.store-link:hover { color: #b08a2e; }
+.store-pin { font-size: 0.9rem; }
+
+.coupons-none {
+  font-family: var(--font-ui, 'Josefin Sans', sans-serif);
+  font-size: 0.85rem;
+  color: #6b6b6b;
+  margin: 0;
+}
+
+/* Cards sit on the same row; scroll horizontally if there are many. */
+.coupons-track {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  gap: 14px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scrollbar-width: thin;
 }
 
 .coupon-card {
+  flex: 0 0 auto;
+  width: 248px;
   display: flex;
   background: #fff;
-  border-radius: 14px;
-  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.07);
+  border-radius: 10px;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
   border: 1px solid #ece4d2;
   overflow: hidden;
   transition: transform 0.2s, box-shadow 0.2s;
 }
+
+@media (max-width: 640px) {
+  .coupons-row { flex-direction: column; align-items: stretch; gap: 14px; }
+  .stores-col { width: auto; }
+}
 .coupon-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.09);
 }
 
 .coupon-card-left {
   flex: 1;
-  padding: 20px 22px;
+  padding: 12px 14px;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 5px;
+  gap: 2px;
 }
 
 .coupon-discount {
   font-family: var(--font-display);
-  font-size: 1.7rem;
+  font-size: 1.3rem;
   font-weight: 700;
   color: var(--green-forest, #1a2e1a);
-  line-height: 1.1;
+  line-height: 1.15;
 }
 
 .coupon-cond {
   font-family: var(--font-ui);
-  font-size: 0.76rem;
+  font-size: 0.7rem;
   color: #6b6b6b;
 }
 
 .coupon-expiry {
   font-family: var(--font-ui);
-  font-size: 0.72rem;
+  font-size: 0.66rem;
   font-weight: 600;
   color: #b08a2e;
-  margin-top: 2px;
+  margin-top: 1px;
 }
 
 .coupon-card-right {
-  width: 134px;
+  width: 104px;
   flex-shrink: 0;
   background: var(--ivory, #faf6ed);
   border-left: 2px dashed #d8cdb0;
@@ -1397,46 +1443,257 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 7px;
-  padding: 16px 8px;
+  gap: 4px;
+  padding: 10px 6px;
 }
 
 .coupon-code-label {
   font-family: var(--font-ui);
-  font-size: 0.58rem;
-  letter-spacing: 0.16em;
+  font-size: 0.54rem;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: #9a8f74;
 }
 
 .coupon-code-value {
   font-family: var(--font-ui);
-  font-size: 1rem;
+  font-size: 0.88rem;
   font-weight: 700;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.05em;
   color: var(--green-forest, #1a2e1a);
   text-align: center;
   word-break: break-word;
 }
 
 .coupon-copy-btn {
-  margin-top: 3px;
+  margin-top: 2px;
   font-family: var(--font-ui);
-  font-size: 0.66rem;
+  font-size: 0.6rem;
   font-weight: 700;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--green-deep, #1c4a0e);
   background: var(--gold, #c9a84c);
   border: none;
   border-radius: 999px;
-  padding: 7px 14px;
+  padding: 5px 11px;
   cursor: pointer;
   transition: background 0.18s, transform 0.18s;
 }
 .coupon-copy-btn:hover {
   background: var(--gold-light, #e4c87a);
   transform: translateY(-1px);
+}
+
+/* ── Our Roots (single row) ───────────────────────── */
+.hyd-section {
+  padding: clamp(26px, 3.4vw, 46px) 0;
+  background: linear-gradient(180deg, var(--ivory, #faf6ed), #ffffff);
+}
+
+.roots-row {
+  display: flex;
+  gap: 16px;
+  align-items: stretch;
+  max-width: 1120px;
+  margin: 0 auto;
+}
+
+/* Intro — caption text above the image row */
+.roots-intro {
+  max-width: 620px;
+  margin: 0 auto 18px;
+  text-align: center;
+}
+.roots-heading {
+  font-family: var(--font-display);
+  font-size: 1.55rem;
+  line-height: 1.14;
+  color: var(--green-forest, #1a2e1a);
+  margin: 4px 0 7px;
+}
+.roots-text {
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
+  line-height: 1.55;
+  color: #6b6b6b;
+  margin: 0 0 8px;
+}
+.roots-text strong { color: var(--green-deep, #1c4a0e); }
+.roots-link {
+  font-family: var(--font-ui);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--gold, #c9a84c);
+  text-decoration: none;
+}
+.roots-link:hover { color: #b08a2e; }
+
+/* Store cards */
+.roots-stores {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  max-width: 1120px;
+  margin: 0 auto 18px;
+}
+.store-card {
+  flex: 1;
+  min-width: 210px;
+  background: #fff;
+  border: 1px solid #ece4d2;
+  border-radius: 12px;
+  padding: 15px 18px;
+  box-shadow: 0 6px 18px -12px rgba(0, 0, 0, 0.35);
+}
+.store-card-name {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  color: var(--green-forest, #1a2e1a);
+  margin: 0 0 3px;
+}
+.store-card-area {
+  font-family: var(--font-ui);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--green-deep, #1c4a0e);
+  margin: 0 0 6px;
+}
+.store-card-line {
+  font-family: var(--font-ui);
+  font-size: 0.78rem;
+  color: #6b6b6b;
+  line-height: 1.5;
+  margin: 0 0 4px;
+}
+.store-card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 14px;
+}
+.store-card-link {
+  display: inline-block;
+  margin-top: 6px;
+  font-family: var(--font-ui);
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--gold, #c9a84c);
+  text-decoration: none;
+}
+.store-card-link:hover { color: #b08a2e; }
+
+@media (max-width: 640px) {
+  .store-card { flex: 1 1 100%; }
+}
+
+/* Image / map / nimmakuru cards — equal height across the row */
+.roots-photo,
+.roots-map,
+.roots-nimmakuru {
+  flex: 1;
+  position: relative;
+  min-height: 206px;
+  margin: 0;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 10px 24px -14px rgba(0, 0, 0, 0.42);
+}
+
+.roots-photo { display: flex; flex-direction: column; }
+.roots-photo img {
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.roots-photo:hover img { transform: scale(1.06); }
+
+.roots-map iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+}
+
+/* Nimmakuru — two pickle images stacked */
+.roots-nimmakuru {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.roots-nimmakuru img {
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  object-fit: cover;
+  display: block;
+}
+
+/* Caption label — sits above the image */
+.roots-cap,
+.roots-strip-item figcaption {
+  font-family: var(--font-ui);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--green-deep, #1c4a0e);
+  background: #fff;
+  text-align: center;
+  padding: 7px 6px;
+  border-bottom: 1px solid #efe7d6;
+}
+
+.hyd-credit {
+  text-align: center;
+  font-family: var(--font-ui);
+  font-size: 0.66rem;
+  color: #9a8f74;
+  margin: 14px 0 0;
+}
+.hyd-credit a { color: inherit; text-decoration: underline; }
+
+/* Andhra & Telangana branding strip */
+.roots-strip {
+  display: flex;
+  gap: 12px;
+  max-width: 1120px;
+  margin: 14px auto 0;
+}
+.roots-strip-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  height: 146px;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 8px 18px -12px rgba(0, 0, 0, 0.45);
+}
+.roots-strip-item img {
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.roots-strip-item:hover img { transform: scale(1.08); }
+
+@media (max-width: 1024px) {
+  .roots-row { flex-wrap: wrap; }
+  .roots-photo,
+  .roots-map,
+  .roots-nimmakuru { flex: 1 1 30%; min-width: 212px; }
+}
+@media (max-width: 600px) {
+  .roots-photo,
+  .roots-map,
+  .roots-nimmakuru { flex: 1 1 100%; }
 }
 
 /* ── Responsive ───────────────────────────────────── */

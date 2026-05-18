@@ -75,51 +75,12 @@ const TESTIMONIALS = [
 
 const WHATSAPP_NUMBER = '919115595959';
 
-const fmtCouponDate = iso => new Date(iso).toLocaleDateString('en-IN', {
-  day: 'numeric', month: 'short', year: 'numeric',
-});
-
-/* ── Coupon card (storefront) ── */
-const CouponCard = ({ coupon }) => {
-  const [copied, setCopied] = useState(false);
-  const discount = coupon.type === 'percent'
-    ? `${Number(coupon.value)}% OFF`
-    : `₹${Number(coupon.value)} OFF`;
-
-  const copy = () => {
-    if (!navigator.clipboard) return;
-    navigator.clipboard.writeText(coupon.code)
-      .then(() => {
-        setCopied(true);
-        setTimeout(() => setCopied(false), 1800);
-      })
-      .catch(() => {});
-  };
-
-  return (
-    <div className="coupon-card">
-      <div className="coupon-card-left">
-        <span className="coupon-discount">{discount}</span>
-        {Number(coupon.minOrder) > 0 && (
-          <span className="coupon-cond">On orders above ₹{Number(coupon.minOrder)}</span>
-        )}
-        {coupon.type === 'percent' && Number(coupon.maxDiscount) > 0 && (
-          <span className="coupon-cond">Up to ₹{Number(coupon.maxDiscount)} off</span>
-        )}
-        {coupon.expiresAt && (
-          <span className="coupon-expiry">Valid till {fmtCouponDate(coupon.expiresAt)}</span>
-        )}
-      </div>
-      <div className="coupon-card-right">
-        <span className="coupon-code-label">Code</span>
-        <span className="coupon-code-value">{coupon.code}</span>
-        <button className="coupon-copy-btn" onClick={copy}>
-          {copied ? '✓ Copied' : 'Copy Code'}
-        </button>
-      </div>
-    </div>
-  );
-};
+// Andhra Pradesh & Telangana branding imagery for the "Our Roots" strip.
+const ROOTS_GALLERY = [
+  { src: '/images/branding/golconda.jpg', label: 'Golconda Fort',     alt: 'Golconda Fort, Hyderabad — Telangana' },
+  { src: '/images/branding/warangal.jpg', label: 'Kakatiya Thoranam', alt: 'Kakatiya Kala Thoranam, Warangal — Telangana' },
+  { src: '/images/branding/mangoes.jpg',  label: 'Andhra Mangoes',    alt: 'Ripe mangoes — the heart of every Avakaaya jar' },
+];
 
 const Home = () => {
   const [igPosts, setIgPosts] = useState([]);
@@ -133,7 +94,7 @@ const Home = () => {
   const [catalogPage, setCatalogPage] = useState(1);
   const [catalogPages, setCatalogPages] = useState(1);
   const [catalogLoading, setCatalogLoading] = useState(false);
-  const [coupons, setCoupons] = useState([]);
+  const [stores, setStores] = useState([]);
 
   // Full paginated catalog — sorted by popularity so bestsellers surface first
   useEffect(() => {
@@ -169,9 +130,9 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
-    api.get('/coupons/active')
-      .then(r => setCoupons(r.data.coupons || []))
-      .catch(() => setCoupons([]));
+    api.get('/stores')
+      .then(r => setStores(r.data.stores || []))
+      .catch(() => setStores([]));
   }, []);
 
   useEffect(() => {
@@ -188,7 +149,7 @@ const Home = () => {
     );
     document.querySelectorAll('.anim, .stagger').forEach(el => observer.observe(el));
     return () => observer.disconnect();
-  }, [catalog, igPosts, coupons]);
+  }, [catalog, igPosts, stores]);
 
   // Lightweight scroll parallax — rAF-throttled, honors reduced-motion
   useEffect(() => {
@@ -313,21 +274,83 @@ const Home = () => {
         </div>
       </div>
 
-      {/* ── Available Offers ─────────────────────── */}
-      {coupons.length > 0 && (
-        <section className="coupons-section">
-          <div className="container">
-            <div className="sec-head centered anim" style={{ marginBottom: 32 }}>
-              <span className="home-sec-label">Save More</span>
-              <h2>Available Offers</h2>
-              <p className="coupons-subtitle">Apply these codes at checkout for instant savings.</p>
+      {/* ── Our Roots ─────────────────────────────── */}
+      <section className="hyd-section">
+        <div className="container">
+          {/* Intro — caption text above the images */}
+          <div className="roots-intro anim">
+            <span className="home-sec-label">Our Roots</span>
+            <h2 className="roots-heading">Rooted in Andhra &amp; Telangana</h2>
+            <p className="roots-text">
+              Made at our pickle kitchen in <strong>Nimmakuru, Andhra Pradesh</strong>,
+              and served fresh from our stores across <strong>Hyderabad</strong>.
+            </p>
+          </div>
+
+          {/* Our stores */}
+          {stores.length > 0 && (
+            <div className="roots-stores stagger">
+              {stores.map(s => (
+                <div key={s._id} className="store-card">
+                  <h3 className="store-card-name">{s.name}</h3>
+                  {s.area && <p className="store-card-area">📍 {s.area}</p>}
+                  {s.address && <p className="store-card-line">{s.address}</p>}
+                  {(s.phone || s.hours) && (
+                    <p className="store-card-line store-card-meta">
+                      {s.phone && <span>📞 {s.phone}</span>}
+                      {s.hours && <span>🕒 {s.hours}</span>}
+                    </p>
+                  )}
+                  <a
+                    className="store-card-link"
+                    href={s.mapUrl || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent([s.name, s.area, s.city].filter(Boolean).join(' '))}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Get Directions →
+                  </a>
+                </div>
+              ))}
             </div>
-            <div className="coupons-grid stagger">
-              {coupons.map(c => <CouponCard key={c.code} coupon={c} />)}
+          )}
+
+          <div className="roots-row anim">
+            {/* Charminar */}
+            <figure className="roots-photo">
+              <span className="roots-cap">Charminar · Hyderabad</span>
+              <img src="/images/hyderabad/charminar.jpg" alt="The Charminar, Hyderabad" loading="lazy" />
+            </figure>
+
+            {/* Map */}
+            <div className="roots-map">
+              <iframe
+                title="Avakaaya Foods — Hyderabad"
+                src="https://www.google.com/maps?q=Kukatpally,%20Hyderabad&z=12&output=embed"
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                allowFullScreen
+              />
+            </div>
+
+            {/* Nimmakuru pickle kitchen */}
+            <div className="roots-nimmakuru">
+              <span className="roots-cap">Made in Nimmakuru, AP</span>
+              <img src="/images/nimmakuru/pickle-1.jpg" alt="Andhra avakaya mango pickle" loading="lazy" />
+              <img src="/images/nimmakuru/pickle-2.jpg" alt="Traditional Andhra mango pickle" loading="lazy" />
             </div>
           </div>
-        </section>
-      )}
+
+          {/* Andhra & Telangana branding strip */}
+          <div className="roots-strip stagger">
+            {ROOTS_GALLERY.map(g => (
+              <figure key={g.src} className="roots-strip-item">
+                <figcaption>{g.label}</figcaption>
+                <img src={g.src} alt={g.alt} loading="lazy" />
+              </figure>
+            ))}
+          </div>
+        </div>
+      </section>
 
       {/* ── Full Product Catalog (bestsellers first) ─────────────── */}
       <section className="quickbuy-section">

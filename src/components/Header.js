@@ -3,6 +3,9 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import MiniCart from './MiniCart';
+import OffersPanel from './OffersPanel';
+import NavCoupon from './NavCoupon';
+import api from '../utils/api';
 import toast from 'react-hot-toast';
 import './Header.css';
 
@@ -24,6 +27,8 @@ const Header = () => {
   const [searchLoading, setSearchLoading] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
+  const [offersOpen, setOffersOpen] = useState(false);
+  const [coupons, setCoupons] = useState([]);
   const [addedIds, setAddedIds] = useState({});
   const searchRef = useRef(null);
   const { user, logout } = useAuth();
@@ -37,12 +42,20 @@ const Header = () => {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  // Active coupons — shown as a slider in the top bar.
+  useEffect(() => {
+    api.get('/coupons/active')
+      .then(r => setCoupons(r.data.coupons || []))
+      .catch(() => {});
+  }, []);
+
   useEffect(() => {
     setMenuOpen(false);
     setSearchOpen(false);
     setShowDropdown(false);
     setSearchQuery('');
     setCartOpen(false);
+    setOffersOpen(false);
   }, [location]);
 
   // Close dropdown when clicking outside
@@ -154,6 +167,19 @@ const Header = () => {
 
           {/* Actions */}
           <div className="header-actions">
+            {/* Offers */}
+            <button
+              className="icon-btn offers-icon-btn"
+              onClick={() => setOffersOpen(true)}
+              aria-label="View available offers"
+              title="Offers"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="20" height="20">
+                <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/>
+                <line x1="7" y1="7" x2="7.01" y2="7"/>
+              </svg>
+            </button>
+
             {/* Search */}
             <button className="icon-btn" onClick={() => setSearchOpen(!searchOpen)} aria-label="Search">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -338,6 +364,7 @@ const Header = () => {
 
       {/* Right-side floating action menu (desktop only) */}
       <div className="side-menu" aria-label="Quick actions">
+        {coupons.length > 0 && <NavCoupon coupons={coupons} />}
         <a
           href="https://wa.me/919115595959?text=Hi%2C%20I%20have%20a%20question%20about%20Avakaaya%20Foods"
           target="_blank"
@@ -363,6 +390,8 @@ const Header = () => {
           <span className="side-menu-tooltip">Cart ({totalItems})</span>
         </button>
       </div>
+
+      <OffersPanel isOpen={offersOpen} onClose={() => setOffersOpen(false)} />
     </>
   );
 };

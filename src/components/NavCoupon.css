@@ -1,0 +1,75 @@
+/* Two-column vertical coupon ribbon — slim, hugs the right edge */
+.nav-coupon {
+  display: flex;
+  width: 62px;
+  height: 200px;            /* fixed — keeps the side-menu from re-centering on rotation */
+  overflow: hidden;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(180deg, #c83c2b 0%, #9c2a1d 100%);
+  cursor: pointer;
+  font-family: var(--font-ui);
+  box-shadow: 0 6px 16px -6px rgba(0, 0, 0, 0.45);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.nav-coupon:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 9px 20px -6px rgba(0, 0, 0, 0.5);
+}
+.nav-coupon.copied {
+  background: linear-gradient(180deg, #3a9d44 0%, #2c7d34 100%);
+}
+
+/* Column 1 — offer + copy action */
+.nav-coupon-offer {
+  width: 30px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  background: #fdf0d8;
+}
+.nav-coupon-off-text {
+  writing-mode: vertical-rl;
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #9c2a1d;
+}
+.nav-coupon.copied .nav-coupon-off-text { color: #2c7d34; }
+
+.nav-coupon-tag {
+  writing-mode: vertical-rl;
+  font-size: 0.5rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  background: #9c2a1d;
+  color: #fdf0d8;
+  border-radius: 3px;
+  padding: 6px 2px;
+}
+.nav-coupon.copied .nav-coupon-tag { background: #2c7d34; }
+
+/* Column 2 — the code */
+.nav-coupon-codecol {
+  flex: 1;
+  display: grid;
+  place-items: center;
+  border-left: 2px dashed rgba(255, 255, 255, 0.5);
+  color: #fff;
+}
+.nav-coupon-code {
+  writing-mode: vertical-rl;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  animation: nav-coupon-fade 0.35s ease;
+}
+@keyframes nav-coupon-fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}

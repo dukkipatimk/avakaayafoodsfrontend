@@ -1,0 +1,143 @@
+.offers-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.28s ease, visibility 0.28s;
+  z-index: 1100;
+}
+.offers-overlay.open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.offers-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: 340px;
+  max-width: 88vw;
+  background: var(--ivory, #faf6ed);
+  z-index: 1101;
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+  box-shadow: -8px 0 28px rgba(0, 0, 0, 0.18);
+}
+.offers-panel.open {
+  transform: translateX(0);
+}
+
+.offers-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 20px;
+  background: var(--green-deep, #1c4a0e);
+  color: #fff;
+  flex-shrink: 0;
+}
+.offers-panel-head h2 {
+  font-family: var(--font-display, 'Cormorant Garamond', serif);
+  font-size: 1.3rem;
+  margin: 0;
+}
+.offers-panel-close {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.offers-panel-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.offers-spinner { margin: 48px auto; }
+
+.offers-empty,
+.offers-foot {
+  font-family: var(--font-ui, 'Josefin Sans', sans-serif);
+  font-size: 0.82rem;
+  color: #6b6b6b;
+  text-align: center;
+}
+.offers-empty { margin: 40px 0; line-height: 1.6; }
+.offers-foot { margin: 2px 0 4px; }
+
+.offer-item {
+  background: #fff;
+  border: 1px solid #ece4d2;
+  border-radius: 10px;
+  padding: 12px 14px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.offer-item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 10px;
+}
+.offer-item-discount {
+  font-family: var(--font-display, 'Cormorant Garamond', serif);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--green-forest, #1a2e1a);
+  line-height: 1.1;
+}
+.offer-item-cond {
+  font-family: var(--font-ui, 'Josefin Sans', sans-serif);
+  font-size: 0.72rem;
+  color: #6b6b6b;
+}
+.offer-item-expiry {
+  font-family: var(--font-ui, 'Josefin Sans', sans-serif);
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: #b08a2e;
+}
+
+.offer-item-code {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  border: 1.5px dashed #c9a84c;
+  background: #fbf6e9;
+  border-radius: 8px;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: background 0.18s, border-color 0.18s;
+}
+.offer-item-code:hover { background: #f6edd6; }
+.offer-item-code.copied { border-color: #2e7d32; background: #eaf5ea; }
+
+.offer-item-code-text {
+  font-family: var(--font-ui, 'Josefin Sans', sans-serif);
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--green-forest, #1a2e1a);
+}
+.offer-item-code-action {
+  font-family: var(--font-ui, 'Josefin Sans', sans-serif);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #b08a2e;
+  white-space: nowrap;
+}
+.offer-item-code.copied .offer-item-code-action { color: #2e7d32; }
