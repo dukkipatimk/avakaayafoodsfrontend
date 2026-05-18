@@ -75,13 +75,6 @@ const TESTIMONIALS = [
 
 const WHATSAPP_NUMBER = '919115595959';
 
-// Andhra Pradesh & Telangana branding imagery for the "Our Roots" strip.
-const ROOTS_GALLERY = [
-  { src: '/images/branding/golconda.jpg', label: 'Golconda Fort',     alt: 'Golconda Fort, Hyderabad — Telangana' },
-  { src: '/images/branding/warangal.jpg', label: 'Kakatiya Thoranam', alt: 'Kakatiya Kala Thoranam, Warangal — Telangana' },
-  { src: '/images/branding/mangoes.jpg',  label: 'Andhra Mangoes',    alt: 'Ripe mangoes — the heart of every Avakaaya jar' },
-];
-
 const Home = () => {
   const [igPosts, setIgPosts] = useState([]);
   const [igLoading, setIgLoading] = useState(true);
@@ -264,13 +257,35 @@ const Home = () => {
       <div className="promo-callout">
         <div className="container promo-callout-inner">
           <div className="promo-callout-items">
-            <span>🚚 <strong>Delivery in 1–2 days</strong> within India</span>
-            <span className="promo-sep">|</span>
-            <span>🎁 <strong>Festival hampers</strong> now available for Diwali &amp; Sankranthi</span>
-            <span className="promo-sep">|</span>
-            <span>🌍 <strong>International delivery</strong> in 3–7 business days</span>
+            <div className="promo-item">
+              <span className="promo-item-icon">⚡</span>
+              <div className="promo-item-text">
+                <strong>In Hyderabad</strong>
+                <span>1–2 hours express delivery</span>
+              </div>
+            </div>
+            <div className="promo-item">
+              <span className="promo-item-icon">🚚</span>
+              <div className="promo-item-text">
+                <strong>Within India</strong>
+                <span>Delivery in 1–2 days</span>
+              </div>
+            </div>
+            <div className="promo-item">
+              <span className="promo-item-icon">🌍</span>
+              <div className="promo-item-text">
+                <strong>International</strong>
+                <span>3–7 business days worldwide</span>
+              </div>
+            </div>
+            <div className="promo-item">
+              <span className="promo-item-icon">🤝</span>
+              <div className="promo-item-text">
+                <strong>Avakaaya.com</strong>
+                <span>International Courier partner</span>
+              </div>
+            </div>
           </div>
-          <Link to="/products" className="btn btn-gold btn-sm">Shop Now →</Link>
         </div>
       </div>
 
@@ -282,8 +297,9 @@ const Home = () => {
             <span className="home-sec-label">Our Roots</span>
             <h2 className="roots-heading">Rooted in Andhra &amp; Telangana</h2>
             <p className="roots-text">
-              Made at our pickle kitchen in <strong>Nimmakuru, Andhra Pradesh</strong>,
-              and served fresh from our stores across <strong>Hyderabad</strong>.
+              Our products are crafted at two manufacturing centres —
+              <strong> Nimmakuru, Andhra Pradesh</strong> and <strong>Hyderabad, Telangana</strong>.
+              Vegetarian and non-vegetarian products are made at separate centres to keep every jar pure.
             </p>
           </div>
 
@@ -314,41 +330,41 @@ const Home = () => {
             </div>
           )}
 
+          {/* Heritage pair — Telangana & Andhra */}
           <div className="roots-row anim">
-            {/* Charminar */}
             <figure className="roots-photo">
               <span className="roots-cap">Charminar · Hyderabad</span>
-              <img src="/images/hyderabad/charminar.jpg" alt="The Charminar, Hyderabad" loading="lazy" />
-            </figure>
-
-            {/* Map */}
-            <div className="roots-map">
-              <iframe
-                title="Avakaaya Foods — Hyderabad"
-                src="https://www.google.com/maps?q=Kukatpally,%20Hyderabad&z=12&output=embed"
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-                allowFullScreen
+              <div
+                className="roots-photo-img"
+                role="img"
+                aria-label="The Charminar, Hyderabad"
+                style={{ backgroundImage: "url('/images/hyderabad/charminar.jpg')" }}
               />
-            </div>
+            </figure>
+            <figure className="roots-photo">
+              <span className="roots-cap">Prakasam Barrage · Vijayawada</span>
+              <div
+                className="roots-photo-img"
+                role="img"
+                aria-label="Prakasam Barrage over the Krishna river, Vijayawada"
+                style={{ backgroundImage: "url('/images/branding/vijayawada.jpg')" }}
+              />
+            </figure>
+          </div>
 
-            {/* Nimmakuru pickle kitchen */}
-            <div className="roots-nimmakuru">
-              <span className="roots-cap">Made in Nimmakuru, AP</span>
-              <img src="/images/nimmakuru/pickle-1.jpg" alt="Andhra avakaya mango pickle" loading="lazy" />
-              <img src="/images/nimmakuru/pickle-2.jpg" alt="Traditional Andhra mango pickle" loading="lazy" />
+          {/* Shop by category — full width */}
+          <div className="roots-products anim">
+            <span className="roots-cap">Shop by Category</span>
+            <div className="roots-cat-grid">
+              {CATEGORIES.map(c => (
+                <Link key={c.slug} to={`/products?category=${c.slug}`} className="roots-cat">
+                  <img src={c.image} alt={c.name} loading="lazy" />
+                  <span className="roots-cat-name">{c.name}</span>
+                </Link>
+              ))}
             </div>
           </div>
 
-          {/* Andhra & Telangana branding strip */}
-          <div className="roots-strip stagger">
-            {ROOTS_GALLERY.map(g => (
-              <figure key={g.src} className="roots-strip-item">
-                <figcaption>{g.label}</figcaption>
-                <img src={g.src} alt={g.alt} loading="lazy" />
-              </figure>
-            ))}
-          </div>
         </div>
       </section>
 

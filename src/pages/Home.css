@@ -1257,22 +1257,47 @@
 
 .promo-callout-inner {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  flex-wrap: wrap;
+  gap: 10px;
 }
 
+/* Delivery options — styled like the USP strip items above */
 .promo-callout-items {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  width: 100%;
+}
+.promo-item {
   display: flex;
   align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
-  font-family: var(--font-ui);
-  font-size: 0.82rem;
-  color: var(--text-mid);
+  justify-content: center;
+  gap: 14px;
+  padding: 12px 24px;
 }
-.promo-callout-items strong { color: var(--green-deep); }
+.promo-item + .promo-item { border-left: 1px solid rgba(201, 168, 76, 0.35); }
+.promo-item-icon {
+  font-size: 1.9rem;
+  flex-shrink: 0;
+  line-height: 1;
+}
+.promo-item-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.promo-item-text strong {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--green-deep);
+}
+.promo-item-text span {
+  font-family: var(--font-ui);
+  font-size: 0.76rem;
+  color: var(--text-mid);
+  line-height: 1.5;
+}
 
 .promo-sep {
   color: rgba(26,46,26,0.2);
@@ -1594,28 +1619,28 @@
 }
 
 /* Image / map / nimmakuru cards — equal height across the row */
-.roots-photo,
-.roots-map,
-.roots-nimmakuru {
+.roots-photo {
   flex: 1;
   position: relative;
-  min-height: 206px;
   margin: 0;
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 10px 24px -14px rgba(0, 0, 0, 0.42);
 }
 
-.roots-photo { display: flex; flex-direction: column; }
-.roots-photo img {
-  width: 100%;
-  flex: 1;
-  min-height: 0;
-  object-fit: cover;
-  display: block;
+.roots-photo {
+  display: flex;
+  flex-direction: column;
+}
+/* Background image — no intrinsic size, so it never inflates the column;
+   the column simply matches the product grid's height. */
+.roots-photo-img {
+  aspect-ratio: 3 / 2;        /* fixed shape — same proportions on every screen */
+  background-size: cover;
+  background-position: center;
   transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
 }
-.roots-photo:hover img { transform: scale(1.06); }
+.roots-photo:hover .roots-photo-img { transform: scale(1.06); }
 
 .roots-map iframe {
   width: 100%;
@@ -1624,18 +1649,53 @@
   display: block;
 }
 
-/* Nimmakuru — two pickle images stacked */
-.roots-nimmakuru {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+/* Shop by category — full-width card */
+.roots-products {
+  max-width: 1120px;
+  margin: 16px auto 0;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 10px 24px -14px rgba(0, 0, 0, 0.42);
 }
-.roots-nimmakuru img {
+.roots-cat-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1px;
+  background: #ece4d2;
+}
+.roots-cat {
+  position: relative;
+  display: block;
+  aspect-ratio: 1;
+  overflow: hidden;
+  text-decoration: none;
+}
+.roots-cat img {
   width: 100%;
-  flex: 1;
-  min-height: 0;
+  height: 100%;
   object-fit: cover;
   display: block;
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.roots-cat:hover img { transform: scale(1.08); }
+.roots-cat-name {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 20px 6px 9px;
+  text-align: center;
+  font-family: var(--font-ui);
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: #fff;
+  background: linear-gradient(180deg, transparent, rgba(20, 30, 16, 0.88));
+}
+
+@media (max-width: 700px) {
+  .roots-cat-grid { grid-template-columns: repeat(3, 1fr); }
 }
 
 /* Caption label — sits above the image */
@@ -1739,9 +1799,12 @@
   .banner-btn { width: 34px; height: 34px; font-size: 1.5rem; }
   .sec-head { flex-direction: column; align-items: flex-start; gap: 10px; }
   .why-grid { grid-template-columns: repeat(2, 1fr); }
-  .promo-callout-inner { flex-direction: column; align-items: flex-start; gap: 12px; }
-  .promo-sep { display: none; }
-  .promo-callout-items { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .promo-callout-inner { gap: 12px; }
+  .promo-callout-items { grid-template-columns: 1fr; }
+  .promo-item + .promo-item {
+    border-left: none;
+    border-top: 1px solid rgba(201, 168, 76, 0.35);
+  }
   /* Mobile: USP strip as a 2x2 grid — icon + title (caption), description hidden */
   .usp-row { grid-template-columns: repeat(2, 1fr); }
   .usp-item {
