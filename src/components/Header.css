@@ -104,6 +104,50 @@
 
 .nav-link:hover { color: var(--green-deep); background: var(--ivory-dark); }
 
+/* Contact nav links — pill-styled phone & WhatsApp buttons */
+.nav-link--phone,
+.nav-link--whatsapp {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: 4px;
+  padding: 6px 13px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  text-transform: none;            /* phone numbers shouldn't be uppercase */
+  letter-spacing: 0.02em;
+  color: #fff;
+  white-space: nowrap;
+  box-shadow: 0 2px 6px -2px rgba(0, 0, 0, 0.25);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+/* Store phone — brand forest green */
+.nav-link--phone {
+  background: var(--green-deep, #1c4a0e);
+}
+.nav-link--phone:hover {
+  background: #245c14;
+  color: #fff;
+  transform: translateY(-1px);
+  box-shadow: 0 5px 12px -3px rgba(28, 74, 14, 0.55);
+}
+
+/* WhatsApp — official brand green with a subtle gradient */
+.nav-link--whatsapp {
+  background: linear-gradient(135deg, #25d366 0%, #128c7e 100%);
+}
+.nav-link--whatsapp:hover {
+  color: #fff;
+  transform: translateY(-1px);
+  box-shadow: 0 5px 14px -3px rgba(37, 211, 102, 0.55);
+}
+
+.nav-link--phone svg,
+.nav-link--whatsapp svg {
+  flex-shrink: 0;
+}
+
 /* Dropdown */
 .nav-dropdown {
   position: relative;

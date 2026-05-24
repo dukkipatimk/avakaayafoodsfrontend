@@ -17,7 +17,7 @@ const ordersToCSV = orders => {
   const rows = orders.map(o => [
     o.orderNumber,
     fmtDate(o.createdAt),
-    o.user?.name || o.shippingAddress?.name || '',
+    o.user?.name || o.shippingAddress?.fullName || o.shippingAddress?.name || '',
     o.user?.email || o.shippingAddress?.email || '',
     o.items?.length ?? 0,
     o.total ?? 0,
@@ -191,7 +191,7 @@ const OrderDetailModal = ({ order, onClose, onOrderUpdated }) => {
           {/* Customer */}
           <section className="omd-section">
             <h3 className="omd-section-title">Customer</h3>
-            <p className="omd-line"><strong>{data.user?.name || order.user?.name || addr.name || '—'}</strong></p>
+            <p className="omd-line"><strong>{data.user?.name || order.user?.name || addr.fullName || addr.name || '—'}</strong></p>
             <p className="omd-line omd-muted">{data.user?.email || order.user?.email || addr.email || '—'}</p>
           </section>
 
@@ -213,7 +213,16 @@ const OrderDetailModal = ({ order, onClose, onOrderUpdated }) => {
                   <tbody>
                     {(data.items || []).map((item, i) => (
                       <tr key={i}>
-                        <td>{item.name || item.product?.name || '—'}</td>
+                        <td>
+                          {item.name || item.product?.name || '—'}
+                          {item.bundleType === 'hamper' && (
+                            <div className="omd-hamper-detail">
+                              <strong>Custom Gift Hamper</strong>
+                              {item.customization?.styleInstructions && <span>Style: {item.customization.styleInstructions}</span>}
+                              {item.customization?.personalMessage && <span>Message: {item.customization.personalMessage}</span>}
+                            </div>
+                          )}
+                        </td>
                         <td>{item.variantWeight || '—'}</td>
                         <td>{item.quantity}</td>
                         <td>{money(item.price)}</td>
@@ -333,7 +342,7 @@ const OrderDetailModal = ({ order, onClose, onOrderUpdated }) => {
           {/* Shipping Address */}
           <section className="omd-section">
             <h3 className="omd-section-title">Shipping Address</h3>
-            <p className="omd-line">{addr.name}</p>
+            <p className="omd-line">{addr.fullName || addr.name}</p>
             {addr.line1 && <p className="omd-line">{addr.line1}</p>}
             {addr.line2 && <p className="omd-line">{addr.line2}</p>}
             <p className="omd-line">
@@ -565,7 +574,7 @@ const AdminDashboard = () => {
                     <td><strong>#{order.orderNumber}</strong></td>
                     <td>
                       <div className="customer-cell">
-                        <span>{order.user?.name || order.shippingAddress?.name}</span>
+                        <span>{order.user?.name || order.shippingAddress?.fullName || order.shippingAddress?.name}</span>
                         <span className="cell-sub">{order.user?.email || order.shippingAddress?.email}</span>
                       </div>
                     </td>

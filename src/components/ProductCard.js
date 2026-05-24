@@ -4,6 +4,7 @@ import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import api from '../utils/api';
 import toast from 'react-hot-toast';
+import { trackEvent } from '../utils/tracking';
 import './ProductCard.css';
 
 const ProductCard = ({ product }) => {
@@ -22,6 +23,12 @@ const ProductCard = ({ product }) => {
     if (selectedVariant.stock === 0) return;
     setAdding(true);
     addItem(product, selectedVariant);
+    trackEvent('add_to_cart', {
+      productId: product._id,
+      cartValue: selectedVariant.price,
+      cartItems: [{ productId: product._id, name: product.name, weight: selectedVariant.weight, quantity: 1, price: selectedVariant.price }],
+      metadata: { source: 'product_card' },
+    });
     toast.success(`${product.name} (${selectedVariant.weight}) added to cart!`);
     setTimeout(() => setAdding(false), 800);
   };

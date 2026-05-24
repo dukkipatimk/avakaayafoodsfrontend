@@ -38,7 +38,7 @@ const BANNERS = [
     alt: 'Festive gift hampers — pickles, sweets & snacks',
     headline: 'Gift the\nfestive joy',
     cta: 'Shop Hampers',
-    ctaLink: '/products?category=gift-hampers',
+    ctaLink: '/collections/gift-hampers',
     capSide: 'left',
     panelTheme: 'on-dark',
   },
@@ -290,6 +290,11 @@ const Home = () => {
       </div>
 
       {/* ── Our Roots ─────────────────────────────── */}
+      <section className="home-intro container">
+        <h1>Authentic Andhra Pickles, Podis &amp; Sweets</h1>
+        <p>Handcrafted in Hyderabad with traditional recipes and freshly prepared ingredients, delivered across India and to homes around the world.</p>
+      </section>
+
       <section className="hyd-section">
         <div className="container">
           {/* Intro — caption text above the images */}
@@ -357,7 +362,7 @@ const Home = () => {
             <span className="roots-cap">Shop by Category</span>
             <div className="roots-cat-grid">
               {CATEGORIES.map(c => (
-                <Link key={c.slug} to={`/products?category=${c.slug}`} className="roots-cat">
+                <Link key={c.slug} to={`/collections/${c.slug}`} className="roots-cat">
                   <img src={c.image} alt={c.name} loading="lazy" />
                   <span className="roots-cat-name">{c.name}</span>
                 </Link>

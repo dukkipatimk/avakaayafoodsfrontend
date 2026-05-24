@@ -44,10 +44,12 @@ const Footer = () => {
             <h4 className="footer-heading">Quick Links</h4>
             <ul className="footer-links">
               <li><Link to="/products">All Products</Link></li>
-              <li><Link to="/products?category=pickles">Pickles</Link></li>
-              <li><Link to="/products?category=powders">Powders & Masalas</Link></li>
-              <li><Link to="/products?category=snacks">Snacks</Link></li>
-              <li><Link to="/products?category=gift-hampers">Gift Hampers</Link></li>
+              <li><Link to="/collections/pickles">Pickles</Link></li>
+              <li><Link to="/collections/powders">Podis &amp; Powders</Link></li>
+              <li><Link to="/collections/snacks">Snacks</Link></li>
+              <li><Link to="/collections/sweets">Sweets</Link></li>
+              <li><Link to="/collections/ghee">Ghee</Link></li>
+              <li><Link to="/collections/gift-hampers">Gift Hampers</Link></li>
               <li><Link to="/about">Our Story</Link></li>
             </ul>
           </div>
@@ -60,6 +62,7 @@ const Footer = () => {
               <li><Link to="/store-locations">Visit Our Stores</Link></li>
               <li><Link to="/shipping-info">Shipping Information</Link></li>
               <li><Link to="/refund-policy">Refund &amp; Cancellation</Link></li>
+              <li><Link to="/privacy-policy">Privacy Policy</Link></li>
               <li><Link to="/terms">Terms &amp; Conditions</Link></li>
               <li><a href="mailto:care@avakaayafoods.com">care@avakaayafoods.com</a></li>
               <li><a href="tel:+919115595959">+91 91155 95959</a></li>

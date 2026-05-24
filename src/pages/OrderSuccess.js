@@ -51,9 +51,10 @@ const OrderSuccess = () => {
                 <div key={i} className="success-item">
                   <div className="success-item-info">
                     <span className="success-item-name">{item.name}</span>
-                    <span className="success-item-variant">{item.weight} × {item.quantity}</span>
+                    {item.bundleType === 'hamper' && <span className="success-hamper-badge">Inside Custom Gift Hamper</span>}
+                    <span className="success-item-variant">{item.variantWeight} x {item.quantity}</span>
                   </div>
-                  <span className="success-item-price">₹{(item.price * item.quantity).toLocaleString()}</span>
+                  <span className="success-item-price">INR {Number(item.price).toLocaleString()}</span>
                 </div>
               ))}
             </div>
@@ -61,11 +62,11 @@ const OrderSuccess = () => {
             <div className="order-totals">
               <div className="total-row">
                 <span>Shipping</span>
-                <span>{order.shippingCost === 0 ? 'Free' : `₹${order.shippingCost}`}</span>
+                <span>{Number(order.shippingCost) === 0 ? 'Free' : `INR ${Number(order.shippingCost).toLocaleString()}`}</span>
               </div>
               <div className="total-row grand">
                 <span>Total Paid</span>
-                <span>₹{order.totalAmount?.toLocaleString()}</span>
+                <span>INR {Number(order.total).toLocaleString()}</span>
               </div>
             </div>
 

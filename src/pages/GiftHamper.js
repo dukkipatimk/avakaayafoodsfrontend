@@ -10,10 +10,11 @@ const MAX_ITEMS = 6;
 const GiftHamper = () => {
   const [allProducts, setAllProducts] = useState([]);
   const [selected, setSelected] = useState([]); // { product, variant }
-  const [note, setNote] = useState('');
+  const [personalMessage, setPersonalMessage] = useState('');
+  const [styleInstructions, setStyleInstructions] = useState('');
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
-  const { addItem } = useCart();
+  const { addHamper } = useCart();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -41,12 +42,12 @@ const GiftHamper = () => {
     setSelected(prev => prev.map(s => s.product._id === productId ? { ...s, variant } : s));
   };
 
-  const hamperTotal = selected.reduce((sum, s) => sum + s.variant.price, 0);
+  const hamperTotal = selected.reduce((sum, selection) => sum + (Number(selection.variant.price) || 0), 0);
 
   const addHamperToCart = () => {
     if (selected.length === 0) { toast.error('Select at least one product'); return; }
-    selected.forEach(({ product, variant }) => addItem(product, variant, 1));
-    toast.success(`${selected.length} items added to cart!`);
+    addHamper(selected, { personalMessage, styleInstructions });
+    toast.success('Custom gift hamper added to cart!');
     navigate('/cart');
   };
 
@@ -130,15 +131,27 @@ const GiftHamper = () => {
                 ))}
 
                 <div className="hamper-note-section">
-                  <label>Personal Message (optional)</label>
+                  <label>Message Card Text (optional)</label>
                   <textarea
-                    value={note}
-                    onChange={e => setNote(e.target.value)}
+                    value={personalMessage}
+                    onChange={e => setPersonalMessage(e.target.value)}
                     placeholder="Add a heartfelt message for the recipient..."
                     className="hamper-note-textarea"
                     maxLength={200}
                   />
-                  <span className="hamper-note-count">{note.length}/200</span>
+                  <span className="hamper-note-count">{personalMessage.length}/200</span>
+                </div>
+
+                <div className="hamper-note-section">
+                  <label>Hamper Style Instructions (optional)</label>
+                  <textarea
+                    value={styleInstructions}
+                    onChange={e => setStyleInstructions(e.target.value)}
+                    placeholder="Example: festive red theme, birthday presentation, minimal packaging, include ribbon..."
+                    className="hamper-note-textarea"
+                    maxLength={300}
+                  />
+                  <span className="hamper-note-count">{styleInstructions.length}/300</span>
                 </div>
 
                 <div className="hamper-total-row">
@@ -149,7 +162,7 @@ const GiftHamper = () => {
                 <button className="btn btn-gold btn-lg hamper-cta" onClick={addHamperToCart}>
                   Add Hamper to Cart →
                 </button>
-                <Link to="/products?category=gift-hampers" className="hamper-link">
+                <Link to="/collections/gift-hampers" className="hamper-link">
                   Browse curated gift hampers →
                 </Link>
               </>

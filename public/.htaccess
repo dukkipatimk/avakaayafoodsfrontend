@@ -24,4 +24,8 @@ RewriteRule ^ index.html [L]
   # produces new filenames, which the fresh index.html points to.
   SetEnvIf Request_URI "^/static/" AKF_STATIC_ASSET
   Header set Cache-Control "public, max-age=31536000, immutable" env=AKF_STATIC_ASSET
+
+  # Do not index customer, payment, authentication or administration pages.
+  SetEnvIf Request_URI "^/(admin|account|my-orders|wishlist|cart|checkout|order|login|register|forgot-password|reset-password)(/|$)" AKF_NOINDEX
+  Header set X-Robots-Tag "noindex, nofollow" env=AKF_NOINDEX
 </IfModule>

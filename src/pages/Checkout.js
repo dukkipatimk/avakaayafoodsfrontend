@@ -4,6 +4,7 @@ import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import api from '../utils/api';
 import toast from 'react-hot-toast';
+import { getTrackingSessionId, trackEvent } from '../utils/tracking';
 import './Checkout.css';
 
 const COUNTRIES = [
@@ -40,7 +41,7 @@ const Checkout = () => {
     country: 'India'
   });
 
-  const [paymentMethod, setPaymentMethod] = useState('razorpay');
+  const paymentMethod = 'razorpay';
   const [upiPayment, setUpiPayment] = useState(null); // { order, upiUrl, qrCodeUrl, vpa, payeeName, amount, reference }
   const [upiTxnRef, setUpiTxnRef] = useState('');
   const [upiPayerVpa, setUpiPayerVpa] = useState('');
@@ -77,6 +78,11 @@ const Checkout = () => {
     : selectedService.total;
   const discountAmount = appliedCoupon?.discount || 0;
   const total = subtotal - discountAmount + (shippingCost ?? 0);
+  const isFirstBundleItem = (item, index) => item.bundleId && items.findIndex(entry => entry.bundleId === item.bundleId) === index;
+
+  useEffect(() => {
+    trackEvent('begin_checkout', { cartValue: subtotal, cartItems: items, metadata: { source: 'checkout_page' } });
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const applyCoupon = async () => {
     if (!couponCode.trim()) return;
@@ -198,6 +204,12 @@ const Checkout = () => {
       toast.error('Could not get a shipping rate for this pincode. Please recheck it.');
       return;
     }
+    trackEvent('address_submitted', {
+      cartValue: total,
+      cartItems: items,
+      contact: { name: address.fullName, email: address.email, phone: address.phone },
+      metadata: { source: 'checkout_review', country: address.country },
+    });
     setStep(1);
   };
 
@@ -206,7 +218,15 @@ const Checkout = () => {
     try {
       // 1. Create order
       const orderRes = await api.post('/orders', {
-        items: items.map(i => ({ productId: i.productId, weight: i.weight, quantity: i.quantity })),
+        items: items.map(i => ({
+          productId: i.productId,
+          weight: i.weight,
+          quantity: i.quantity,
+          bundleId: i.bundleId,
+          bundleType: i.bundleType,
+          bundleLabel: i.bundleLabel,
+          customization: i.customization,
+        })),
         shippingAddress: address,
         shippingCost: shippingCost ?? 0,
         shippingMethod: 'Avakaaya.com Delivery',
@@ -216,12 +236,14 @@ const Checkout = () => {
         paymentMethod,
         couponCode: appliedCoupon?.code,
         discount: discountAmount,
-        guestEmail: !user ? address.email : undefined
+        guestEmail: !user ? address.email : undefined,
+        leadSessionId: getTrackingSessionId()
       });
 
       const order = orderRes.data.order;
 
       if (paymentMethod === 'cod') {
+        trackEvent('order_completed', { orderId: order._id, contact: { name: address.fullName, email: address.email, phone: address.phone } });
         clearCart();
         navigate(`/order/success?orderId=${order._id}&orderNumber=${order.orderNumber}`);
         return;
@@ -230,7 +252,7 @@ const Checkout = () => {
       if (paymentMethod === 'upi') {
         const upiRes = await api.post('/payment/upi/initiate', {
           orderId: order._id,
-          amount: total,
+          amount: Number(order.total),
         });
         setUpiPayment({ order, ...upiRes.data });
         return;
@@ -239,7 +261,7 @@ const Checkout = () => {
       // 2. Create Razorpay order (ICICI bank gateway)
       const payRes = await api.post('/payment/create-order', {
         orderId: order._id,
-        amount: total,
+        amount: Number(order.total),
         currency: 'INR'
       });
 
@@ -251,6 +273,7 @@ const Checkout = () => {
           razorpay_signature: 'mock_sig',
           orderId: order._id
         });
+        trackEvent('order_completed', { orderId: order._id, contact: { name: address.fullName, email: address.email, phone: address.phone } });
         clearCart();
         navigate(`/order/success?orderId=${order._id}&orderNumber=${order.orderNumber}`);
         return;
@@ -290,6 +313,7 @@ const Checkout = () => {
             ...response,
             orderId: order._id
           });
+          trackEvent('order_completed', { orderId: order._id, contact: { name: address.fullName, email: address.email, phone: address.phone } });
           clearCart();
           navigate(`/order/success?orderId=${order._id}&orderNumber=${order.orderNumber}`);
         },
@@ -520,14 +544,23 @@ const Checkout = () => {
                 )}
 
                 <div className="checkout-items-preview">
-                  {items.map(item => (
-                    <div key={`${item.productId}_${item.weight}`} className="checkout-item-row">
-                      <img src={item.thumbnail} alt={item.name} className="checkout-item-img" />
-                      <span className="checkout-item-name">{item.name}</span>
-                      <span className="checkout-item-weight">{item.weight}</span>
-                      <span className="checkout-item-qty">×{item.quantity}</span>
-                      <span className="checkout-item-price">₹{(item.price * item.quantity).toLocaleString()}</span>
-                    </div>
+                  {items.map((item, index) => (
+                    <React.Fragment key={`${item.productId}_${item.weight}_${item.bundleId || 'regular'}`}>
+                      {isFirstBundleItem(item, index) && (
+                        <div className="checkout-hamper-note">
+                          <strong>Custom Gift Hamper</strong>
+                          {item.customization?.styleInstructions && <span>Style: {item.customization.styleInstructions}</span>}
+                          {item.customization?.personalMessage && <span>Message card: {item.customization.personalMessage}</span>}
+                        </div>
+                      )}
+                      <div className={`checkout-item-row ${item.bundleId ? 'checkout-item-row--hamper' : ''}`}>
+                        <img src={item.thumbnail} alt={item.name} className="checkout-item-img" />
+                        <span className="checkout-item-name">{item.name}{item.bundleId && <small>Inside custom hamper</small>}</span>
+                        <span className="checkout-item-weight">{item.weight}</span>
+                        <span className="checkout-item-qty">x{item.quantity}</span>
+                        <span className="checkout-item-price">INR {(Number(item.price) * item.quantity).toLocaleString()}</span>
+                      </div>
+                    </React.Fragment>
                   ))}
                 </div>
 
@@ -553,13 +586,13 @@ const Checkout = () => {
           <div className="checkout-summary">
             <h3>Order Summary</h3>
             {items.map(item => (
-              <div key={`${item.productId}_${item.weight}`} className="summary-item">
+              <div key={`${item.productId}_${item.weight}_${item.bundleId || 'regular'}`} className="summary-item">
                 <img src={item.thumbnail} alt={item.name} className="summary-item-img" />
                 <div className="summary-item-info">
                   <span className="summary-item-name">{item.name}</span>
-                  <span className="summary-item-meta">{item.weight} × {item.quantity}</span>
+                  <span className="summary-item-meta">{item.bundleId ? 'Custom hamper | ' : ''}{item.weight} x {item.quantity}</span>
                 </div>
-                <span className="summary-item-price">₹{(item.price * item.quantity).toLocaleString()}</span>
+                <span className="summary-item-price">INR {(Number(item.price) * item.quantity).toLocaleString()}</span>
               </div>
             ))}
             {/* Coupon code */}

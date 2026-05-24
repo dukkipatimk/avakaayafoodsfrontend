@@ -6,7 +6,12 @@ export const CartProvider = ({ children }) => {
   const [items, setItems] = useState(() => {
     try {
       const raw = JSON.parse(localStorage.getItem('akf_cart')) || [];
-      return raw.filter(i => i && i.productId != null && i.weight);
+      return raw.filter(i => i && i.productId != null && i.weight).map(i => ({
+        ...i,
+        price: Number(i.price) || 0,
+        mrp: Number(i.mrp) || Number(i.price) || 0,
+        quantity: Number(i.quantity) || 1,
+      }));
     } catch { return []; }
   });
 
@@ -14,7 +19,7 @@ export const CartProvider = ({ children }) => {
     localStorage.setItem('akf_cart', JSON.stringify(items));
   }, [items]);
 
-  const getKey = (productId, weight) => `${productId}_${weight}`;
+  const getKey = (productId, weight, bundleId = '') => `${productId}_${weight}_${bundleId || 'regular'}`;
 
   const addItem = (product, variant, quantity = 1) => {
     const pid = product._id ?? product.id;
@@ -24,9 +29,9 @@ export const CartProvider = ({ children }) => {
     }
     setItems(prev => {
       const key = getKey(pid, variant.weight);
-      const existing = prev.find(i => getKey(i.productId, i.weight) === key);
+      const existing = prev.find(i => getKey(i.productId, i.weight, i.bundleId) === key);
       if (existing) {
-        return prev.map(i => getKey(i.productId, i.weight) === key
+        return prev.map(i => getKey(i.productId, i.weight, i.bundleId) === key
           ? { ...i, quantity: i.quantity + quantity }
           : i
         );
@@ -37,25 +42,51 @@ export const CartProvider = ({ children }) => {
         thumbnail: product.thumbnail,
         slug: product.slug,
         weight: variant.weight,
-        price: variant.price,
-        mrp: variant.mrp,
+        price: Number(variant.price) || 0,
+        mrp: Number(variant.mrp) || Number(variant.price) || 0,
         quantity,
         isVeg: product.isVeg
       }];
     });
   };
 
-  const updateQuantity = (productId, weight, quantity) => {
-    if (quantity < 1) return removeItem(productId, weight);
-    const key = getKey(productId, weight);
-    setItems(prev => prev.map(i => getKey(i.productId, i.weight) === key ? { ...i, quantity } : i));
+  const addHamper = (selections, customization = {}) => {
+    const bundleId = `hamper_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
+    const details = {
+      personalMessage: String(customization.personalMessage || '').trim(),
+      styleInstructions: String(customization.styleInstructions || '').trim(),
+    };
+    const hamperItems = selections.map(({ product, variant }) => ({
+      productId: product._id ?? product.id,
+      name: product.name,
+      thumbnail: product.thumbnail,
+      slug: product.slug,
+      weight: variant.weight,
+      price: Number(variant.price) || 0,
+      mrp: Number(variant.mrp) || Number(variant.price) || 0,
+      quantity: 1,
+      isVeg: product.isVeg,
+      bundleId,
+      bundleType: 'hamper',
+      bundleLabel: 'Custom Gift Hamper',
+      customization: details,
+    })).filter(item => item.productId != null);
+    setItems(prev => [...prev, ...hamperItems]);
+    return bundleId;
   };
 
-  const removeItem = (productId, weight) => {
-    const key = getKey(productId, weight);
-    setItems(prev => prev.filter(i => getKey(i.productId, i.weight) !== key));
+  const updateQuantity = (productId, weight, quantity, bundleId = '') => {
+    if (quantity < 1) return removeItem(productId, weight, bundleId);
+    const key = getKey(productId, weight, bundleId);
+    setItems(prev => prev.map(i => getKey(i.productId, i.weight, i.bundleId) === key ? { ...i, quantity } : i));
   };
 
+  const removeItem = (productId, weight, bundleId = '') => {
+    const key = getKey(productId, weight, bundleId);
+    setItems(prev => prev.filter(i => getKey(i.productId, i.weight, i.bundleId) !== key));
+  };
+
+  const removeBundle = bundleId => setItems(prev => prev.filter(i => i.bundleId !== bundleId));
   const clearCart = () => setItems([]);
 
   const subtotal = items.reduce((sum, i) => sum + i.price * i.quantity, 0);
@@ -64,7 +95,7 @@ export const CartProvider = ({ children }) => {
 
   return (
     <CartContext.Provider value={{
-      items, addItem, updateQuantity, removeItem, clearCart,
+      items, addItem, addHamper, updateQuantity, removeItem, removeBundle, clearCart,
       subtotal, totalItems, savings
     }}>
       {children}

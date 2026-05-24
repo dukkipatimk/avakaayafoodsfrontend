@@ -11,6 +11,7 @@
 
 .products-page-header h1 { font-size: 2rem; }
 .products-count { font-family: var(--font-ui); font-size: 0.85rem; color: var(--text-light); margin-top: 4px; }
+.products-category-intro { max-width: 680px; margin-top: 12px; color: var(--text-mid); line-height: 1.6; }
 
 .sort-select {
   padding: 10px 16px;

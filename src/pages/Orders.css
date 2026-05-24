@@ -142,6 +142,7 @@
 .line-item-name { font-size: 0.9375rem; color: var(--color-forest, #1a2e1a); }
 
 .line-item-meta { font-size: 0.8rem; color: var(--color-text-muted, #6b6b6b); }
+.line-item-hamper { align-self: flex-start; font-size: 0.65rem; font-weight: 700; color: var(--color-forest, #1a2e1a); background: #f5e6b8; border-radius: 100px; padding: 2px 8px; text-transform: uppercase; letter-spacing: 0.04em; }
 
 .line-item-price { font-weight: 600; color: var(--color-forest, #1a2e1a); }
 

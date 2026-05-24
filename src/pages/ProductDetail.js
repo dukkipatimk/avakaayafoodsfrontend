@@ -5,6 +5,9 @@ import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 import ProductCard from '../components/ProductCard';
+import Seo from '../components/Seo';
+import { trackEvent } from '../utils/tracking';
+import { CATEGORY_SEO, SITE_URL, absoluteUrl, categoryPath, textSummary } from '../utils/seo';
 import './ProductDetail.css';
 
 // Some API rows return JSON array columns as raw strings — coerce to arrays.
@@ -74,6 +77,11 @@ const ProductDetail = () => {
   useEffect(() => {
     if (!product) return;
 
+    trackEvent('product_view', {
+      productId: product._id,
+      metadata: { name: product.name, category: product.category, source: 'product_detail' },
+    });
+
     const stored = (() => {
       try {
         return JSON.parse(localStorage.getItem('recentlyViewed') || '[]');
@@ -104,17 +112,73 @@ const ProductDetail = () => {
       .catch(() => setRelated([]));
   }, [product]);
 
-  if (loading) return <div className="container" style={{ padding: '80px 24px', textAlign: 'center' }}>Loading...</div>;
-  if (!product) return <div className="container" style={{ padding: '80px 24px', textAlign: 'center' }}>Product not found.</div>;
+  if (loading) return (
+    <>
+      <Seo title="Loading Product | Avakaaya Foods" description="Loading product information from Avakaaya Foods." path={`/products/${slug}`} noIndex />
+      <div className="container" style={{ padding: '80px 24px', textAlign: 'center' }}>Loading...</div>
+    </>
+  );
+  if (!product) return (
+    <>
+      <Seo title="Product Not Found | Avakaaya Foods" description="This product is no longer available." path={`/products/${slug}`} noIndex />
+      <div className="container" style={{ padding: '80px 24px', textAlign: 'center' }}>Product not found.</div>
+    </>
+  );
 
   const discount = selectedVariant ? Math.round((1 - selectedVariant.price / selectedVariant.mrp) * 100) : 0;
   const images = product.images?.length ? product.images : [product.thumbnail];
 
   const isOutOfStock = selectedVariant?.stock !== undefined && selectedVariant.stock <= 0;
+  const canonicalPath = `/products/${product.slug}`;
+  const productImages = images.filter(Boolean).map(absoluteUrl);
+  const productSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: product.name,
+    description: product.description,
+    image: productImages,
+    sku: product.variants?.[0]?.sku || String(product._id),
+    category: CATEGORY_SEO[product.category]?.name || product.category,
+    brand: { '@type': 'Brand', name: 'Avakaaya Foods' },
+    ...(product.variants?.length ? {
+      offers: product.variants.map(variant => ({
+        '@type': 'Offer',
+        url: `${SITE_URL}${canonicalPath}`,
+        sku: variant.sku || undefined,
+        priceCurrency: 'INR',
+        price: String(variant.price),
+        availability: variant.stock > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+        itemCondition: 'https://schema.org/NewCondition',
+      })),
+    } : {}),
+    ...(product.rating > 0 && product.numReviews > 0 ? {
+      aggregateRating: {
+        '@type': 'AggregateRating',
+        ratingValue: product.rating,
+        reviewCount: product.numReviews,
+      },
+    } : {}),
+  };
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_URL },
+      { '@type': 'ListItem', position: 2, name: 'Products', item: `${SITE_URL}/products` },
+      { '@type': 'ListItem', position: 3, name: CATEGORY_SEO[product.category]?.name || product.category, item: `${SITE_URL}${categoryPath(product.category)}` },
+      { '@type': 'ListItem', position: 4, name: product.name, item: `${SITE_URL}${canonicalPath}` },
+    ],
+  };
 
   const handleAddToCart = () => {
     if (isOutOfStock) return;
     addItem(product, selectedVariant, quantity);
+    trackEvent('add_to_cart', {
+      productId: product._id,
+      cartValue: Number(selectedVariant.price) * quantity,
+      cartItems: [{ productId: product._id, name: product.name, weight: selectedVariant.weight, quantity, price: selectedVariant.price }],
+      metadata: { source: 'product_detail' },
+    });
     toast.success(`${product.name} (${selectedVariant.weight} × ${quantity}) added to cart!`);
   };
 
@@ -139,6 +203,14 @@ const ProductDetail = () => {
 
   return (
     <div className="product-detail-page">
+      <Seo
+        title={`${product.name} Online | Avakaaya Foods`}
+        description={textSummary(product.shortDescription || product.description)}
+        path={canonicalPath}
+        image={product.thumbnail || productImages[0]}
+        type="product"
+        jsonLd={[productSchema, breadcrumbSchema]}
+      />
       <div className="container">
         {/* Breadcrumb */}
         <nav className="breadcrumb">
@@ -146,7 +218,7 @@ const ProductDetail = () => {
           <span>›</span>
           <Link to="/products">Products</Link>
           <span>›</span>
-          <Link to={`/products?category=${product.category}`}>{product.category}</Link>
+          <Link to={categoryPath(product.category)}>{CATEGORY_SEO[product.category]?.name || product.category}</Link>
           <span>›</span>
           <span>{product.name}</span>
         </nav>

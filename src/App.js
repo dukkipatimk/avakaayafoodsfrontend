@@ -23,6 +23,7 @@ import AdminCustomers from './pages/AdminCustomers';
 import AdminUsers from './pages/AdminUsers';
 import AdminCoupons from './pages/AdminCoupons';
 import AdminStores from './pages/AdminStores';
+import AdminLeads from './pages/AdminLeads';
 import ShippingInfo from './pages/ShippingInfo';
 import About from './pages/About';
 import Contact from './pages/Contact';
@@ -34,6 +35,9 @@ import GiftHamper from './pages/GiftHamper';
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminRoute from './components/AdminRoute';
 import ScrollToTop from './components/ScrollToTop';
+import AnalyticsTracker from './components/AnalyticsTracker';
+import RouteSeo from './components/RouteSeo';
+import PrivacyPolicy from './pages/PrivacyPolicy';
 
 function App() {
   return (
@@ -53,12 +57,15 @@ function App() {
               error: { style: { background: '#c0392b', color: '#fff' } }
             }}
           />
+          <RouteSeo />
+          <AnalyticsTracker />
           <ScrollToTop />
           <Header />
           <main style={{ minHeight: '60vh', paddingTop: 'calc(var(--header-h) + var(--banner-h))' }}>
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/products" element={<Products />} />
+              <Route path="/collections/:category" element={<Products collectionPage />} />
               <Route path="/products/:slug" element={<ProductDetail />} />
               <Route path="/cart" element={<Cart />} />
               <Route path="/checkout" element={<Checkout />} />
@@ -73,6 +80,7 @@ function App() {
               <Route path="/store-locations" element={<StoreLocations />} />
               <Route path="/terms" element={<Terms />} />
               <Route path="/refund-policy" element={<RefundPolicy />} />
+              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
               <Route path="/account" element={<ProtectedRoute><Account /></ProtectedRoute>} />
               <Route path="/my-orders" element={<ProtectedRoute><Orders /></ProtectedRoute>} />
               <Route path="/wishlist" element={<ProtectedRoute><Wishlist /></ProtectedRoute>} />
@@ -83,6 +91,7 @@ function App() {
               <Route path="/admin/users" element={<AdminRoute><AdminUsers /></AdminRoute>} />
               <Route path="/admin/coupons" element={<AdminRoute><AdminCoupons /></AdminRoute>} />
               <Route path="/admin/stores" element={<AdminRoute><AdminStores /></AdminRoute>} />
+              <Route path="/admin/leads" element={<AdminRoute><AdminLeads /></AdminRoute>} />
             </Routes>
           </main>
           <Footer />

@@ -1,6 +1,4 @@
-# https://www.robotstxt.org/robotstxt.html
 User-agent: *
-Disallow: /admin
-Disallow: /account
-Disallow: /checkout
 Allow: /
+
+Sitemap: https://avakaayafoods.com/sitemap.xml

@@ -34,6 +34,15 @@
 
 /* ── Page body ─────────────────────────────────── */
 .policy-body { padding: 60px 0 80px; }
+.policy-content { max-width: 820px; }
+.policy-content h2 {
+  font-size: 1.35rem;
+  color: var(--green-deep);
+  margin: 28px 0 10px;
+}
+.policy-content h2:first-child { margin-top: 0; }
+.policy-content p { color: var(--text-mid); line-height: 1.8; }
+.policy-content a { color: var(--green-deep); text-decoration: underline; }
 
 /* ── Policy sections (Terms, Refund) ───────────── */
 .policy-sections { max-width: 820px; margin: 0 auto; }

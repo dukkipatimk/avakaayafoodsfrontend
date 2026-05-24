@@ -422,6 +422,11 @@
 .checkout-item-weight { font-family: var(--font-ui); font-size: 0.78rem; color: var(--text-light); background: var(--white); padding: 2px 8px; border-radius: 100px; }
 .checkout-item-qty { font-family: var(--font-ui); font-size: 0.85rem; color: var(--text-light); }
 .checkout-item-price { font-family: var(--font-display); font-size: 1rem; color: var(--green-deep); }
+.checkout-hamper-note { display: flex; flex-direction: column; gap: 4px; background: var(--gold-pale); color: var(--text-mid); border-radius: var(--radius-sm); padding: 12px; }
+.checkout-hamper-note strong { font-family: var(--font-ui); color: var(--green-deep); text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.78rem; }
+.checkout-hamper-note span { font-size: 0.9rem; }
+.checkout-item-row--hamper { margin-left: 12px; border-left: 3px solid var(--gold); }
+.checkout-item-name small { display: block; font-family: var(--font-ui); color: var(--gold); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.06em; }
 
 /* Step buttons */
 .checkout-step-btns { display: flex; gap: 16px; margin-top: 24px; }

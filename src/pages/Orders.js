@@ -215,7 +215,10 @@ const Orders = () => {
                         <div key={i} className="order-line-item">
                           <div className="line-item-info">
                             <span className="line-item-name">{item.name}</span>
-                            <span className="line-item-meta">{item.variant?.weight} × {item.quantity}</span>
+                            {item.bundleType === 'hamper' && <span className="line-item-hamper">Custom Gift Hamper</span>}
+                            <span className="line-item-meta">{item.variantWeight} x {item.quantity}</span>
+                            {item.bundleType === 'hamper' && item.customization?.styleInstructions && <span className="line-item-meta">Style: {item.customization.styleInstructions}</span>}
+                            {item.bundleType === 'hamper' && item.customization?.personalMessage && <span className="line-item-meta">Message card: {item.customization.personalMessage}</span>}
                           </div>
                           <span className="line-item-price">
                             ₹{item.price?.toLocaleString()}
