@@ -9,6 +9,8 @@ const defaultImage = `${SITE_URL}/avakaaya-logo.png`;
 
 const collectionPages = {
   pickles: ['Authentic Andhra Pickles Online | Avakaaya Foods', 'Shop traditional Andhra pickles handcrafted in Hyderabad, including avakaya, gongura and more. Delivery across India and international shipping available.', 'Andhra Pickles'],
+  'veg-pickles': ['Authentic Veg Andhra Pickles Online | Avakaaya Foods', 'Shop vegetarian Andhra pickles including avakaya, gongura, lemon and more, handcrafted in Hyderabad and delivered worldwide.', 'Veg Pickles'],
+  'non-veg-pickles': ['Andhra Non-Veg Pickles Online | Avakaaya Foods', 'Shop Andhra chicken, mutton, prawn and fish pickles prepared in Hyderabad with traditional spices and carefully packed for delivery.', 'Non-Veg Pickles'],
   powders: ['Andhra Podis & Spice Powders Online | Avakaaya Foods', 'Shop authentic Andhra podis and spice powders made in Hyderabad for idli, dosa and rice. Freshly packed for delivery in India and abroad.', 'Podis & Powders'],
   snacks: ['Traditional Andhra Snacks Online | Avakaaya Foods', 'Buy crisp traditional Andhra snacks from Avakaaya Foods, prepared in Hyderabad and delivered fresh to your doorstep.', 'Traditional Snacks'],
   sweets: ['Traditional Indian Sweets Online | Avakaaya Foods', 'Order traditional sweets from Avakaaya Foods in Hyderabad, packed with care for celebrations, gifting and everyday treats.', 'Indian Sweets'],
@@ -125,6 +127,9 @@ const main = async () => {
 
   products.filter(product => product.slug).forEach(product => {
     const route = `/products/${encodeURIComponent(product.slug)}`;
+    const categoryName = product.category === 'pickles'
+      ? (product.isVeg === false ? 'Non-Veg Pickles' : 'Veg Pickles')
+      : product.category;
     const image = product.thumbnail || (Array.isArray(product.images) ? product.images[0] : null);
     const offers = (product.variants || []).map(variant => ({
       '@type': 'Offer',
@@ -142,6 +147,7 @@ const main = async () => {
       description: product.description,
       image: [absolute(image)],
       sku: product.variants?.[0]?.sku || String(product.id || product._id),
+      category: categoryName,
       brand: { '@type': 'Brand', name: 'Avakaaya Foods' },
       ...(offers.length ? { offers } : {}),
       ...(Number(product.rating) > 0 && Number(product.numReviews) > 0 ? {

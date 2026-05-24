@@ -16,6 +16,16 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://avakaayafoods.com/collections/veg-pickles</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://avakaayafoods.com/collections/non-veg-pickles</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://avakaayafoods.com/collections/powders</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>

@@ -9,6 +9,8 @@ const staticPaths = [
   '/',
   '/products',
   '/collections/pickles',
+  '/collections/veg-pickles',
+  '/collections/non-veg-pickles',
   '/collections/powders',
   '/collections/snacks',
   '/collections/sweets',

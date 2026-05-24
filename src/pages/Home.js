@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../utils/api';
 import ProductCard from '../components/ProductCard';
+import { collectionApiFilters } from '../utils/seo';
 import './Home.css';
 
 // Desktop: widened 3.5:1 artwork (src) with an HTML caption panel.
@@ -52,7 +53,8 @@ const USPS = [
 ];
 
 const CATEGORIES = [
-  { name: 'Pickles',  slug: 'pickles',  image: '/images/products/2024/10/gongura_pickle_pp.jpg',       count: '36 varieties' },
+  { name: 'Veg Pickles', slug: 'veg-pickles', image: '/images/products/2024/10/gongura_pickle_pp.jpg', count: '24 varieties' },
+  { name: 'Non-Veg Pickles', slug: 'non-veg-pickles', image: '/images/products/2024/10/gongura_chicken-1-600x600.jpg', count: '12 varieties' },
   { name: 'Powders',  slug: 'powders',  image: '/images/products/2024/10/PALLI-KARAM-600x600.jpg',     count: '14 varieties' },
   { name: 'Snacks',   slug: 'snacks',   image: '/images/products/2024/10/CHEKKALU-ROUND-600x600.jpg',  count: '17 varieties' },
   { name: 'Sweets',   slug: 'sweets',   image: '/images/products/2024/10/BOONDHI-LADDU-1-600x600.jpg', count: '5 varieties'  },
@@ -93,7 +95,9 @@ const Home = () => {
   useEffect(() => {
     setCatalogLoading(true);
     const params = new URLSearchParams({ page: catalogPage, limit: 12, sort: 'popular' });
-    if (activeCategory !== 'all') params.set('category', activeCategory);
+    if (activeCategory !== 'all') {
+      Object.entries(collectionApiFilters(activeCategory)).forEach(([key, value]) => params.set(key, value));
+    }
     api.get(`/products?${params}`)
       .then(r => {
         const list = r.data.products || [];
@@ -281,7 +285,14 @@ const Home = () => {
             <div className="promo-item">
               <span className="promo-item-icon">🤝</span>
               <div className="promo-item-text">
-                <strong>Avakaaya.com</strong>
+                <a
+                  className="promo-partner-link"
+                  href="https://avakaaya.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Avakaaya.com
+                </a>
                 <span>International Courier partner</span>
               </div>
             </div>
@@ -391,7 +402,7 @@ const Home = () => {
                 className={`qb-tab${activeCategory === tab ? ' active' : ''}`}
                 onClick={() => selectCategory(tab)}
               >
-                {tab === 'all' ? 'All' : tab.charAt(0).toUpperCase() + tab.slice(1)}
+                {tab === 'all' ? 'All' : CATEGORIES.find(category => category.slug === tab)?.name}
               </button>
             ))}
           </div>

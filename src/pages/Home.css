@@ -5,12 +5,74 @@
 }
 
 .home-intro {
-  padding-top: clamp(40px, 5vw, 64px);
-  padding-bottom: clamp(28px, 4vw, 48px);
+  position: relative;
+  max-width: min(1160px, calc(100% - 48px));
+  margin: clamp(30px, 4.5vw, 58px) auto clamp(36px, 5vw, 70px);
+  padding: clamp(42px, 6vw, 72px) clamp(24px, 6vw, 92px);
   text-align: center;
+  overflow: hidden;
+  border-radius: clamp(18px, 2vw, 28px);
+  border: 1px solid rgba(201, 168, 76, 0.2);
+  background:
+    radial-gradient(circle at 50% -25%, rgba(201, 168, 76, 0.13), transparent 48%),
+    linear-gradient(135deg, #fffdf8 0%, #faf5e9 100%);
 }
-.home-intro h1 { max-width: 860px; margin: 0 auto 14px; }
-.home-intro p { max-width: 700px; margin: 0 auto; color: var(--text-mid); }
+.home-intro::before {
+  content: '';
+  display: block;
+  width: clamp(46px, 7vw, 72px);
+  height: 2px;
+  margin: 0 auto clamp(18px, 2.5vw, 26px);
+  border-radius: 99px;
+  background: var(--gold, #c9a84c);
+}
+.home-intro::after {
+  content: '';
+  position: absolute;
+  inset: auto 18% 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(201, 168, 76, 0.28), transparent);
+}
+.home-intro h1 {
+  max-width: 900px;
+  margin: 0 auto clamp(16px, 2vw, 22px);
+  font-family: var(--font-display, 'Cormorant Garamond', Georgia, serif);
+  font-size: clamp(2.25rem, 4.4vw, 3.7rem);
+  font-weight: 600;
+  line-height: 1.08;
+  letter-spacing: -0.025em;
+  color: var(--green-deep, #1c4a0e);
+  text-wrap: balance;
+}
+.home-intro p {
+  max-width: 690px;
+  margin: 0 auto;
+  font-family: var(--font-ui);
+  font-size: clamp(0.98rem, 1.35vw, 1.13rem);
+  font-weight: 400;
+  line-height: 1.75;
+  letter-spacing: 0.01em;
+  color: var(--text-mid);
+  text-wrap: pretty;
+}
+
+@media (max-width: 600px) {
+  .home-intro {
+    max-width: calc(100% - 32px);
+    margin: 26px auto 42px;
+    padding: 34px 18px 38px;
+    border-radius: 18px;
+  }
+  .home-intro h1 {
+    font-size: clamp(1.85rem, 9.2vw, 2.3rem);
+    line-height: 1.13;
+    letter-spacing: -0.018em;
+  }
+  .home-intro p {
+    font-size: 0.95rem;
+    line-height: 1.66;
+  }
+}
 
 /* ── Scroll reveal ────────────────────────────────── */
 /* Premium reveal: longer, soft easing, gentle rise + micro-blur clearing */
@@ -1294,11 +1356,22 @@
   flex-direction: column;
   gap: 2px;
 }
-.promo-item-text strong {
+.promo-item-text strong,
+.promo-partner-link {
   font-family: var(--font-display);
   font-size: 1rem;
   font-weight: 600;
   color: var(--green-deep);
+}
+.promo-partner-link {
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+.promo-partner-link:hover,
+.promo-partner-link:focus-visible {
+  color: var(--green-mid);
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 .promo-item-text span {
   font-family: var(--font-ui);
@@ -1667,7 +1740,7 @@
 }
 .roots-cat-grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(6, 1fr);
   gap: 1px;
   background: #ece4d2;
 }

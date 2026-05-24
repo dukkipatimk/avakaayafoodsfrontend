@@ -3,12 +3,13 @@ import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import api from '../utils/api';
 import ProductCard from '../components/ProductCard';
 import Seo from '../components/Seo';
-import { CATEGORY_SEO, SITE_URL, categoryPath } from '../utils/seo';
+import { CATEGORY_SEO, SITE_URL, categoryPath, collectionApiFilters } from '../utils/seo';
 import './Products.css';
 
 const CATEGORIES = [
   { value: '', label: 'All Products' },
-  { value: 'pickles', label: 'Pickles' },
+  { value: 'veg-pickles', label: 'Veg Pickles' },
+  { value: 'non-veg-pickles', label: 'Non-Veg Pickles' },
   { value: 'powders', label: 'Podis & Powders' },
   { value: 'snacks', label: 'Snacks' },
   { value: 'sweets', label: 'Sweets' },
@@ -57,7 +58,7 @@ const Products = ({ collectionPage = false }) => {
   useEffect(() => {
     setLoading(true);
     const params = new URLSearchParams({ page, limit: 12, sort });
-    if (category) params.set('category', category);
+    Object.entries(collectionApiFilters(category)).forEach(([key, value]) => params.set(key, value));
     if (search) params.set('search', search);
     if (minPrice) params.set('minPrice', minPrice);
     if (maxPrice) params.set('maxPrice', maxPrice);

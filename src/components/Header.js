@@ -11,7 +11,6 @@ import { trackEvent } from '../utils/tracking';
 import './Header.css';
 
 const ANNOUNCE_ITEMS = [
-  '🎉 Use code FIRST10 for 10% off your first order',
   '🚚 Delivery in 1–2 days within India',
   '🌿 No preservatives — 100% natural ingredients',
   '🌍 Delivering to USA · UK · Singapore · Australia · Malaysia',
@@ -129,7 +128,8 @@ const Header = () => {
   };
 
   const categories = [
-    { label: 'Pickles', path: '/collections/pickles' },
+    { label: 'Veg Pickles', path: '/collections/veg-pickles' },
+    { label: 'Non-Veg Pickles', path: '/collections/non-veg-pickles' },
     { label: 'Podis & Powders', path: '/collections/powders' },
     { label: 'Snacks', path: '/collections/snacks' },
     { label: 'Sweets', path: '/collections/sweets' },
@@ -221,7 +221,7 @@ const Header = () => {
             {/* Account */}
             {user ? (
               <div className="nav-dropdown">
-                <button className="icon-btn">
+                <button className="icon-btn" aria-label="Open account menu">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
                   </svg>

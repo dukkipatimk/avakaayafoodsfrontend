@@ -9,6 +9,18 @@ export const CATEGORY_SEO = {
     description: 'Shop traditional Andhra pickles handcrafted in Hyderabad, including avakaya, gongura and more. Delivery across India and international shipping available.',
     introduction: 'Explore traditional Andhra pickles prepared with carefully sourced ingredients, freshly ground spices and time-honoured recipes.',
   },
+  'veg-pickles': {
+    name: 'Veg Pickles',
+    title: 'Authentic Veg Andhra Pickles Online | Avakaaya Foods',
+    description: 'Shop vegetarian Andhra pickles including avakaya, gongura, lemon and more, handcrafted in Hyderabad and delivered worldwide.',
+    introduction: 'Explore traditional vegetarian Andhra pickles prepared with fresh produce, carefully sourced spices and time-honoured recipes.',
+  },
+  'non-veg-pickles': {
+    name: 'Non-Veg Pickles',
+    title: 'Andhra Non-Veg Pickles Online | Avakaaya Foods',
+    description: 'Shop Andhra chicken, mutton, prawn and fish pickles prepared in Hyderabad with traditional spices and carefully packed for delivery.',
+    introduction: 'Discover bold Andhra non-vegetarian pickles, prepared in separate batches with rich spices and careful packing.',
+  },
   powders: {
     name: 'Podis & Powders',
     title: 'Andhra Podis & Spice Powders Online | Avakaaya Foods',
@@ -49,9 +61,19 @@ export const absoluteUrl = (value = '/') => {
 
 export const categoryPath = (category) => `/collections/${category}`;
 
+export const collectionApiFilters = (category) => {
+  if (category === 'veg-pickles') return { category: 'pickles', isVeg: 'true' };
+  if (category === 'non-veg-pickles') return { category: 'pickles', isVeg: 'false' };
+  return category ? { category } : {};
+};
+
+export const productCategorySlug = (product) => {
+  if (product?.category !== 'pickles') return product?.category || '';
+  return product.isVeg === false ? 'non-veg-pickles' : 'veg-pickles';
+};
+
 export const textSummary = (value = '', maximum = 155) => {
   const cleaned = String(value).replace(/\s+/g, ' ').trim();
   if (cleaned.length <= maximum) return cleaned;
   return `${cleaned.slice(0, maximum - 3).replace(/\s+\S*$/, '')}...`;
 };
-

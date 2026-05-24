@@ -44,7 +44,8 @@ const Footer = () => {
             <h4 className="footer-heading">Quick Links</h4>
             <ul className="footer-links">
               <li><Link to="/products">All Products</Link></li>
-              <li><Link to="/collections/pickles">Pickles</Link></li>
+              <li><Link to="/collections/veg-pickles">Veg Pickles</Link></li>
+              <li><Link to="/collections/non-veg-pickles">Non-Veg Pickles</Link></li>
               <li><Link to="/collections/powders">Podis &amp; Powders</Link></li>
               <li><Link to="/collections/snacks">Snacks</Link></li>
               <li><Link to="/collections/sweets">Sweets</Link></li>
