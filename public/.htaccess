@@ -3,6 +3,7 @@
 # deep link (e.g. /admin/coupons) asks the server for that path directly.
 # Serve index.html for any path that isn't a real file or directory.
 Options -MultiViews
+DirectoryIndex index.html
 RewriteEngine On
 
 RewriteCond %{REQUEST_FILENAME} !-f
