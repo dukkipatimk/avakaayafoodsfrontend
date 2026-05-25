@@ -77,6 +77,31 @@
 .status-toggle.inactive { background: #ef444418; color: #dc2626; border-color: #ef444455; }
 .status-toggle:disabled { cursor: not-allowed; opacity: 0.6; }
 
+.password-reset-btn {
+  padding: 0.38rem 0.7rem;
+  border: 1px solid #d97706;
+  border-radius: 6px;
+  background: #fff7ed;
+  color: #b45309;
+  font-family: 'Josefin Sans', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.password-reset-btn:hover {
+  background: #d97706;
+  color: #fff;
+}
+
+.password-reset-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
 /* ── Create Staff modal ── */
 .modal-overlay {
   position: fixed;
@@ -155,6 +180,30 @@
   color: #dc2626;
   font-size: 0.78rem;
   margin: 0 0 0.75rem;
+}
+
+.staff-form-success {
+  padding: 0.65rem 0.8rem;
+  border-radius: 8px;
+  background: #ecfdf5;
+  color: #047857;
+  font-size: 0.78rem;
+  margin: 0 0 0.75rem;
+}
+
+.reset-password-user {
+  padding: 0.75rem;
+  margin: 0 0 1rem;
+  border-radius: 8px;
+  background: #f9fafb;
+  color: var(--color-forest, #1a2e1a);
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+.reset-password-user span {
+  color: var(--color-text-muted, #6b6b6b);
+  font-size: 0.78rem;
 }
 
 .modal-footer {

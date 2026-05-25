@@ -87,6 +87,88 @@ const CreateStaffModal = ({ onClose, onCreated }) => {
   );
 };
 
+const ResetPasswordModal = ({ user, onClose }) => {
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+
+  const handleSubmit = async e => {
+    e.preventDefault();
+    setError('');
+    setSuccess('');
+    if (password !== confirmPassword) {
+      setError('Passwords do not match');
+      return;
+    }
+
+    setSaving(true);
+    try {
+      await api.patch(`/admin/users/${user._id}/password`, { password });
+      setPassword('');
+      setConfirmPassword('');
+      setSuccess('Password updated. Share the new password securely with the user.');
+    } catch (err) {
+      setError(err.response?.data?.message || 'Could not update password');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="staff-modal" onClick={e => e.stopPropagation()}>
+        <div className="modal-header">
+          <h2>Reset Password</h2>
+          <button className="modal-close" onClick={onClose} aria-label="Close">✕</button>
+        </div>
+        <form className="staff-form" onSubmit={handleSubmit}>
+          <p className="reset-password-user">
+            Set a temporary password for <strong>{user.name}</strong><br />
+            <span>{user.email}</span>
+          </p>
+          <div className="form-group">
+            <label>New Password *</label>
+            <input
+              type="password"
+              required
+              minLength={6}
+              autoComplete="new-password"
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              placeholder="At least 6 characters"
+            />
+          </div>
+          <div className="form-group">
+            <label>Confirm Password *</label>
+            <input
+              type="password"
+              required
+              minLength={6}
+              autoComplete="new-password"
+              value={confirmPassword}
+              onChange={e => setConfirmPassword(e.target.value)}
+            />
+          </div>
+          {error && <p className="staff-form-error">{error}</p>}
+          {success && <p className="staff-form-success">{success}</p>}
+          <div className="modal-footer">
+            <button type="button" className="btn btn-outline" onClick={onClose}>
+              {success ? 'Close' : 'Cancel'}
+            </button>
+            {!success && (
+              <button type="submit" className="btn btn-primary" disabled={saving}>
+                {saving ? 'Updating...' : 'Update Password'}
+              </button>
+            )}
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
 /* ── Main Component ── */
 const AdminUsers = () => {
   const { user: currentUser } = useAuth();
@@ -97,6 +179,7 @@ const AdminUsers = () => {
   const [search, setSearch] = useState('');
   const [roleFilter, setRoleFilter] = useState('all');
   const [showCreate, setShowCreate] = useState(false);
+  const [passwordUser, setPasswordUser] = useState(null);
   const [busyId, setBusyId] = useState(null);
 
   const fetchUsers = () => {
@@ -177,6 +260,7 @@ const AdminUsers = () => {
                   <th>Role</th>
                   <th>Status</th>
                   <th>Joined</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -215,6 +299,15 @@ const AdminUsers = () => {
                         </button>
                       </td>
                       <td className="cell-date">{fmtDate(u.createdAt)}</td>
+                      <td>
+                        <button
+                          className="password-reset-btn"
+                          onClick={() => setPasswordUser(u)}
+                          disabled={busy}
+                        >
+                          Reset Password
+                        </button>
+                      </td>
                     </tr>
                   );
                 })}
@@ -231,6 +324,12 @@ const AdminUsers = () => {
         <CreateStaffModal
           onClose={() => setShowCreate(false)}
           onCreated={u => setUsers(prev => [u, ...prev])}
+        />
+      )}
+      {passwordUser && (
+        <ResetPasswordModal
+          user={passwordUser}
+          onClose={() => setPasswordUser(null)}
         />
       )}
     </div>
