@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { trackEvent } from '../utils/tracking';
@@ -19,12 +19,14 @@ function formatWeight(grams) {
 const Cart = () => {
   const { items, updateQuantity, removeItem, removeBundle, subtotal, savings } = useCart();
   const navigate = useNavigate();
+  const trackedFilledCart = useRef(items.length > 0);
 
   useEffect(() => {
-    if (items.length) {
+    if (items.length || trackedFilledCart.current) {
       trackEvent('view_cart', { cartValue: subtotal, cartItems: items, metadata: { source: 'cart_page' } });
+      trackedFilledCart.current = items.length > 0;
     }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [items, subtotal]);
 
   if (items.length === 0) {
     return (

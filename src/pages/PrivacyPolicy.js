@@ -15,7 +15,7 @@ const PrivacyPolicy = () => (
         <p>When you place an order or contact us, we collect details needed to respond and deliver your order, such as your name, phone number, email address, shipping address and order information.</p>
 
         <h2>Website Activity</h2>
-        <p>We record basic interactions such as page visits, product views, cart actions, checkout progress and clicks on contact options. This helps us improve the website and follow up when a customer has requested help or started an order without completing it.</p>
+        <p>We record basic interactions such as page visits, product views, cart actions, checkout progress and clicks on contact options. These records may include your IP address and approximate country, region or city supplied by our hosting provider, as well as the delivery location you enter during checkout. This helps us improve the website and follow up when a customer has requested help or started an order without completing it.</p>
 
         <h2>How We Use Information</h2>
         <p>We use information to process payments and orders, arrange delivery, provide customer support, prevent misuse, improve our products and website, and contact customers about an enquiry or incomplete checkout where appropriate.</p>

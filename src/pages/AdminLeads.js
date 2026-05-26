@@ -9,21 +9,80 @@ const money = (value) => `Rs. ${Number(value || 0).toLocaleString('en-IN')}`;
 const dateTime = (value) => value
   ? new Date(value).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })
   : '-';
+const locationText = (lead) => [lead.city, lead.region, lead.country].filter(Boolean).join(', ') || 'Unknown';
+
+const CartDetails = ({ items }) => {
+  const hamperNotes = items.reduce((groups, item) => {
+    if (item.bundleType === 'hamper' && item.bundleId && !groups[item.bundleId]) {
+      groups[item.bundleId] = item.customization || {};
+    }
+    return groups;
+  }, {});
+
+  return (
+    <div className="lead-cart-details">
+      <h3>Cart Details</h3>
+      <div className="lead-cart-table-wrap">
+        <table className="lead-cart-table">
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>Qty</th>
+              <th>Price</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            {items.map((item, index) => (
+              <tr key={`${item.productId || item.name}-${item.weight}-${item.bundleId || index}`}>
+                <td>
+                  <strong>{item.name || 'Product'}</strong>
+                  <small>
+                    {item.weight || '-'}
+                    {typeof item.isVeg === 'boolean' ? ` | ${item.isVeg ? 'Veg' : 'Non-Veg'}` : ''}
+                    {item.bundleType === 'hamper' ? ' | Custom Gift Hamper' : ''}
+                  </small>
+                </td>
+                <td>{item.quantity || 1}</td>
+                <td>{money(item.price)}</td>
+                <td>{money((Number(item.price) || 0) * (Number(item.quantity) || 1))}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      {Object.entries(hamperNotes).map(([bundleId, notes]) => (
+        <div className="lead-hamper-notes" key={bundleId}>
+          <strong>Custom Hamper Instructions</strong>
+          <span>Style: {notes.styleInstructions || 'Not provided'}</span>
+          <span>Message card: {notes.personalMessage || 'Not provided'}</span>
+        </div>
+      ))}
+    </div>
+  );
+};
 
 const AdminLeads = () => {
   const [leads, setLeads] = useState([]);
   const [eventSummary, setEventSummary] = useState([]);
   const [statusSummary, setStatusSummary] = useState([]);
+  const [regionalPageViews, setRegionalPageViews] = useState([]);
+  const [leadRegions, setLeadRegions] = useState([]);
   const [filter, setFilter] = useState('actionable');
+  const [region, setRegion] = useState('all');
   const [loading, setLoading] = useState(true);
 
-  const loadLeads = async (selected = filter) => {
+  const loadLeads = async (selected = filter, selectedRegion = region) => {
     setLoading(true);
     try {
-      const res = await api.get(`/tracking/leads?status=${selected}`);
+      const params = new URLSearchParams({ status: selected });
+      if (selectedRegion !== 'all') params.set('region', selectedRegion);
+      const res = await api.get(`/tracking/leads?${params}`);
       setLeads(res.data.leads || []);
       setEventSummary(res.data.eventSummary || []);
       setStatusSummary(res.data.statusSummary || []);
+      setRegionalPageViews(res.data.regionalPageViews || []);
+      setLeadRegions(res.data.leadRegions || []);
     } catch {
       setLeads([]);
     } finally {
@@ -32,8 +91,8 @@ const AdminLeads = () => {
   };
 
   useEffect(() => {
-    loadLeads(filter);
-  }, [filter]); // eslint-disable-line react-hooks/exhaustive-deps
+    loadLeads(filter, region);
+  }, [filter, region]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const changeStatus = async (id, status) => {
     await api.patch(`/tracking/leads/${id}`, { status });
@@ -71,8 +130,31 @@ const AdminLeads = () => {
               <option key={option} value={option}>{option.charAt(0).toUpperCase() + option.slice(1)}</option>
             ))}
           </select>
+          <label htmlFor="lead-region">Region</label>
+          <select id="lead-region" value={region} onChange={e => setRegion(e.target.value)}>
+            <option value="all">All regions</option>
+            {leadRegions.map(item => (
+              <option key={item.region} value={item.region}>
+                {item.region}{item.country && item.country !== item.region ? `, ${item.country}` : ''} ({item.count})
+              </option>
+            ))}
+          </select>
           <span className="lead-alert-note">Alerts are sent after checkout is inactive for the configured delay.</span>
         </div>
+
+        <section className="lead-regions">
+          <h2>Page Views by Region</h2>
+          <div className="lead-region-grid">
+            {regionalPageViews.map((item, index) => (
+              <div className="lead-region-row" key={`${item.region || 'unknown'}-${item.country || index}`}>
+                <span>{item.region || item.country || 'Unknown region'}</span>
+                {item.country && item.country !== item.region && <small>{item.country}</small>}
+                <strong>{Number(item.count) || 0}</strong>
+              </div>
+            ))}
+            {regionalPageViews.length === 0 && <p>No regional page-view data collected yet.</p>}
+          </div>
+        </section>
 
         {loading ? (
           <div className="leads-loading"><div className="loading-spinner" /></div>
@@ -94,12 +176,12 @@ const AdminLeads = () => {
                   <span><strong>{money(lead.cartValue)}</strong> Cart</span>
                   <span><strong>{lead.productViews}</strong> Views</span>
                   <span><strong>{lead.cartAdds}</strong> Adds</span>
+                  <span><strong>{locationText(lead)}</strong> Region</span>
+                  <span><strong>{lead.ipAddress || 'Unavailable'}</strong> IP Address</span>
                 </div>
 
                 {Array.isArray(lead.cartItems) && lead.cartItems.length > 0 && (
-                  <p className="lead-items">
-                    {lead.cartItems.map(item => `${item.name || 'Product'} (${item.weight}) x${item.quantity}`).join(', ')}
-                  </p>
+                  <CartDetails items={lead.cartItems} />
                 )}
 
                 <div className="lead-card-foot">

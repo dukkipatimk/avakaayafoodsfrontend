@@ -207,8 +207,15 @@ const Checkout = () => {
     trackEvent('address_submitted', {
       cartValue: total,
       cartItems: items,
-      contact: { name: address.fullName, email: address.email, phone: address.phone },
-      metadata: { source: 'checkout_review', country: address.country },
+      contact: {
+        name: address.fullName,
+        email: address.email,
+        phone: address.phone,
+        country: address.country,
+        state: address.state,
+        city: address.city,
+      },
+      metadata: { source: 'checkout_review', country: address.country, state: address.state, city: address.city },
     });
     setStep(1);
   };
