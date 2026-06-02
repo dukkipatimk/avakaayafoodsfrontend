@@ -95,6 +95,99 @@ const BulkStockPanel = ({ product, onClose, onSaved }) => {
   );
 };
 
+/* ── Inline Price Update Panel ── */
+const PriceUpdatePanel = ({ product, onClose, onSaved }) => {
+  const [prices, setPrices] = useState(() => {
+    const map = {};
+    (product.variants || []).forEach(v => {
+      map[v.weight] = { price: v.price ?? '', mrp: v.mrp ?? '' };
+    });
+    return map;
+  });
+  const [saving, setSaving] = useState(false);
+
+  const activeVariants = (product.variants || []).filter(v => v.price);
+
+  const handleSave = async () => {
+    const updatedVariants = product.variants.map(v => ({
+      ...v,
+      price: Number(prices[v.weight]?.price ?? v.price),
+      mrp: Number(prices[v.weight]?.mrp ?? v.mrp),
+    }));
+    if (updatedVariants.some(v => v.price <= 0 || v.mrp <= 0)) {
+      alert('Price and MRP must be greater than zero.');
+      return;
+    }
+    if (updatedVariants.some(v => v.mrp < v.price)) {
+      alert('MRP cannot be lower than selling price.');
+      return;
+    }
+
+    setSaving(true);
+    try {
+      await api.put(`/products/${product._id}`, { ...product, variants: updatedVariants });
+      onSaved(product._id, updatedVariants);
+      onClose();
+    } catch (err) {
+      alert(err.response?.data?.message || 'Failed to update prices');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div className="bulk-price-panel" onClick={e => e.stopPropagation()}>
+      <div className="bulk-stock-header">
+        <span className="bulk-stock-title">Update Prices — {product.name}</span>
+        <button className="bulk-stock-close" onClick={onClose}>✕</button>
+      </div>
+      {activeVariants.length === 0 ? (
+        <p className="bulk-stock-empty">No active variants.</p>
+      ) : (
+        <div className="bulk-price-rows">
+          {activeVariants.map(v => (
+            <div key={v.weight} className="bulk-price-row">
+              <span className="bulk-stock-weight">{v.weight}</span>
+              <label>
+                Price
+                <input
+                  type="number"
+                  min="1"
+                  value={prices[v.weight]?.price ?? v.price}
+                  onChange={e => setPrices(prev => ({
+                    ...prev,
+                    [v.weight]: { ...prev[v.weight], price: e.target.value },
+                  }))}
+                  className="bulk-stock-input"
+                />
+              </label>
+              <label>
+                MRP
+                <input
+                  type="number"
+                  min="1"
+                  value={prices[v.weight]?.mrp ?? v.mrp}
+                  onChange={e => setPrices(prev => ({
+                    ...prev,
+                    [v.weight]: { ...prev[v.weight], mrp: e.target.value },
+                  }))}
+                  className="bulk-stock-input"
+                />
+              </label>
+            </div>
+          ))}
+        </div>
+      )}
+      <div className="bulk-stock-footer">
+        <button className="btn-table-edit btn-sm" onClick={onClose}>Cancel</button>
+        <button className="btn btn-primary btn-sm" onClick={handleSave} disabled={saving || activeVariants.length === 0}>
+          {saving ? 'Saving…' : 'Save Prices'}
+        </button>
+      </div>
+    </div>
+  );
+};
+
 /* ── Main Component ── */
 const AdminProducts = () => {
   const [products, setProducts] = useState([]);
@@ -105,6 +198,7 @@ const AdminProducts = () => {
   const [saving, setSaving] = useState(false);
   const [search, setSearch] = useState('');
   const [bulkStockProductId, setBulkStockProductId] = useState(null);
+  const [priceProductId, setPriceProductId] = useState(null);
   const [uploading, setUploading] = useState(false);
 
   const fetchProducts = () => {
@@ -120,6 +214,7 @@ const AdminProducts = () => {
     setEditing(null);
     setShowForm(true);
     setBulkStockProductId(null);
+    setPriceProductId(null);
   };
 
   const openEdit = product => {
@@ -135,6 +230,7 @@ const AdminProducts = () => {
     setEditing(product._id);
     setShowForm(true);
     setBulkStockProductId(null);
+    setPriceProductId(null);
   };
 
   const uploadImage = async file => {
@@ -223,6 +319,12 @@ const AdminProducts = () => {
     ));
   };
 
+  const handlePricesSaved = (productId, updatedVariants) => {
+    setProducts(prev => prev.map(p =>
+      p._id === productId ? { ...p, variants: updatedVariants } : p
+    ));
+  };
+
   const filtered = products.filter(p =>
     p.name?.toLowerCase().includes(search.toLowerCase())
   );
@@ -273,6 +375,7 @@ const AdminProducts = () => {
                   const min = Math.min(...prices);
                   const max = Math.max(...prices);
                   const isStockPanelOpen = bulkStockProductId === p._id;
+                  const isPricePanelOpen = priceProductId === p._id;
                   return (
                     <React.Fragment key={p._id}>
                       <tr>
@@ -302,9 +405,21 @@ const AdminProducts = () => {
                             <button className="btn-table-edit" onClick={() => openEdit(p)}>Edit</button>
                             <button
                               className={`btn-table-stock${isStockPanelOpen ? ' active' : ''}`}
-                              onClick={() => setBulkStockProductId(isStockPanelOpen ? null : p._id)}
+                              onClick={() => {
+                                setBulkStockProductId(isStockPanelOpen ? null : p._id);
+                                setPriceProductId(null);
+                              }}
                             >
                               Stock
+                            </button>
+                            <button
+                              className={`btn-table-price${isPricePanelOpen ? ' active' : ''}`}
+                              onClick={() => {
+                                setPriceProductId(isPricePanelOpen ? null : p._id);
+                                setBulkStockProductId(null);
+                              }}
+                            >
+                              Price
                             </button>
                             <button className="btn-table-delete" onClick={() => handleDelete(p._id)}>Delete</button>
                           </div>
@@ -317,6 +432,17 @@ const AdminProducts = () => {
                               product={p}
                               onClose={() => setBulkStockProductId(null)}
                               onSaved={handleBulkStockSaved}
+                            />
+                          </td>
+                        </tr>
+                      )}
+                      {isPricePanelOpen && (
+                        <tr className="bulk-stock-row-tr">
+                          <td colSpan={8} style={{ padding: 0, background: '#f9fafb' }}>
+                            <PriceUpdatePanel
+                              product={p}
+                              onClose={() => setPriceProductId(null)}
+                              onSaved={handlePricesSaved}
                             />
                           </td>
                         </tr>

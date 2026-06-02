@@ -1,6 +1,16 @@
 import api from './api';
 
 const SESSION_KEY = 'akf_tracking_session';
+const STAFF_ROLES = new Set(['admin', 'store_manager']);
+
+const isStaffViewer = () => {
+  try {
+    const user = JSON.parse(localStorage.getItem('akf_user') || 'null');
+    return STAFF_ROLES.has(user?.role);
+  } catch {
+    return false;
+  }
+};
 
 export const getTrackingSessionId = () => {
   let sessionId = localStorage.getItem(SESSION_KEY);
@@ -14,7 +24,7 @@ export const getTrackingSessionId = () => {
 };
 
 export const trackEvent = (eventType, payload = {}) => {
-  if (window.location.pathname.startsWith('/admin')) return;
+  if (window.location.pathname.startsWith('/admin') || isStaffViewer()) return;
   api.post('/tracking/event', {
     sessionId: getTrackingSessionId(),
     eventType,
