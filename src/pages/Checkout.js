@@ -81,7 +81,11 @@ const Checkout = () => {
   const isFirstBundleItem = (item, index) => item.bundleId && items.findIndex(entry => entry.bundleId === item.bundleId) === index;
 
   useEffect(() => {
-    trackEvent('begin_checkout', { cartValue: subtotal, cartItems: items, metadata: { source: 'checkout_page' } });
+    trackEvent('begin_checkout', {
+      cartValue: subtotal,
+      cartItems: items,
+      metadata: { source: 'checkout_page', subtotal, shippingStatus: 'pending_address' },
+    });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const applyCoupon = async () => {
@@ -215,7 +219,16 @@ const Checkout = () => {
         state: address.state,
         city: address.city,
       },
-      metadata: { source: 'checkout_review', country: address.country, state: address.state, city: address.city },
+      metadata: {
+        source: 'checkout_review',
+        country: address.country,
+        state: address.state,
+        city: address.city,
+        subtotal,
+        shippingCost: shippingCost ?? 0,
+        discount: discountAmount,
+        total,
+      },
     });
     setStep(1);
   };
@@ -248,9 +261,23 @@ const Checkout = () => {
       });
 
       const order = orderRes.data.order;
+      const orderTotal = Number(order.total) || total;
+      const orderTrackingPayload = {
+        orderId: order._id,
+        cartValue: orderTotal,
+        cartItems: items,
+        contact: { name: address.fullName, email: address.email, phone: address.phone },
+        metadata: {
+          source: 'order_completion',
+          subtotal,
+          shippingCost: shippingCost ?? 0,
+          discount: discountAmount,
+          total: orderTotal,
+        },
+      };
 
       if (paymentMethod === 'cod') {
-        trackEvent('order_completed', { orderId: order._id, contact: { name: address.fullName, email: address.email, phone: address.phone } });
+        trackEvent('order_completed', orderTrackingPayload);
         clearCart();
         navigate(`/order/success?orderId=${order._id}&orderNumber=${order.orderNumber}`);
         return;
@@ -280,7 +307,7 @@ const Checkout = () => {
           razorpay_signature: 'mock_sig',
           orderId: order._id
         });
-        trackEvent('order_completed', { orderId: order._id, contact: { name: address.fullName, email: address.email, phone: address.phone } });
+        trackEvent('order_completed', orderTrackingPayload);
         clearCart();
         navigate(`/order/success?orderId=${order._id}&orderNumber=${order.orderNumber}`);
         return;
@@ -320,7 +347,7 @@ const Checkout = () => {
             ...response,
             orderId: order._id
           });
-          trackEvent('order_completed', { orderId: order._id, contact: { name: address.fullName, email: address.email, phone: address.phone } });
+          trackEvent('order_completed', orderTrackingPayload);
           clearCart();
           navigate(`/order/success?orderId=${order._id}&orderNumber=${order.orderNumber}`);
         },

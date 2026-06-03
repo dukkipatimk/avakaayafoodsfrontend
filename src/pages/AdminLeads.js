@@ -31,6 +31,30 @@ const normalizeLead = (lead) => ({
   ...lead,
   cartItems: asCartItems(lead?.cartItems),
 });
+const newestLeadFirst = (a, b) => new Date(b.lastEventAt || 0) - new Date(a.lastEventAt || 0);
+const addressSource = (lead) => (
+  lead?.shippingAddress ||
+  lead?.customerAddress ||
+  lead?.address ||
+  lead?.order?.shippingAddress ||
+  lead?.metadata?.shippingAddress ||
+  lead?.metadata?.address ||
+  null
+);
+const customerAddressLines = (lead) => {
+  const address = addressSource(lead);
+  if (typeof address === 'string') return address.trim() ? [address.trim()] : [];
+
+  const line1 = address?.line1 || address?.addressLine1 || address?.street || address?.address1;
+  const line2 = address?.line2 || address?.addressLine2 || address?.landmark || address?.address2;
+  const city = address?.city || lead?.city;
+  const state = address?.state || address?.region || lead?.region;
+  const pincode = address?.pincode || address?.postalCode || address?.zip;
+  const country = address?.country || lead?.country;
+  const localityLine = [city, state, pincode].filter(Boolean).join(', ');
+
+  return [line1, line2, localityLine, country].filter(Boolean);
+};
 
 const CartDetails = ({ items }) => {
   const hamperNotes = items.reduce((groups, item) => {
@@ -100,7 +124,7 @@ const AdminLeads = () => {
       const params = new URLSearchParams({ status: selected });
       if (selectedRegion !== 'all') params.set('region', selectedRegion);
       const res = await api.get(`/tracking/leads?${params}`);
-      const nextLeads = (res.data.leads || []).map(normalizeLead);
+      const nextLeads = (res.data.leads || []).map(normalizeLead).sort(newestLeadFirst);
       setLeads(nextLeads);
       setSelectedLead(current => current
         ? nextLeads.find(lead => leadId(lead) === leadId(current)) || null
@@ -270,10 +294,21 @@ const AdminLeads = () => {
               <span><strong>{selectedLead.stage}</strong> Stage</span>
               <span><strong>{money(selectedLead.cartValue)}</strong> Cart Value</span>
               <span><strong>{selectedLead.status}</strong> Status</span>
-              <span><strong>{locationText(selectedLead)}</strong> Region</span>
-              <span><strong>{selectedLead.ipAddress || 'Unavailable'}</strong> IP Address</span>
               <span><strong>{dateTime(selectedLead.lastEventAt)}</strong> Last Activity</span>
               {selectedLead.order?.orderNumber && <span><strong>#{selectedLead.order.orderNumber}</strong> Order</span>}
+            </div>
+
+            <div className="lead-customer-address">
+              <h3>Customer Address</h3>
+              {customerAddressLines(selectedLead).length > 0 ? (
+                <address>
+                  {customerAddressLines(selectedLead).map((line, index) => (
+                    <span key={`${line}-${index}`}>{line}</span>
+                  ))}
+                </address>
+              ) : (
+                <p>No customer address captured yet.</p>
+              )}
             </div>
 
             {Array.isArray(selectedLead.cartItems) && selectedLead.cartItems.length > 0 ? (

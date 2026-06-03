@@ -32,7 +32,7 @@ const Header = () => {
   const [addedIds, setAddedIds] = useState({});
   const searchRef = useRef(null);
   const { user, logout } = useAuth();
-  const { totalItems, addItem } = useCart();
+  const { totalItems, addItem, subtotal } = useCart();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -116,11 +116,12 @@ const Header = () => {
     const variant = product.variants?.[0];
     if (!variant) return;
     addItem(product, variant);
+    const addedValue = Number(variant.price) || 0;
     trackEvent('add_to_cart', {
       productId: product._id,
-      cartValue: variant.price,
+      cartValue: subtotal + addedValue,
       cartItems: [{ productId: product._id, name: product.name, weight: variant.weight, quantity: 1, price: variant.price }],
-      metadata: { source: 'search_quick_add' },
+      metadata: { source: 'search_quick_add', addedValue },
     });
     toast.success(`${product.name} (${variant.weight}) added to cart!`);
     setAddedIds(prev => ({ ...prev, [product._id]: true }));

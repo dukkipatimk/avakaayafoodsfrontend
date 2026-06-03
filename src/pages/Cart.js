@@ -23,7 +23,11 @@ const Cart = () => {
 
   useEffect(() => {
     if (items.length || trackedFilledCart.current) {
-      trackEvent('view_cart', { cartValue: subtotal, cartItems: items, metadata: { source: 'cart_page' } });
+      trackEvent('view_cart', {
+        cartValue: subtotal,
+        cartItems: items,
+        metadata: { source: 'cart_page', subtotal, shippingStatus: 'calculated_at_checkout' },
+      });
       trackedFilledCart.current = items.length > 0;
     }
   }, [items, subtotal]);
@@ -129,7 +133,11 @@ const Cart = () => {
             <div className="summary-divider" />
             <div className="summary-total"><span>Total</span><span>INR {subtotal.toLocaleString()}</span></div>
             <button className="btn btn-gold btn-lg checkout-btn" onClick={() => {
-              trackEvent('begin_checkout', { cartValue: subtotal, cartItems: items, metadata: { source: 'cart_button' } });
+              trackEvent('begin_checkout', {
+                cartValue: subtotal,
+                cartItems: items,
+                metadata: { source: 'cart_button', subtotal, shippingStatus: 'pending_address' },
+              });
               navigate('/checkout');
             }}>Proceed to Checkout</button>
             <Link to="/products" className="continue-shopping">Continue Shopping</Link>

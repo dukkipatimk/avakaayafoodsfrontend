@@ -338,6 +338,35 @@
   text-transform: capitalize;
 }
 
+.lead-customer-address {
+  background: #fffaf0;
+  border: 1px solid #eee6d7;
+  border-radius: 8px;
+  margin: 0 0 1rem;
+  padding: 0.85rem 0.9rem;
+}
+
+.lead-customer-address h3 {
+  color: var(--color-forest, #1a2e1a);
+  font: 600 0.76rem 'Josefin Sans', sans-serif;
+  letter-spacing: 0.08em;
+  margin: 0 0 0.5rem;
+  text-transform: uppercase;
+}
+
+.lead-customer-address address,
+.lead-customer-address p {
+  color: var(--color-text-muted, #6b6b6b);
+  font-size: 0.85rem;
+  font-style: normal;
+  line-height: 1.55;
+  margin: 0;
+}
+
+.lead-customer-address address span {
+  display: block;
+}
+
 .lead-no-products {
   background: #fafafa;
   border: 1px dashed #d1d5db;

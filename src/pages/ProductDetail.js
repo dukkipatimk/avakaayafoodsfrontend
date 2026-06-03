@@ -56,7 +56,7 @@ const ProductDetail = () => {
   const [reviewComment, setReviewComment] = useState('');
   const [reviewSubmitting, setReviewSubmitting] = useState(false);
 
-  const { addItem } = useCart();
+  const { addItem, subtotal } = useCart();
   const { user } = useAuth();
 
   const fetchProduct = (productSlug) => {
@@ -174,11 +174,12 @@ const ProductDetail = () => {
   const handleAddToCart = () => {
     if (isOutOfStock) return;
     addItem(product, selectedVariant, quantity);
+    const addedValue = (Number(selectedVariant.price) || 0) * quantity;
     trackEvent('add_to_cart', {
       productId: product._id,
-      cartValue: Number(selectedVariant.price) * quantity,
+      cartValue: subtotal + addedValue,
       cartItems: [{ productId: product._id, name: product.name, weight: selectedVariant.weight, quantity, price: selectedVariant.price }],
-      metadata: { source: 'product_detail' },
+      metadata: { source: 'product_detail', addedValue },
     });
     toast.success(`${product.name} (${selectedVariant.weight} × ${quantity}) added to cart!`);
   };
