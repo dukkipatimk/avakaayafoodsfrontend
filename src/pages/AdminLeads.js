@@ -4,6 +4,11 @@ import AdminTabs from '../components/AdminTabs';
 import './AdminLeads.css';
 
 const FILTERS = ['actionable', 'abandoned', 'hot', 'active', 'converted', 'dismissed', 'all'];
+const TREND_OPTIONS = [
+  { value: 'daily', label: 'Daily', title: 'Last 30 Days' },
+  { value: 'weekly', label: 'Weekly', title: 'Last 12 Weeks' },
+  { value: 'monthly', label: 'Monthly', title: 'Last 12 Months' },
+];
 
 const money = (value) => `Rs. ${Number(value || 0).toLocaleString('en-IN')}`;
 const dateTime = (value) => value
@@ -54,6 +59,30 @@ const customerAddressLines = (lead) => {
   const localityLine = [city, state, pincode].filter(Boolean).join(', ');
 
   return [line1, line2, localityLine, country].filter(Boolean);
+};
+const trendLabel = (period, unit) => {
+  if (unit === 'weekly') return String(period || '').replace('-W', ' W');
+  if (unit === 'monthly') {
+    const [year, month] = String(period || '').split('-');
+    if (year && month) {
+      return new Date(Number(year), Number(month) - 1, 1).toLocaleDateString('en-IN', { month: 'short', year: '2-digit' });
+    }
+  }
+  if (unit === 'daily' && period) {
+    return new Date(`${period}T00:00:00`).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' });
+  }
+  return period || '-';
+};
+const trendRows = (rows = []) => {
+  const byPeriod = rows.reduce((groups, row) => {
+    const period = row.period;
+    if (!period) return groups;
+    if (!groups[period]) groups[period] = { period, pageViews: 0, clicks: 0 };
+    if (row.eventType === 'page_view') groups[period].pageViews = Number(row.count) || 0;
+    if (row.eventType === 'generic_click') groups[period].clicks = Number(row.count) || 0;
+    return groups;
+  }, {});
+  return Object.values(byPeriod).sort((a, b) => String(a.period).localeCompare(String(b.period)));
 };
 
 const CartDetails = ({ items }) => {
@@ -107,12 +136,41 @@ const CartDetails = ({ items }) => {
   );
 };
 
+const AnalyticsTrendChart = ({ rows, unit }) => {
+  const data = trendRows(rows);
+  const maxValue = Math.max(1, ...data.flatMap(item => [item.pageViews, item.clicks]));
+
+  return (
+    <div className="lead-trend-chart">
+      {data.length > 0 ? data.map(item => (
+        <div className="lead-trend-column" key={item.period}>
+          <div className="lead-trend-bars" title={`${trendLabel(item.period, unit)}: ${item.pageViews} views, ${item.clicks} clicks`}>
+            <span
+              className="lead-trend-bar lead-trend-bar--views"
+              style={{ height: `${Math.max(4, (item.pageViews / maxValue) * 100)}%` }}
+            />
+            <span
+              className="lead-trend-bar lead-trend-bar--clicks"
+              style={{ height: `${Math.max(4, (item.clicks / maxValue) * 100)}%` }}
+            />
+          </div>
+          <span className="lead-trend-label">{trendLabel(item.period, unit)}</span>
+        </div>
+      )) : (
+        <div className="lead-trend-empty">No dated analytics data found for this period.</div>
+      )}
+    </div>
+  );
+};
+
 const AdminLeads = () => {
   const [leads, setLeads] = useState([]);
   const [eventSummary, setEventSummary] = useState([]);
   const [statusSummary, setStatusSummary] = useState([]);
   const [regionalPageViews, setRegionalPageViews] = useState([]);
   const [leadRegions, setLeadRegions] = useState([]);
+  const [analyticsTrends, setAnalyticsTrends] = useState({ daily: [], weekly: [], monthly: [] });
+  const [trendView, setTrendView] = useState('daily');
   const [filter, setFilter] = useState('actionable');
   const [region, setRegion] = useState('all');
   const [loading, setLoading] = useState(true);
@@ -134,8 +192,14 @@ const AdminLeads = () => {
       setStatusSummary(res.data.statusSummary || []);
       setRegionalPageViews(res.data.regionalPageViews || []);
       setLeadRegions(res.data.leadRegions || []);
+      setAnalyticsTrends({
+        daily: res.data.analyticsTrends?.daily || [],
+        weekly: res.data.analyticsTrends?.weekly || [],
+        monthly: res.data.analyticsTrends?.monthly || [],
+      });
     } catch {
       setLeads([]);
+      setAnalyticsTrends({ daily: [], weekly: [], monthly: [] });
     } finally {
       setLoading(false);
     }
@@ -160,6 +224,7 @@ const AdminLeads = () => {
 
   const summary = Object.fromEntries(eventSummary.map(event => [event.eventType, Number(event.count)]));
   const statuses = Object.fromEntries(statusSummary.map(status => [status.status, Number(status.count)]));
+  const activeTrend = TREND_OPTIONS.find(option => option.value === trendView) || TREND_OPTIONS[0];
 
   return (
     <div className="admin-page leads-page">
@@ -181,6 +246,32 @@ const AdminLeads = () => {
           <div className="lead-metric"><strong>{summary.begin_checkout || 0}</strong><span>Checkout Starts</span></div>
           <div className="lead-metric alert"><strong>{statuses.abandoned || 0}</strong><span>Abandoned</span></div>
         </div>
+
+        <section className="lead-trends-panel">
+          <div className="lead-section-head">
+            <div>
+              <h2>Views & Clicks</h2>
+              <p>{activeTrend.title}</p>
+            </div>
+            <div className="lead-trend-tabs" role="tablist" aria-label="Analytics period">
+              {TREND_OPTIONS.map(option => (
+                <button
+                  type="button"
+                  key={option.value}
+                  className={trendView === option.value ? 'active' : ''}
+                  onClick={() => setTrendView(option.value)}
+                >
+                  {option.label}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="lead-trend-legend">
+            <span><i className="views" /> Page Views</span>
+            <span><i className="clicks" /> Page Clicks</span>
+          </div>
+          <AnalyticsTrendChart rows={analyticsTrends[trendView]} unit={trendView} />
+        </section>
 
         <div className="leads-toolbar">
           <label htmlFor="lead-filter">Show</label>
