@@ -324,7 +324,12 @@ const Home = () => {
             <div className="roots-stores stagger">
               {stores.map(s => (
                 <div key={s._id} className="store-card">
-                  <h3 className="store-card-name">{s.name}</h3>
+                  <div className="store-card-title-row">
+                    <h3 className="store-card-name">{s.name}</h3>
+                    <span className={`store-card-status store-card-status--${s.status || 'unknown'}`}>
+                      {s.statusLabel || 'Open'}
+                    </span>
+                  </div>
                   {s.area && <p className="store-card-area">📍 {s.area}</p>}
                   {s.address && <p className="store-card-line">{s.address}</p>}
                   {(s.phone || s.hours) && (

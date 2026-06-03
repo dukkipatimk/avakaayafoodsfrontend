@@ -16,6 +16,29 @@
 .status-toggle.inactive { background: #ef444418; color: #dc2626; border-color: #ef444455; }
 .status-toggle:disabled { cursor: not-allowed; opacity: 0.6; }
 
+.branch-status {
+  border: 1.5px solid transparent;
+  border-radius: 20px;
+  display: inline-flex;
+  font: 700 0.68rem 'Josefin Sans', sans-serif;
+  letter-spacing: 0.06em;
+  padding: 0.28rem 0.65rem;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.branch-status--open { background: #10b98118; border-color: #10b98155; color: #059669; }
+.branch-status--closed { background: #ef444418; border-color: #ef444455; color: #dc2626; }
+.branch-status--coming_soon { background: #f59e0b18; border-color: #f59e0b55; color: #b45309; }
+.branch-status--unknown { background: #6b728018; border-color: #6b728055; color: #4b5563; }
+
+.branch-status-note {
+  color: var(--color-text-muted, #6b6b6b);
+  display: block;
+  font-size: 0.72rem;
+  margin-top: 0.25rem;
+}
+
 /* ── Row actions ── */
 .store-actions { display: flex; gap: 0.4rem; }
 .btn-table-edit,
@@ -89,6 +112,7 @@
   margin-bottom: 0.3rem;
 }
 .store-form-group input,
+.store-form-group select,
 .store-form-group textarea {
   width: 100%;
   padding: 0.55rem 0.8rem;
@@ -99,6 +123,7 @@
   resize: vertical;
 }
 .store-form-group input:focus,
+.store-form-group select:focus,
 .store-form-group textarea:focus {
   outline: none;
   border-color: var(--color-forest, #1a2e1a);

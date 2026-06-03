@@ -171,6 +171,7 @@ const AdminLeads = () => {
   const [leadRegions, setLeadRegions] = useState([]);
   const [analyticsTrends, setAnalyticsTrends] = useState({ daily: [], weekly: [], monthly: [] });
   const [trendView, setTrendView] = useState('daily');
+  const [showTrends, setShowTrends] = useState(false);
   const [filter, setFilter] = useState('actionable');
   const [region, setRegion] = useState('all');
   const [loading, setLoading] = useState(true);
@@ -247,30 +248,42 @@ const AdminLeads = () => {
           <div className="lead-metric alert"><strong>{statuses.abandoned || 0}</strong><span>Abandoned</span></div>
         </div>
 
-        <section className="lead-trends-panel">
+        <section className={`lead-trends-panel ${showTrends ? 'is-open' : ''}`}>
           <div className="lead-section-head">
             <div>
               <h2>Views & Clicks</h2>
-              <p>{activeTrend.title}</p>
+              <p>{showTrends ? activeTrend.title : 'Daily, weekly, and monthly analytics'}</p>
             </div>
-            <div className="lead-trend-tabs" role="tablist" aria-label="Analytics period">
-              {TREND_OPTIONS.map(option => (
-                <button
-                  type="button"
-                  key={option.value}
-                  className={trendView === option.value ? 'active' : ''}
-                  onClick={() => setTrendView(option.value)}
-                >
-                  {option.label}
-                </button>
-              ))}
-            </div>
+            <button
+              type="button"
+              className="lead-trend-toggle"
+              onClick={() => setShowTrends(current => !current)}
+              aria-expanded={showTrends}
+            >
+              {showTrends ? 'Hide Graphs' : 'Show Graphs'}
+            </button>
           </div>
-          <div className="lead-trend-legend">
-            <span><i className="views" /> Page Views</span>
-            <span><i className="clicks" /> Page Clicks</span>
-          </div>
-          <AnalyticsTrendChart rows={analyticsTrends[trendView]} unit={trendView} />
+          {showTrends && (
+            <>
+              <div className="lead-trend-tabs" role="tablist" aria-label="Analytics period">
+                {TREND_OPTIONS.map(option => (
+                  <button
+                    type="button"
+                    key={option.value}
+                    className={trendView === option.value ? 'active' : ''}
+                    onClick={() => setTrendView(option.value)}
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+              <div className="lead-trend-legend">
+                <span><i className="views" /> Page Views</span>
+                <span><i className="clicks" /> Page Clicks</span>
+              </div>
+              <AnalyticsTrendChart rows={analyticsTrends[trendView]} unit={trendView} />
+            </>
+          )}
         </section>
 
         <div className="leads-toolbar">

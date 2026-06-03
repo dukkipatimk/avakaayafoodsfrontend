@@ -6,8 +6,17 @@ import './AdminStores.css';
 
 const emptyStore = {
   name: '', area: '', address: '', city: 'Hyderabad', state: 'Telangana',
-  phone: '', hours: '', mapUrl: '', sortOrder: 0, isActive: true,
+  phone: '', hours: '', statusOverride: 'auto', mapUrl: '', sortOrder: 0, isActive: true,
 };
+
+const STATUS_OVERRIDE_OPTIONS = [
+  { value: 'auto', label: 'Auto from hours' },
+  { value: 'open', label: 'Force Open' },
+  { value: 'closed', label: 'Force Closed' },
+  { value: 'coming_soon', label: 'Coming Soon' },
+];
+
+const statusClass = (status) => `branch-status branch-status--${status || 'unknown'}`;
 
 /* ── Create / Edit Store Modal ── */
 const StoreModal = ({ store, onClose, onSaved }) => {
@@ -26,7 +35,7 @@ const StoreModal = ({ store, onClose, onSaved }) => {
       const payload = {
         name: form.name.trim(), area: form.area.trim(), address: form.address.trim(),
         city: form.city.trim(), state: form.state.trim(), phone: form.phone.trim(),
-        hours: form.hours.trim(), mapUrl: form.mapUrl.trim(),
+        hours: form.hours.trim(), statusOverride: form.statusOverride || 'auto', mapUrl: form.mapUrl.trim(),
         sortOrder: Number(form.sortOrder) || 0, isActive: form.isActive,
       };
       const { data } = editing
@@ -91,6 +100,14 @@ const StoreModal = ({ store, onClose, onSaved }) => {
                 placeholder="e.g. 9 AM – 9 PM"
                 onChange={e => set('hours', e.target.value)} />
             </div>
+          </div>
+          <div className="store-form-group">
+            <label>Branch Status Override</label>
+            <select value={form.statusOverride || 'auto'} onChange={e => set('statusOverride', e.target.value)}>
+              {STATUS_OVERRIDE_OPTIONS.map(option => (
+                <option key={option.value} value={option.value}>{option.label}</option>
+              ))}
+            </select>
           </div>
           <div className="store-form-group">
             <label>Google Maps Link</label>
@@ -202,7 +219,8 @@ const AdminStores = () => {
                   <th>City</th>
                   <th>Phone</th>
                   <th>Hours</th>
-                  <th>Status</th>
+                  <th>Branch Status</th>
+                  <th>Visibility</th>
                   <th>Actions</th>
                 </tr>
               </thead>
@@ -216,6 +234,14 @@ const AdminStores = () => {
                       <td>{s.city || '—'}</td>
                       <td>{s.phone || '—'}</td>
                       <td>{s.hours || '—'}</td>
+                      <td>
+                        <span className={statusClass(s.status)}>
+                          {s.statusLabel || 'Unknown'}
+                        </span>
+                        <small className="branch-status-note">
+                          {s.statusOverride && s.statusOverride !== 'auto' ? 'Manual override' : s.statusNote || 'Auto from hours'}
+                        </small>
+                      </td>
                       <td>
                         <button
                           className={`status-toggle ${s.isActive ? 'active' : 'inactive'}`}

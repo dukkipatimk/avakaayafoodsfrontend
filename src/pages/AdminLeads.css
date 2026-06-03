@@ -40,6 +40,10 @@
   border-radius: 10px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
   margin-bottom: 1.3rem;
+  padding: 0.85rem 1rem;
+}
+
+.lead-trends-panel.is-open {
   padding: 1rem 1.2rem;
 }
 
@@ -48,6 +52,10 @@
   display: flex;
   gap: 1rem;
   justify-content: space-between;
+  margin-bottom: 0;
+}
+
+.lead-trends-panel.is-open .lead-section-head {
   margin-bottom: 0.8rem;
 }
 
@@ -61,6 +69,19 @@
   color: var(--color-text-muted, #6b6b6b);
   font-size: 0.82rem;
   margin: 0;
+}
+
+.lead-trend-toggle {
+  background: var(--color-forest, #1a2e1a);
+  border: 1px solid var(--color-forest, #1a2e1a);
+  border-radius: 6px;
+  color: #fff;
+  cursor: pointer;
+  font: 600 0.7rem 'Josefin Sans', sans-serif;
+  letter-spacing: 0.08em;
+  padding: 0.5rem 0.75rem;
+  text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .lead-trend-tabs {
@@ -540,6 +561,7 @@
 @media (max-width: 800px) {
   .leads-metrics { grid-template-columns: repeat(2, 1fr); }
   .lead-section-head { flex-direction: column; }
+  .lead-trend-toggle { width: 100%; }
   .lead-trend-tabs { width: 100%; }
   .lead-trend-tabs button { flex: 1; }
   .leads-toolbar, .lead-card-foot { align-items: stretch; flex-direction: column; }
