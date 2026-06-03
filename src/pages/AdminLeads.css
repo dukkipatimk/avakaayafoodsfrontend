@@ -103,6 +103,18 @@
   padding: 1.15rem 1.3rem;
 }
 
+.lead-card-clickable {
+  cursor: pointer;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.lead-card-clickable:hover,
+.lead-card-clickable:focus-visible {
+  box-shadow: 0 8px 24px rgba(26, 46, 26, 0.12);
+  outline: none;
+  transform: translateY(-1px);
+}
+
 .lead-card-head, .lead-card-foot {
   align-items: flex-start;
   display: flex;
@@ -151,6 +163,23 @@
   color: var(--color-forest, #1a2e1a);
   display: block;
   text-transform: capitalize;
+}
+
+.lead-product-preview {
+  align-items: center;
+  background: #faf6ed;
+  border: 1px dashed #dfcfaa;
+  border-radius: 8px;
+  color: var(--color-text-muted, #6b6b6b);
+  display: flex;
+  font-size: 0.82rem;
+  justify-content: space-between;
+  margin: 0 0 0.9rem;
+  padding: 0.65rem 0.8rem;
+}
+
+.lead-product-preview strong {
+  color: var(--color-forest, #1a2e1a);
 }
 
 .lead-cart-details {
@@ -210,8 +239,131 @@
   border: 1px solid var(--color-forest, #1a2e1a);
   border-radius: 4px;
   color: var(--color-forest, #1a2e1a);
+  cursor: pointer;
   font: 0.72rem 'Josefin Sans', sans-serif;
   padding: 0.36rem 0.65rem;
+  text-decoration: none;
+}
+
+.lead-actions .lead-view-products {
+  background: var(--color-forest, #1a2e1a);
+  color: #fff;
+}
+
+.lead-detail-backdrop {
+  background: rgba(17, 24, 39, 0.48);
+  bottom: 0;
+  display: flex;
+  justify-content: flex-end;
+  left: 0;
+  position: fixed;
+  right: 0;
+  top: 0;
+  z-index: 1200;
+}
+
+.lead-detail-panel {
+  background: #fff;
+  box-shadow: -12px 0 32px rgba(0, 0, 0, 0.18);
+  max-width: 680px;
+  overflow-y: auto;
+  padding: 1.35rem;
+  width: min(92vw, 680px);
+}
+
+.lead-detail-head {
+  align-items: flex-start;
+  border-bottom: 1px solid #eee6d7;
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+}
+
+.lead-detail-kicker {
+  color: #b45309;
+  display: block;
+  font: 700 0.68rem 'Josefin Sans', sans-serif;
+  letter-spacing: 0.12em;
+  margin-bottom: 0.35rem;
+  text-transform: uppercase;
+}
+
+.lead-detail-head h2 {
+  color: var(--color-forest, #1a2e1a);
+  margin: 0 0 0.2rem;
+}
+
+.lead-detail-head p {
+  color: var(--color-text-muted, #6b6b6b);
+  font-size: 0.88rem;
+  margin: 0;
+}
+
+.lead-detail-close {
+  align-items: center;
+  background: #faf6ed;
+  border: 1px solid #eee6d7;
+  border-radius: 999px;
+  color: var(--color-forest, #1a2e1a);
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 1.45rem;
+  height: 36px;
+  justify-content: center;
+  line-height: 1;
+  width: 36px;
+}
+
+.lead-detail-summary {
+  display: grid;
+  gap: 0.65rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-bottom: 1rem;
+}
+
+.lead-detail-summary span {
+  background: #faf6ed;
+  border-radius: 8px;
+  color: var(--color-text-muted, #6b6b6b);
+  font-size: 0.8rem;
+  padding: 0.65rem 0.75rem;
+}
+
+.lead-detail-summary strong {
+  color: var(--color-forest, #1a2e1a);
+  display: block;
+  margin-bottom: 0.15rem;
+  text-transform: capitalize;
+}
+
+.lead-no-products {
+  background: #fafafa;
+  border: 1px dashed #d1d5db;
+  border-radius: 8px;
+  color: var(--color-text-muted, #6b6b6b);
+  padding: 1rem;
+  text-align: center;
+}
+
+.lead-detail-actions {
+  border-top: 1px solid #eee6d7;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+}
+
+.lead-detail-actions a,
+.lead-detail-actions button {
+  background: var(--color-forest, #1a2e1a);
+  border: 1px solid var(--color-forest, #1a2e1a);
+  border-radius: 5px;
+  color: #fff;
+  font: 0.78rem 'Josefin Sans', sans-serif;
+  padding: 0.55rem 0.85rem;
   text-decoration: none;
 }
 
@@ -227,4 +379,7 @@
   .leads-metrics { grid-template-columns: repeat(2, 1fr); }
   .leads-toolbar, .lead-card-foot { align-items: stretch; flex-direction: column; }
   .lead-alert-note, .lead-actions { margin-left: 0; }
+  .lead-product-preview { align-items: flex-start; flex-direction: column; gap: 0.25rem; }
+  .lead-detail-panel { width: 100%; }
+  .lead-detail-summary { grid-template-columns: 1fr; }
 }

@@ -10,6 +10,27 @@ const dateTime = (value) => value
   ? new Date(value).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })
   : '-';
 const locationText = (lead) => [lead.city, lead.region, lead.country].filter(Boolean).join(', ') || 'Unknown';
+const leadTitle = (lead) => lead?.name || lead?.email || lead?.phone || 'Anonymous visitor';
+const cartItemCount = (lead) => Array.isArray(lead?.cartItems)
+  ? lead.cartItems.reduce((total, item) => total + (Number(item.quantity) || 1), 0)
+  : 0;
+const leadId = (lead) => lead?.id || lead?._id;
+const asCartItems = (value) => {
+  if (Array.isArray(value)) return value;
+  if (typeof value === 'string') {
+    try {
+      const parsed = JSON.parse(value);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
+  }
+  return [];
+};
+const normalizeLead = (lead) => ({
+  ...lead,
+  cartItems: asCartItems(lead?.cartItems),
+});
 
 const CartDetails = ({ items }) => {
   const hamperNotes = items.reduce((groups, item) => {
@@ -71,6 +92,7 @@ const AdminLeads = () => {
   const [filter, setFilter] = useState('actionable');
   const [region, setRegion] = useState('all');
   const [loading, setLoading] = useState(true);
+  const [selectedLead, setSelectedLead] = useState(null);
 
   const loadLeads = async (selected = filter, selectedRegion = region) => {
     setLoading(true);
@@ -78,7 +100,12 @@ const AdminLeads = () => {
       const params = new URLSearchParams({ status: selected });
       if (selectedRegion !== 'all') params.set('region', selectedRegion);
       const res = await api.get(`/tracking/leads?${params}`);
-      setLeads(res.data.leads || []);
+      const nextLeads = (res.data.leads || []).map(normalizeLead);
+      setLeads(nextLeads);
+      setSelectedLead(current => current
+        ? nextLeads.find(lead => leadId(lead) === leadId(current)) || null
+        : null
+      );
       setEventSummary(res.data.eventSummary || []);
       setStatusSummary(res.data.statusSummary || []);
       setRegionalPageViews(res.data.regionalPageViews || []);
@@ -97,6 +124,14 @@ const AdminLeads = () => {
   const changeStatus = async (id, status) => {
     await api.patch(`/tracking/leads/${id}`, { status });
     loadLeads();
+  };
+  const openLead = (lead) => setSelectedLead(normalizeLead(lead));
+  const closeLead = () => setSelectedLead(null);
+  const onLeadKeyDown = (event, lead) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      openLead(lead);
+    }
   };
 
   const summary = Object.fromEntries(eventSummary.map(event => [event.eventType, Number(event.count)]));
@@ -161,10 +196,18 @@ const AdminLeads = () => {
         ) : (
           <div className="lead-cards">
             {leads.map(lead => (
-              <article className="lead-card" key={lead._id || lead.id}>
+              <article
+                className="lead-card lead-card-clickable"
+                key={lead._id || lead.id}
+                role="button"
+                tabIndex={0}
+                onClick={() => openLead(lead)}
+                onKeyDown={(event) => onLeadKeyDown(event, lead)}
+                aria-label={`Open lead details for ${leadTitle(lead)}`}
+              >
                 <div className="lead-card-head">
                   <div>
-                    <h2>{lead.name || lead.email || lead.phone || 'Anonymous visitor'}</h2>
+                    <h2>{leadTitle(lead)}</h2>
                     <p>{lead.email || 'No email'} {lead.phone ? ` | ${lead.phone}` : ''}</p>
                   </div>
                   <span className={`lead-status status-${lead.status}`}>{lead.status}</span>
@@ -178,24 +221,29 @@ const AdminLeads = () => {
                   <span><strong>{lead.cartAdds}</strong> Adds</span>
                   <span><strong>{locationText(lead)}</strong> Region</span>
                   <span><strong>{lead.ipAddress || 'Unavailable'}</strong> IP Address</span>
+                  <span><strong>{cartItemCount(lead)}</strong> Product Qty</span>
                 </div>
 
-                {Array.isArray(lead.cartItems) && lead.cartItems.length > 0 && (
-                  <CartDetails items={lead.cartItems} />
-                )}
+                <div className="lead-product-preview">
+                  <strong>{Array.isArray(lead.cartItems) && lead.cartItems.length ? `${lead.cartItems.length} product line${lead.cartItems.length === 1 ? '' : 's'}` : 'No cart products captured yet'}</strong>
+                  <span>Click lead to check product details</span>
+                </div>
 
                 <div className="lead-card-foot">
                   <span>Last activity: {dateTime(lead.lastEventAt)}</span>
                   {lead.order?.orderNumber && <span>Order: #{lead.order.orderNumber} ({lead.order.paymentStatus})</span>}
                   <div className="lead-actions">
                     {lead.status !== 'dismissed' && lead.status !== 'converted' && (
-                      <button onClick={() => changeStatus(lead.id, 'dismissed')}>Dismiss</button>
+                      <button onClick={(event) => { event.stopPropagation(); changeStatus(leadId(lead), 'dismissed'); }}>Dismiss</button>
                     )}
                     {lead.status === 'dismissed' && (
-                      <button onClick={() => changeStatus(lead.id, 'hot')}>Reopen</button>
+                      <button onClick={(event) => { event.stopPropagation(); changeStatus(leadId(lead), 'hot'); }}>Reopen</button>
                     )}
-                    {lead.phone && <a href={`tel:${lead.phone}`}>Call</a>}
-                    {lead.phone && <a href={`https://wa.me/${lead.phone.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer">WhatsApp</a>}
+                    <button className="lead-view-products" onClick={(event) => { event.stopPropagation(); openLead(lead); }}>
+                      View Products
+                    </button>
+                    {lead.phone && <a href={`tel:${lead.phone}`} onClick={(event) => event.stopPropagation()}>Call</a>}
+                    {lead.phone && <a href={`https://wa.me/${lead.phone.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" onClick={(event) => event.stopPropagation()}>WhatsApp</a>}
                   </div>
                 </div>
               </article>
@@ -204,6 +252,49 @@ const AdminLeads = () => {
           </div>
         )}
       </div>
+
+      {selectedLead && (
+        <div className="lead-detail-backdrop" onClick={closeLead}>
+          <aside className="lead-detail-panel" role="dialog" aria-modal="true" aria-label={`Lead details for ${leadTitle(selectedLead)}`} onClick={(event) => event.stopPropagation()}>
+            <div className="lead-detail-head">
+              <div>
+                <span className="lead-detail-kicker">Lead Details</span>
+                <h2>{leadTitle(selectedLead)}</h2>
+                <p>{selectedLead.email || 'No email'} {selectedLead.phone ? ` | ${selectedLead.phone}` : ''}</p>
+              </div>
+              <button className="lead-detail-close" onClick={closeLead} aria-label="Close lead details">&times;</button>
+            </div>
+
+            <div className="lead-detail-summary">
+              <span><strong>{selectedLead.score}</strong> Score</span>
+              <span><strong>{selectedLead.stage}</strong> Stage</span>
+              <span><strong>{money(selectedLead.cartValue)}</strong> Cart Value</span>
+              <span><strong>{selectedLead.status}</strong> Status</span>
+              <span><strong>{locationText(selectedLead)}</strong> Region</span>
+              <span><strong>{selectedLead.ipAddress || 'Unavailable'}</strong> IP Address</span>
+              <span><strong>{dateTime(selectedLead.lastEventAt)}</strong> Last Activity</span>
+              {selectedLead.order?.orderNumber && <span><strong>#{selectedLead.order.orderNumber}</strong> Order</span>}
+            </div>
+
+            {Array.isArray(selectedLead.cartItems) && selectedLead.cartItems.length > 0 ? (
+              <CartDetails items={selectedLead.cartItems} />
+            ) : (
+              <div className="lead-no-products">No product details captured for this lead yet.</div>
+            )}
+
+            <div className="lead-detail-actions">
+              {selectedLead.status !== 'dismissed' && selectedLead.status !== 'converted' && (
+                <button onClick={() => changeStatus(leadId(selectedLead), 'dismissed')}>Dismiss Lead</button>
+              )}
+              {selectedLead.status === 'dismissed' && (
+                <button onClick={() => changeStatus(leadId(selectedLead), 'hot')}>Reopen Lead</button>
+              )}
+              {selectedLead.phone && <a href={`tel:${selectedLead.phone}`}>Call</a>}
+              {selectedLead.phone && <a href={`https://wa.me/${selectedLead.phone.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer">WhatsApp</a>}
+            </div>
+          </aside>
+        </div>
+      )}
     </div>
   );
 };
