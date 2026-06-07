@@ -218,6 +218,34 @@
   margin-bottom: 1rem;
 }
 
+/* Status tabs for the orders list */
+.order-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #ece4d3;
+  padding-bottom: 0.6rem;
+}
+.order-tab {
+  padding: 0.45rem 1.1rem;
+  border: 0;
+  border-radius: 999px;
+  background: #f3eede;
+  color: #6b6b6b;
+  font: 600 0.82rem 'Josefin Sans', sans-serif;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.order-tab:hover {
+  background: #e8e0cb;
+  color: var(--color-forest, #1a2e1a);
+}
+.order-tab.active {
+  background: var(--color-forest, #1a2e1a);
+  color: #fff;
+}
+
 .order-filter-label {
   font-family: 'Josefin Sans', sans-serif;
   font-size: 0.7rem;

@@ -5,7 +5,13 @@ import AdminTabs from '../components/AdminTabs';
 import './AdminDashboard.css';
 
 const STATUS_OPTIONS = ['placed', 'confirmed', 'processing', 'packed', 'shipped', 'out-for-delivery', 'delivered', 'cancelled', 'returned'];
-const FILTER_OPTIONS = ['all', 'placed', 'confirmed', 'processing', 'packed', 'shipped', 'delivered', 'cancelled'];
+// Orders grouped into tabs. Each tab fetches its set of statuses.
+const ORDER_TABS = [
+  { key: 'active',    label: 'Active',              statuses: ['placed', 'confirmed', 'processing', 'packed'] },
+  { key: 'fulfilled', label: 'Shipped & Delivered', statuses: ['out-for-delivery', 'shipped', 'delivered'] },
+  { key: 'cancelled', label: 'Cancelled',           statuses: ['cancelled', 'returned'] },
+  { key: 'all',       label: 'All',                 statuses: [] },
+];
 
 /* ── helpers ── */
 const fmtDate = iso => new Date(iso).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
@@ -550,16 +556,17 @@ const AdminDashboard = () => {
   const [recentOrders, setRecentOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedOrder, setSelectedOrder] = useState(null);
-  const [statusFilter, setStatusFilter] = useState('all');
+  const [statusFilter, setStatusFilter] = useState('active');
 
-  const fetchOrders = (filter = 'all') => {
-    const params = filter === 'all' ? '?limit=50' : `?limit=50&status=${filter}`;
-    return api.get(`/orders${params}`).then(res => res.data.orders || []);
+  const fetchOrders = (tabKey = statusFilter) => {
+    const tab = ORDER_TABS.find(t => t.key === tabKey) || ORDER_TABS[0];
+    const statusParam = tab.statuses.length ? `&status=${tab.statuses.join(',')}` : '';
+    return api.get(`/orders?limit=50${statusParam}`).then(res => res.data.orders || []);
   };
 
   useEffect(() => {
     // Store managers only see orders — the stats endpoint is admin-only.
-    fetchOrders('all')
+    fetchOrders('active')
       .then(setRecentOrders)
       .catch(console.error)
       .finally(() => setLoading(false));
@@ -569,6 +576,7 @@ const AdminDashboard = () => {
         .then(res => setStats(res.data.stats || res.data))
         .catch(console.error);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAdmin]);
 
   const handleFilterChange = async filter => {
@@ -637,23 +645,17 @@ const AdminDashboard = () => {
             </button>
           </div>
 
-          {/* Filter Dropdown */}
-          <div className="order-filters">
-            <label className="order-filter-label" htmlFor="order-status-filter">
-              Filter by status
-            </label>
-            <select
-              id="order-status-filter"
-              className="order-filter-select"
-              value={statusFilter}
-              onChange={e => handleFilterChange(e.target.value)}
-            >
-              {FILTER_OPTIONS.map(f => (
-                <option key={f} value={f}>
-                  {f.charAt(0).toUpperCase() + f.slice(1)}
-                </option>
-              ))}
-            </select>
+          {/* Status tabs */}
+          <div className="order-tabs">
+            {ORDER_TABS.map(tab => (
+              <button
+                key={tab.key}
+                className={`order-tab${statusFilter === tab.key ? ' active' : ''}`}
+                onClick={() => handleFilterChange(tab.key)}
+              >
+                {tab.label}
+              </button>
+            ))}
           </div>
 
           <div className="admin-table-wrap">
