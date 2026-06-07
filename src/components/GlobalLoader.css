@@ -1,0 +1,33 @@
+.global-loader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  z-index: 99999;
+  background: rgba(201, 168, 76, 0.16);
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.global-loader-bar {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  width: 40%;
+  border-radius: 0 4px 4px 0;
+  background: linear-gradient(
+    90deg,
+    rgba(201, 168, 76, 0) 0%,
+    #c9a84c 35%,
+    #1a2e1a 65%,
+    rgba(201, 168, 76, 0) 100%
+  );
+  box-shadow: 0 0 8px rgba(201, 168, 76, 0.5);
+  animation: global-loader-slide 1.05s ease-in-out infinite;
+}
+
+@keyframes global-loader-slide {
+  0%   { left: -42%; }
+  100% { left: 100%; }
+}

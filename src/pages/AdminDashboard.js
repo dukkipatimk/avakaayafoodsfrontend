@@ -664,7 +664,7 @@ const AdminDashboard = () => {
                 <tr>
                   <th>Order #</th>
                   <th>Customer</th>
-                  <th>Items</th>
+                  <th>Address</th>
                   <th>Total</th>
                   <th>Zone</th>
                   <th>Payment</th>
@@ -687,7 +687,19 @@ const AdminDashboard = () => {
                         <span className="cell-sub">{order.user?.email || orderAddr(order).email || order.guestEmail || ''}</span>
                       </div>
                     </td>
-                    <td>{order.items?.length}</td>
+                    <td>
+                      {(() => {
+                        const a = orderAddr(order);
+                        const street = [a.line1, a.line2].filter(Boolean).join(', ');
+                        const locality = [a.city, a.state, a.pincode].filter(Boolean).join(', ');
+                        return (
+                          <div className="address-cell">
+                            <span>{street || locality || '—'}</span>
+                            {street && locality && <span className="cell-sub">{locality}</span>}
+                          </div>
+                        );
+                      })()}
+                    </td>
                     <td><strong>₹{(order.total ?? 0).toLocaleString()}</strong></td>
                     <td>
                       <span className="zone-badge">{order.shippingZone?.toUpperCase()}</span>

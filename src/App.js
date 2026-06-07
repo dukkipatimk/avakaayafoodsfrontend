@@ -35,6 +35,7 @@ import GiftHamper from './pages/GiftHamper';
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminRoute from './components/AdminRoute';
 import ScrollToTop from './components/ScrollToTop';
+import GlobalLoader from './components/GlobalLoader';
 import AnalyticsTracker from './components/AnalyticsTracker';
 import RouteSeo from './components/RouteSeo';
 import PrivacyPolicy from './pages/PrivacyPolicy';
@@ -57,6 +58,7 @@ function App() {
               error: { style: { background: '#c0392b', color: '#fff' } }
             }}
           />
+          <GlobalLoader />
           <RouteSeo />
           <AnalyticsTracker />
           <ScrollToTop />
