@@ -16,6 +16,67 @@ const COUNTRIES = [
   { value: 'Malaysia',       label: '🇲🇾 Malaysia',       currency: 'MYR', zone: 'malaysia' },
 ];
 
+// State / province lists for countries where we have a known set. Countries
+// not listed here (e.g. Singapore) fall back to a free-text input.
+const STATES = {
+  India: [
+    'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh', 'Goa', 'Gujarat',
+    'Haryana', 'Himachal Pradesh', 'Jharkhand', 'Karnataka', 'Kerala', 'Madhya Pradesh',
+    'Maharashtra', 'Manipur', 'Meghalaya', 'Mizoram', 'Nagaland', 'Odisha', 'Punjab', 'Rajasthan',
+    'Sikkim', 'Tamil Nadu', 'Telangana', 'Tripura', 'Uttar Pradesh', 'Uttarakhand', 'West Bengal',
+    'Andaman and Nicobar Islands', 'Chandigarh', 'Dadra and Nagar Haveli and Daman and Diu',
+    'Delhi', 'Jammu and Kashmir', 'Ladakh', 'Lakshadweep', 'Puducherry',
+  ],
+  'United States': [
+    'Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware',
+    'Florida', 'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky',
+    'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi',
+    'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey', 'New Mexico',
+    'New York', 'North Carolina', 'North Dakota', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania',
+    'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont',
+    'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming', 'Washington, D.C.',
+  ],
+  'United Kingdom': ['England', 'Scotland', 'Wales', 'Northern Ireland'],
+  Australia: [
+    'Australian Capital Territory', 'New South Wales', 'Northern Territory', 'Queensland',
+    'South Australia', 'Tasmania', 'Victoria', 'Western Australia',
+  ],
+  Malaysia: [
+    'Johor', 'Kedah', 'Kelantan', 'Kuala Lumpur', 'Labuan', 'Malacca', 'Negeri Sembilan',
+    'Pahang', 'Penang', 'Perak', 'Perlis', 'Putrajaya', 'Sabah', 'Sarawak', 'Selangor', 'Terengganu',
+  ],
+};
+
+// 2-letter country codes for the zippopotam.us postal lookup (non-India).
+const POSTAL_COUNTRY_CODE = {
+  India: 'in', 'United States': 'us', 'United Kingdom': 'gb',
+  Singapore: 'sg', Australia: 'au', Malaysia: 'my',
+};
+
+// Resolve { city, state } from a postal code. India uses the official India Post
+// API (best coverage); other countries use zippopotam.us. Returns null on miss.
+async function lookupPincodeLocation(pincode, country) {
+  const pin = String(pincode || '').trim();
+  try {
+    if (country === 'India') {
+      if (!/^\d{6}$/.test(pin)) return null;
+      const res = await fetch(`https://api.postalpincode.in/pincode/${pin}`);
+      const data = await res.json();
+      const po = data?.[0]?.Status === 'Success' ? data[0].PostOffice?.[0] : null;
+      return po ? { city: po.District || '', state: po.State || '' } : null;
+    }
+    const cc = POSTAL_COUNTRY_CODE[country];
+    if (!cc || pin.length < 3) return null;
+    const res = await fetch(`https://api.zippopotam.us/${cc}/${encodeURIComponent(pin)}`);
+    if (!res.ok) return null;
+    const data = await res.json();
+    const place = data?.places?.[0];
+    return place ? { city: place['place name'] || '', state: place['state'] || '' } : null;
+  } catch {
+    return null;
+  }
+}
+
 const STEPS = ['Address', 'Review'];
 
 const Checkout = () => {
@@ -152,6 +213,41 @@ const Checkout = () => {
     const timer = setTimeout(fetchLiveRates, 600);
     return () => clearTimeout(timer);
   }, [address.pincode, address.country]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Auto-fill delivery city + state from the postal code (debounced)
+  useEffect(() => {
+    const minLength = address.country === 'India' ? 6 : 3;
+    if (!address.pincode || address.pincode.trim().length < minLength) return;
+    let cancelled = false;
+    const timer = setTimeout(async () => {
+      const loc = await lookupPincodeLocation(address.pincode, address.country);
+      if (cancelled || !loc) return;
+      setAddress(prev => ({
+        ...prev,
+        city: loc.city || prev.city,
+        state: loc.state || prev.state,
+      }));
+    }, 500);
+    return () => { cancelled = true; clearTimeout(timer); };
+  }, [address.pincode, address.country]);
+
+  // Auto-fill billing city + state from the postal code (debounced)
+  useEffect(() => {
+    if (billingSameAsDelivery) return;
+    const minLength = billing.country === 'India' ? 6 : 3;
+    if (!billing.pincode || billing.pincode.trim().length < minLength) return;
+    let cancelled = false;
+    const timer = setTimeout(async () => {
+      const loc = await lookupPincodeLocation(billing.pincode, billing.country);
+      if (cancelled || !loc) return;
+      setBilling(prev => ({
+        ...prev,
+        city: loc.city || prev.city,
+        state: loc.state || prev.state,
+      }));
+    }, 500);
+    return () => { cancelled = true; clearTimeout(timer); };
+  }, [billing.pincode, billing.country, billingSameAsDelivery]);
 
   // Load Razorpay checkout script once
   useEffect(() => {
@@ -524,8 +620,15 @@ const Checkout = () => {
                     <input name="city" value={address.city} onChange={handleAddressChange} className="form-input" />
                   </div>
                   <div className="form-group">
-                    <label>State / Province</label>
-                    <input name="state" value={address.state} onChange={handleAddressChange} className="form-input" />
+                    <label>State / Province{isIndia ? ' *' : ''}</label>
+                    {STATES[address.country] ? (
+                      <select name="state" value={address.state} onChange={handleAddressChange} className="form-select">
+                        <option value="">Select state…</option>
+                        {STATES[address.country].map(s => <option key={s} value={s}>{s}</option>)}
+                      </select>
+                    ) : (
+                      <input name="state" value={address.state} onChange={handleAddressChange} className="form-input" />
+                    )}
                   </div>
                   <div className="form-group">
                     <label>{isIndia ? 'PIN Code *' : 'ZIP / Postal Code'}</label>
@@ -581,8 +684,15 @@ const Checkout = () => {
                         <input name="city" value={billing.city} onChange={handleBillingChange} className="form-input" />
                       </div>
                       <div className="form-group">
-                        <label>State / Province</label>
-                        <input name="state" value={billing.state} onChange={handleBillingChange} className="form-input" />
+                        <label>State / Province{billing.country === 'India' ? ' *' : ''}</label>
+                        {STATES[billing.country] ? (
+                          <select name="state" value={billing.state} onChange={handleBillingChange} className="form-select">
+                            <option value="">Select state…</option>
+                            {STATES[billing.country].map(s => <option key={s} value={s}>{s}</option>)}
+                          </select>
+                        ) : (
+                          <input name="state" value={billing.state} onChange={handleBillingChange} className="form-input" />
+                        )}
                       </div>
                       <div className="form-group">
                         <label>{billing.country === 'India' ? 'PIN Code *' : 'ZIP / Postal Code'}</label>
