@@ -86,8 +86,8 @@ const Products = ({ collectionPage = false }) => {
   return (
     <div className="products-page">
       <Seo
-        title={categorySeo ? categorySeo.title : 'Shop Andhra Foods Online | Avakaaya Foods'}
-        description={categorySeo ? categorySeo.description : 'Browse authentic Andhra pickles, podis, snacks, sweets, ghee and gift hampers from Avakaaya Foods.'}
+        title={categorySeo ? categorySeo.title : 'Shop Telugu Foods Online | Avakaaya Foods'}
+        description={categorySeo ? categorySeo.description : 'Browse authentic Telugu pickles, podis, snacks, sweets, ghee and gift hampers from Avakaaya Foods.'}
         path={canonicalPath}
         noIndex={!validCollection || isFilteredPage}
         jsonLd={breadcrumbSchema ? [breadcrumbSchema] : []}

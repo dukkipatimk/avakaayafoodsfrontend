@@ -4,34 +4,34 @@ export const DEFAULT_IMAGE = '/avakaaya-logo.png';
 
 export const CATEGORY_SEO = {
   pickles: {
-    name: 'Andhra Pickles',
-    title: 'Authentic Andhra Pickles Online | Avakaaya Foods',
-    description: 'Shop traditional Andhra pickles handcrafted in Hyderabad, including avakaya, gongura and more. Delivery across India and international shipping available.',
-    introduction: 'Explore traditional Andhra pickles prepared with carefully sourced ingredients, freshly ground spices and time-honoured recipes.',
+    name: 'Telugu Pickles',
+    title: 'Authentic Telugu Pickles Online | Avakaaya Foods',
+    description: 'Shop traditional Telugu pickles handcrafted in Hyderabad, including avakaya, gongura and more. Delivery across India and international shipping available.',
+    introduction: 'Explore traditional Telugu pickles prepared with carefully sourced ingredients, freshly ground spices and time-honoured recipes.',
   },
   'veg-pickles': {
     name: 'Veg Pickles',
-    title: 'Authentic Veg Andhra Pickles Online | Avakaaya Foods',
-    description: 'Shop vegetarian Andhra pickles including avakaya, gongura, lemon and more, handcrafted in Hyderabad and delivered worldwide.',
-    introduction: 'Explore traditional vegetarian Andhra pickles prepared with fresh produce, carefully sourced spices and time-honoured recipes.',
+    title: 'Authentic Veg Telugu Pickles Online | Avakaaya Foods',
+    description: 'Shop vegetarian Telugu pickles including avakaya, gongura, lemon and more, handcrafted in Hyderabad and delivered worldwide.',
+    introduction: 'Explore traditional vegetarian Telugu pickles prepared with fresh produce, carefully sourced spices and time-honoured recipes.',
   },
   'non-veg-pickles': {
     name: 'Non-Veg Pickles',
-    title: 'Andhra Non-Veg Pickles Online | Avakaaya Foods',
-    description: 'Shop Andhra chicken, mutton, prawn and fish pickles prepared in Hyderabad with traditional spices and carefully packed for delivery.',
-    introduction: 'Discover bold Andhra non-vegetarian pickles, prepared in separate batches with rich spices and careful packing.',
+    title: 'Telugu Non-Veg Pickles Online | Avakaaya Foods',
+    description: 'Shop Telugu chicken, mutton, prawn and fish pickles prepared in Hyderabad with traditional spices and carefully packed for delivery.',
+    introduction: 'Discover bold Telugu non-vegetarian pickles, prepared in separate batches with rich spices and careful packing.',
   },
   powders: {
     name: 'Podis & Powders',
-    title: 'Andhra Podis & Spice Powders Online | Avakaaya Foods',
-    description: 'Shop authentic Andhra podis and spice powders made in Hyderabad for idli, dosa and rice. Freshly packed for delivery in India and abroad.',
-    introduction: 'Bring home the aroma of Andhra kitchens with podis and spice powders made for rice, idli, dosa and everyday meals.',
+    title: 'Telugu Podis & Spice Powders Online | Avakaaya Foods',
+    description: 'Shop authentic Telugu podis and spice powders made in Hyderabad for idli, dosa and rice. Freshly packed for delivery in India and abroad.',
+    introduction: 'Bring home the aroma of Telugu kitchens with podis and spice powders made for rice, idli, dosa and everyday meals.',
   },
   snacks: {
     name: 'Traditional Snacks',
-    title: 'Traditional Andhra Snacks Online | Avakaaya Foods',
-    description: 'Buy crisp traditional Andhra snacks from Avakaaya Foods, prepared in Hyderabad and delivered fresh to your doorstep.',
-    introduction: 'Discover savoury Andhra snacks prepared for tea time, celebrations and sharing with family.',
+    title: 'Traditional Telugu Snacks Online | Avakaaya Foods',
+    description: 'Buy crisp traditional Telugu snacks from Avakaaya Foods, prepared in Hyderabad and delivered fresh to your doorstep.',
+    introduction: 'Discover savoury Telugu snacks prepared for tea time, celebrations and sharing with family.',
   },
   sweets: {
     name: 'Indian Sweets',
@@ -47,9 +47,9 @@ export const CATEGORY_SEO = {
   },
   'gift-hampers': {
     name: 'Gift Hampers',
-    title: 'Andhra Food Gift Hampers Online | Avakaaya Foods',
-    description: 'Send curated Andhra food gift hampers with pickles, podis, snacks and sweets from Avakaaya Foods.',
-    introduction: 'Share authentic Andhra flavours with thoughtfully assembled hampers for celebrations and special occasions.',
+    title: 'Telugu Food Gift Hampers Online | Avakaaya Foods',
+    description: 'Send curated Telugu food gift hampers with pickles, podis, snacks and sweets from Avakaaya Foods.',
+    introduction: 'Share authentic Telugu flavours with thoughtfully assembled hampers for celebrations and special occasions.',
   },
 };
 

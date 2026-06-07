@@ -41,6 +41,22 @@ const Checkout = () => {
     country: 'India'
   });
 
+  // Billing address — defaults to "same as delivery". When the customer opts
+  // for a separate billing address, these fields are captured and sent.
+  const [billingSameAsDelivery, setBillingSameAsDelivery] = useState(true);
+  const [billing, setBilling] = useState({
+    fullName: '',
+    phone: '',
+    line1: '',
+    line2: '',
+    city: '',
+    state: '',
+    pincode: '',
+    country: 'India'
+  });
+  const handleBillingChange = (e) =>
+    setBilling((b) => ({ ...b, [e.target.name]: e.target.value }));
+
   const paymentMethod = 'razorpay';
   const [upiPayment, setUpiPayment] = useState(null); // { order, upiUrl, qrCodeUrl, vpa, payeeName, amount, reference }
   const [upiTxnRef, setUpiTxnRef] = useState('');
@@ -198,6 +214,17 @@ const Checkout = () => {
         return false;
       }
     }
+    // When a separate billing address is chosen, validate its core fields too.
+    if (!billingSameAsDelivery) {
+      const billingRequired = ['fullName', 'line1', 'city', 'country'];
+      if (billing.country === 'India') billingRequired.push('pincode', 'state');
+      for (const field of billingRequired) {
+        if (!billing[field]?.trim()) {
+          toast.error(`Please fill in billing ${field.replace(/([A-Z])/g, ' $1').toLowerCase()}`);
+          return false;
+        }
+      }
+    }
     return true;
   };
 
@@ -248,6 +275,8 @@ const Checkout = () => {
           customization: i.customization,
         })),
         shippingAddress: address,
+        // null when "same as delivery" — backend falls back to shipping for billing
+        billingAddress: billingSameAsDelivery ? null : billing,
         shippingCost: shippingCost ?? 0,
         shippingMethod: 'Avakaaya.com Delivery',
         subtotal,
@@ -503,6 +532,65 @@ const Checkout = () => {
                     <input name="pincode" value={address.pincode} onChange={handleAddressChange} className="form-input" />
                   </div>
                 </div>
+
+                {/* Billing address */}
+                <label className="billing-same-toggle">
+                  <input
+                    type="checkbox"
+                    checked={billingSameAsDelivery}
+                    onChange={e => setBillingSameAsDelivery(e.target.checked)}
+                  />
+                  <span>Billing address same as delivery address</span>
+                </label>
+
+                {!billingSameAsDelivery && (
+                  <div className="billing-fields">
+                    <h3 className="billing-fields-title">Billing Address</h3>
+
+                    <div className="form-group">
+                      <label>Country *</label>
+                      <select name="country" value={billing.country} onChange={handleBillingChange} className="form-select">
+                        {COUNTRIES.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
+                      </select>
+                    </div>
+
+                    <div className="form-row">
+                      <div className="form-group">
+                        <label>Full Name *</label>
+                        <input name="fullName" value={billing.fullName} onChange={handleBillingChange} className="form-input" placeholder="Name on the bill" />
+                      </div>
+                      <div className="form-group">
+                        <label>Phone</label>
+                        <input name="phone" value={billing.phone} onChange={handleBillingChange} className="form-input" placeholder="Optional" />
+                      </div>
+                    </div>
+
+                    <div className="form-group">
+                      <label>Address Line 1 *</label>
+                      <input name="line1" value={billing.line1} onChange={handleBillingChange} className="form-input" placeholder="House/Flat No., Street" />
+                    </div>
+
+                    <div className="form-group">
+                      <label>Address Line 2</label>
+                      <input name="line2" value={billing.line2} onChange={handleBillingChange} className="form-input" placeholder="Apartment, area, landmark (optional)" />
+                    </div>
+
+                    <div className="form-row">
+                      <div className="form-group">
+                        <label>City *</label>
+                        <input name="city" value={billing.city} onChange={handleBillingChange} className="form-input" />
+                      </div>
+                      <div className="form-group">
+                        <label>State / Province</label>
+                        <input name="state" value={billing.state} onChange={handleBillingChange} className="form-input" />
+                      </div>
+                      <div className="form-group">
+                        <label>{billing.country === 'India' ? 'PIN Code *' : 'ZIP / Postal Code'}</label>
+                        <input name="pincode" value={billing.pincode} onChange={handleBillingChange} className="form-input" />
+                      </div>
+                    </div>
+                  </div>
+                )}
 
                 {/* Live shipping preview */}
                 {liveRatesLoading && (

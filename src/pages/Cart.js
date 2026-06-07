@@ -37,7 +37,7 @@ const Cart = () => {
       <div className="cart-empty">
         <div className="cart-empty-inner">
           <h2>Your cart is empty</h2>
-          <p>Browse our authentic Andhra foods or create a custom hamper.</p>
+          <p>Browse our authentic Telugu foods or create a custom hamper.</p>
           <Link to="/products" className="btn btn-primary btn-lg">Start Shopping</Link>
         </div>
       </div>

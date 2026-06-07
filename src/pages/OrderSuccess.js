@@ -34,7 +34,7 @@ const OrderSuccess = () => {
 
         <h1 className="success-title">Order Placed!</h1>
         <p className="success-subtitle">
-          Thank you for choosing Avakaaya Foods. Your authentic Andhra flavours are on their way!
+          Thank you for choosing Avakaaya Foods. Your authentic Telugu flavours are on their way!
         </p>
 
         {loading ? (
@@ -102,7 +102,7 @@ const OrderSuccess = () => {
         <div className="share-section">
           <p>Love our pickles? Share with friends!</p>
           <div className="share-buttons">
-            <a href={`https://wa.me/?text=I just ordered authentic Andhra pickles from Avakaaya Foods! Check them out at avakaayafoods.com`}
+            <a href={`https://wa.me/?text=I just ordered authentic Telugu pickles from Avakaaya Foods! Check them out at avakaayafoods.com`}
               target="_blank" rel="noopener noreferrer" className="share-btn whatsapp">
               Share on WhatsApp
             </a>

@@ -5,56 +5,56 @@ import ProductCard from '../components/ProductCard';
 import { collectionApiFilters } from '../utils/seo';
 import './Home.css';
 
-// Desktop: widened 3.5:1 artwork (src) with an HTML caption panel.
-// Mobile: the original complete designs (srcMobile) shown whole, no caption.
 const BANNERS = [
   {
-    src: '/images/banners/quality.jpg',
-    srcMobile: '/images/banners/quality_m.jpg',
-    alt: 'Pure ingredients, perfect hygiene — FSSAI-certified Andhra pickles',
-    headline: 'Andhra\'s finest,\nin every jar',
+    src: '/images/banners/quality.png',
+    srcMobile: '/images/banners/quality_m.png',
+    alt: 'Avakaaya quality and hygiene with pickles, snacks, and sweets',
+    slideClass: 'quality',
     cta: 'Shop Now',
-    ctaLink: '/products',
     capSide: 'left',
     panelTheme: 'on-light',
+    ctaLink: '/products',
   },
   {
     src: '/images/banners/banner_worldwide.jpg',
     srcMobile: '/images/banners/banner_worldwide_m.jpg',
-    alt: 'Authentic Andhra taste, shipped worldwide',
+    alt: 'Avakaaya foods shipping across Hyderabad, India, and worldwide',
+    slideClass: 'worldwide',
     headline: 'From our kitchen\nto your doorstep',
     points: [
-      { icon: '⚡', text: '2 hours in Hyderabad' },
-      { icon: '🚚', text: '1–2 business days across India' },
-      { icon: '✈️', text: '3–7 business days international' },
+      { icon: 'HYD', text: '2 hours in Hyderabad' },
+      { icon: 'IND', text: '1-2 business days across India' },
+      { icon: 'INTL', text: '3-7 business days international' },
     ],
     cta: 'Shop Now',
-    ctaLink: '/products',
     capSide: 'right',
     panelTheme: 'on-light',
+    ctaLink: '/products',
   },
   {
     src: '/images/banners/banner_festivals.jpg',
     srcMobile: '/images/banners/banner_festivals_m.jpg',
-    alt: 'Festive gift hampers — pickles, sweets & snacks',
-    headline: 'Gift the\nfestive joy',
-    cta: 'Shop Hampers',
-    ctaLink: '/collections/gift-hampers',
+    alt: 'Avakaaya premium pickles and sweets gift hampers - authentic Telugu taste',
+    slideClass: 'hampers',
+    imageFit: 'contain',
+    cta: 'Shop Now',
     capSide: 'left',
     panelTheme: 'on-dark',
+    ctaLink: '/collections/gift-hampers',
   },
 ];
 
 const USPS = [
   { icon: '🌿', title: 'Zero Preservatives',     desc: 'Natural salt, oil & spice ratios only. No chemicals.' },
   { icon: '👩‍🍳', title: 'Generational Recipes',  desc: 'Passed down for 40+ years. Made exactly as Ammamma used to.' },
-  { icon: '📦', title: 'Small Batches',           desc: 'Quality over volume — every jar gets the same attention.' },
-  { icon: '🌍', title: 'Ships Worldwide',         desc: 'Leak-proof packaging built for India and international delivery.' },
+  { icon: '📦', title: 'Small Batches',           desc: 'Quality over volume - every jar gets the same attention.' },
+  { icon: '🌎', title: 'Ships Worldwide',         desc: 'Leak-proof packaging built for India and international delivery.' },
 ];
 
 const CATEGORIES = [
-  { name: 'Veg Pickles', slug: 'veg-pickles', image: '/images/products/2024/10/gongura_pickle_pp.jpg', count: '24 varieties' },
-  { name: 'Non-Veg Pickles', slug: 'non-veg-pickles', image: '/images/products/2024/10/gongura_chicken-1-600x600.jpg', count: '12 varieties' },
+  { name: 'Veg Pickles', slug: 'veg-pickles', image: '/images/products/2024/10/Mango-pickle-1_7_11zon-600x400.webp', count: '24 varieties' },
+  { name: 'Non-Veg Pickles', slug: 'non-veg-pickles', image: '/images/products/2024/10/chicken-1-1-600x600.jpg', count: '12 varieties' },
   { name: 'Powders',  slug: 'powders',  image: '/images/products/2024/10/PALLI-KARAM-600x600.jpg',     count: '14 varieties' },
   { name: 'Snacks',   slug: 'snacks',   image: '/images/products/2024/10/CHEKKALU-ROUND-600x600.jpg',  count: '17 varieties' },
   { name: 'Sweets',   slug: 'sweets',   image: '/images/products/2024/10/BOONDHI-LADDU-1-600x600.jpg', count: '5 varieties'  },
@@ -62,17 +62,17 @@ const CATEGORIES = [
 ];
 
 const FESTIVALS = [
-  { name: 'Diwali',             tag: 'Festival of Lights',  image: '/images/festivals/diwali.jpg',     emoji: '🪔' },
-  { name: 'Sankranthi',         tag: 'Harvest Festival',     image: '/images/festivals/sankranthi.jpg', emoji: '🪁' },
-  { name: 'Vinayaka Chaturthi', tag: 'Ganesh Festival',      image: '/images/festivals/vinayaka.jpg',   emoji: '🐘' },
-  { name: 'Eid Mubarak',        tag: 'Festive Celebrations', image: '/images/festivals/eid.jpg',        emoji: '🌙' },
-  { name: 'Christmas',          tag: "Season's Greetings",   image: '/images/festivals/christmas.jpg',  emoji: '🎄' },
+  { name: 'Diwali',             tag: 'Festival of Lights',  image: '/images/festivals/diwali.jpg',     emoji: 'Gift' },
+  { name: 'Sankranthi',         tag: 'Harvest Festival',     image: '/images/festivals/sankranthi.jpg', emoji: 'Harvest' },
+  { name: 'Vinayaka Chaturthi', tag: 'Ganesh Festival',      image: '/images/festivals/vinayaka.jpg',   emoji: 'Festival' },
+  { name: 'Eid Mubarak',        tag: 'Festive Celebrations', image: '/images/festivals/eid.jpg',        emoji: 'Celebrate' },
+  { name: 'Christmas',          tag: "Season's Greetings",   image: '/images/festivals/christmas.jpg',  emoji: 'Seasonal' },
 ];
 
 const TESTIMONIALS = [
   { name: 'Priya Reddy',  location: 'New Jersey, USA', initials: 'PR', rating: 5, text: 'The avakaya tastes exactly like my grandmother used to make. Nothing comes close in the US!' },
   { name: 'Karthik Rao',  location: 'London, UK',      initials: 'KR', rating: 5, text: 'Gongura pachadi brings back every memory of home. Quality and taste are exceptional.' },
-  { name: 'Sunitha Devi', location: 'Singapore',       initials: 'SD', rating: 5, text: 'Fast shipping, beautiful packaging, 100% authentic taste. My go-to for Andhra food.' },
+  { name: 'Sunitha Devi', location: 'Singapore',       initials: 'SD', rating: 5, text: 'Fast shipping, beautiful packaging, 100% authentic taste. My go-to for Telugu food.' },
 ];
 
 const WHATSAPP_NUMBER = '919115595959';
@@ -91,7 +91,7 @@ const Home = () => {
   const [catalogLoading, setCatalogLoading] = useState(false);
   const [stores, setStores] = useState([]);
 
-  // Full paginated catalog — sorted by popularity so bestsellers surface first
+  // Full paginated catalog â€” sorted by popularity so bestsellers surface first
   useEffect(() => {
     setCatalogLoading(true);
     const params = new URLSearchParams({ page: catalogPage, limit: 12, sort: 'popular' });
@@ -137,6 +137,7 @@ const Home = () => {
     return () => clearInterval(t);
   }, []);
 
+
   useEffect(() => {
     const observer = new IntersectionObserver(
       entries => entries.forEach(e => {
@@ -148,7 +149,7 @@ const Home = () => {
     return () => observer.disconnect();
   }, [catalog, igPosts, stores]);
 
-  // Lightweight scroll parallax — rAF-throttled, honors reduced-motion
+  // Lightweight scroll parallax â€” rAF-throttled, honors reduced-motion
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const els = Array.from(document.querySelectorAll('[data-parallax]'));
@@ -185,37 +186,37 @@ const Home = () => {
   return (
     <div className="home">
 
-      {/* ── Hero banner (designed-artwork slider, natural aspect) ───────────── */}
+      {/* Hero */}
       <section className="hero-split">
         <div className="banner-slider">
           <div className="banner-track">
             {BANNERS.map((b, i) => (
               <Link
-                key={i}
-                to={b.ctaLink || '/products'}
-                className={`banner-slide${i === bannerIdx ? ' is-active' : ''}`}
+                key={b.src}
+                to={b.ctaLink}
+                className={`banner-slide banner-slide--fit-${b.imageFit || 'cover'}${b.slideClass ? ` banner-slide--${b.slideClass}` : ''}${i === bannerIdx ? ' is-active' : ''}`}
               >
                 <picture>
-                  {b.srcMobile && (
-                    <source media="(max-width: 768px)" srcSet={b.srcMobile} />
-                  )}
+                  {b.srcMobile && <source media="(max-width: 768px)" srcSet={b.srcMobile} />}
                   <img
                     src={b.src}
-                    alt={b.alt || 'Avakaaya banner'}
+                    alt={b.alt}
                     className="banner-slide-img"
                     loading={i === 0 ? 'eager' : 'lazy'}
                     decoding="async"
-                    fetchpriority={i === 0 ? 'high' : 'auto'}
+                    fetchPriority={i === 0 ? 'high' : 'auto'}
                     draggable="false"
                   />
                 </picture>
-                {b.headline && (
+                {(b.headline || b.points || b.cta) && !b.hideCaption && (
                   <div className={`banner-cap banner-cap--${b.panelTheme || 'on-light'} banner-cap--side-${b.capSide || 'right'}`}>
-                    <h2 className="banner-cap-title">
-                      {b.headline.split('\n').map((line, li) => (
-                        <span key={li}>{line}</span>
-                      ))}
-                    </h2>
+                    {b.headline && (
+                      <h2 className="banner-cap-title">
+                        {b.headline.split('\n').map((line, li) => (
+                          <span key={li}>{line}</span>
+                        ))}
+                      </h2>
+                    )}
                     {b.points && (
                       <ul className="banner-cap-points">
                         {b.points.map((p, pi) => (
@@ -227,7 +228,7 @@ const Home = () => {
                       </ul>
                     )}
                     <span className="banner-cap-btn">
-                      {b.cta || 'Shop Now'} <span aria-hidden="true">→</span>
+                      {b.cta || 'Shop Now'}
                     </span>
                   </div>
                 )}
@@ -236,18 +237,23 @@ const Home = () => {
           </div>
           <div className="banner-dots">
             {BANNERS.map((_, i) => (
-              <button key={i} className={`banner-dot${i === bannerIdx ? ' active' : ''}`} onClick={() => setBannerIdx(i)} aria-label={`Slide ${i + 1}`} />
+              <button
+                key={i}
+                className={`banner-dot${i === bannerIdx ? ' active' : ''}`}
+                onClick={() => setBannerIdx(i)}
+                aria-label={`Show banner ${i + 1}`}
+              />
             ))}
           </div>
         </div>
       </section>
 
-      {/* ── USP strip ────────────────────────────── */}
+      {/* â”€â”€ USP strip â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <div className="usp-strip">
         <div className="container usp-row stagger">
           {USPS.map(u => (
             <div key={u.title} className="usp-item">
-              <span className="usp-icon">{u.icon}</span>
+              <span className="usp-icon" aria-hidden="true">{u.icon}</span>
               <div className="usp-text">
                 <strong>{u.title}</strong>
                 <span>{u.desc}</span>
@@ -257,33 +263,33 @@ const Home = () => {
         </div>
       </div>
 
-      {/* ── Promo callout ────────────────────────── */}
+      {/* â”€â”€ Promo callout â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <div className="promo-callout">
         <div className="container promo-callout-inner">
           <div className="promo-callout-items">
             <div className="promo-item">
-              <span className="promo-item-icon">⚡</span>
+              <span className="promo-item-icon">HYD</span>
               <div className="promo-item-text">
                 <strong>In Hyderabad</strong>
-                <span>1–2 hours express delivery</span>
+                <span>1-2 hours express delivery</span>
               </div>
             </div>
             <div className="promo-item">
-              <span className="promo-item-icon">🚚</span>
+              <span className="promo-item-icon">IND</span>
               <div className="promo-item-text">
                 <strong>Within India</strong>
-                <span>Delivery in 1–2 days</span>
+                <span>Delivery in 1-2 days</span>
               </div>
             </div>
             <div className="promo-item">
-              <span className="promo-item-icon">🌍</span>
+              <span className="promo-item-icon">INTL</span>
               <div className="promo-item-text">
                 <strong>International</strong>
-                <span>3–7 business days worldwide</span>
+                <span>3-7 business days worldwide</span>
               </div>
             </div>
             <div className="promo-item">
-              <span className="promo-item-icon">🤝</span>
+              <span className="promo-item-icon">PARTNER</span>
               <div className="promo-item-text">
                 <a
                   className="promo-partner-link"
@@ -300,102 +306,105 @@ const Home = () => {
         </div>
       </div>
 
-      {/* ── Our Roots ─────────────────────────────── */}
-      <section className="home-intro container">
-        <h1>Authentic Andhra Pickles, Podis &amp; Sweets</h1>
-        <p>Handcrafted in Hyderabad with traditional recipes and freshly prepared ingredients, delivered across India and to homes around the world.</p>
-      </section>
-
-      <section className="hyd-section">
-        <div className="container">
-          {/* Intro — caption text above the images */}
-          <div className="roots-intro anim">
-            <span className="home-sec-label">Our Roots</span>
-            <h2 className="roots-heading">Rooted in Andhra &amp; Telangana</h2>
-            <p className="roots-text">
-              Our products are crafted at two manufacturing centres —
-              <strong> Nimmakuru, Andhra Pradesh</strong> and <strong>Hyderabad, Telangana</strong>.
-              Vegetarian and non-vegetarian products are made at separate centres to keep every jar pure.
-            </p>
-          </div>
-
-          {/* Our stores */}
-          {stores.length > 0 && (
+      {/* â”€â”€ Our Roots â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {stores.length > 0 && (
+        <section className="branches-section">
+          <div className="container">
+            <div className="sec-head centered anim">
+              <h2>Visit Us In Hyderabad</h2>
+            </div>
             <div className="roots-stores stagger">
               {stores.map(s => (
                 <div key={s._id} className="store-card">
-                  <div className="store-card-title-row">
-                    <h3 className="store-card-name">{s.name}</h3>
-                    <span className={`store-card-status store-card-status--${s.status || 'unknown'}`}>
-                      {s.statusLabel || 'Open'}
-                    </span>
+                  <div className="store-card-copy">
+                    <div className="store-card-title-row">
+                      <div className="store-card-title-details">
+                        <div className="store-card-title-top">
+                          {s.name && <h3 className="store-card-name">{s.name}</h3>}
+                        </div>
+                        <div className="store-card-status-wrap">
+                          <span className={`store-card-status store-card-status--${s.status || 'unknown'}`}>
+                            {s.statusLabel || 'Open'}
+                          </span>
+                          {s.hours && <p className="store-card-hours">{s.hours}</p>}
+                        </div>
+                      </div>
+                    </div>
+                    {s.address && <p className="store-card-line">{s.address}</p>}
+                    <div className="store-card-actions">
+                      <a
+                        className="store-card-link store-card-link--primary"
+                        href={s.mapUrl || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent([s.name, s.area, s.city].filter(Boolean).join(' '))}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Get Directions
+                      </a>
+                      {s.phone && (
+                        <a className="store-card-phone-inline" href={`tel:${s.phone.replace(/\s/g, '')}`}>
+                          {s.phone}
+                        </a>
+                      )}
+                    </div>
                   </div>
-                  {s.area && <p className="store-card-area">📍 {s.area}</p>}
-                  {s.address && <p className="store-card-line">{s.address}</p>}
-                  {(s.phone || s.hours) && (
-                    <p className="store-card-line store-card-meta">
-                      {s.phone && <span>📞 {s.phone}</span>}
-                      {s.hours && <span>🕒 {s.hours}</span>}
-                    </p>
-                  )}
-                  <a
-                    className="store-card-link"
-                    href={s.mapUrl || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent([s.name, s.area, s.city].filter(Boolean).join(' '))}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Get Directions →
-                  </a>
                 </div>
               ))}
             </div>
-          )}
+          </div>
+        </section>
+      )}
 
-          {/* Heritage pair — Telangana & Andhra */}
-          <div className="roots-row anim">
-            <figure className="roots-photo">
-              <span className="roots-cap">Charminar · Hyderabad</span>
-              <div
-                className="roots-photo-img"
-                role="img"
-                aria-label="The Charminar, Hyderabad"
-                style={{ backgroundImage: "url('/images/hyderabad/charminar.jpg')" }}
-              />
-            </figure>
-            <figure className="roots-photo">
-              <span className="roots-cap">Prakasam Barrage · Vijayawada</span>
-              <div
-                className="roots-photo-img"
-                role="img"
-                aria-label="Prakasam Barrage over the Krishna river, Vijayawada"
-                style={{ backgroundImage: "url('/images/branding/vijayawada.jpg')" }}
-              />
-            </figure>
+      <section className="home-story-band">
+        <div className="home-story-inner">
+          <div className="home-story-brand">
+            <img src="/avakaaya-logo.png" alt="Avakaaya Foods" />
+            <span>Rooted in Andhra and Telangana</span>
           </div>
 
-          {/* Shop by category — full width */}
-          <div className="roots-products anim">
-            <span className="roots-cap">Shop by Category</span>
-            <div className="roots-cat-grid">
-              {CATEGORIES.map(c => (
-                <Link key={c.slug} to={`/collections/${c.slug}`} className="roots-cat">
-                  <img src={c.image} alt={c.name} loading="lazy" />
-                  <span className="roots-cat-name">{c.name}</span>
-                </Link>
-              ))}
+          <div className="home-story-copy-block">
+            <div className="home-story-copy">
+              <h1>Authentic Telugu Pickles, Snacks &amp; Sweets</h1>
+              <p>
+                Avakaaya began in a family kitchen where seasonal raw mangoes, hand-ground spices, and cold-pressed oils came together every summer into jars of pickle that defined Telugu cooking. Today, those same recipes are handcrafted in Nimmakuru and Hyderabad, with vegetarian and non-vegetarian products made at separate centres to keep every jar pure.
+              </p>
+            </div>
+            <div className="home-story-actions">
+              <span>Making pickles since 2000&apos;s</span>
+              <Link to="/about" className="btn btn-primary">Read Our Full Story</Link>
             </div>
           </div>
 
+          <div className="roots-column">
+            <div className="roots-row home-story-roots anim">
+              <figure className="roots-photo">
+                <span className="roots-cap">Charminar - Hyderabad</span>
+                <div
+                  className="roots-photo-img"
+                  role="img"
+                  aria-label="The Charminar, Hyderabad"
+                  style={{ backgroundImage: "url('/images/hyderabad/charminar.jpg')" }}
+                />
+              </figure>
+              <figure className="roots-photo">
+                <span className="roots-cap">Prakasam Barrage - Vijayawada</span>
+                <div
+                  className="roots-photo-img"
+                  role="img"
+                  aria-label="Prakasam Barrage over the Krishna river, Vijayawada"
+                  style={{ backgroundImage: "url('/images/branding/vijayawada.jpg')" }}
+                />
+              </figure>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* ── Full Product Catalog (bestsellers first) ─────────────── */}
+      {/* â”€â”€ Full Product Catalog (bestsellers first) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <section className="quickbuy-section">
         <div className="container">
           <div className="sec-head anim">
             <div>
-              <span className="home-sec-label">Shop</span>
-              <h2>Our Products</h2>
+              <span className="home-sec-label">Fresh From Our Kitchen To Your Cart</span>
             </div>
           </div>
 
@@ -427,23 +436,23 @@ const Home = () => {
                 disabled={catalogLoading}
                 onClick={() => setCatalogPage(p => p + 1)}
               >
-                {catalogLoading ? 'Loading…' : 'Load More Products'}
+                {catalogLoading ? 'Loading...' : 'Load More Products'}
               </button>
             </div>
           )}
         </div>
       </section>
 
-      {/* ── New Arrivals ──────────────────────────── */}
+      {/* â”€â”€ New Arrivals â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       {newArrivals.length > 0 && (
         <section className="new-arrivals-section">
           <div className="container">
             <div className="sec-head anim">
               <div>
-                <span className="home-sec-label">Just In</span>
-                <h2>New Arrivals</h2>
+                <span className="home-sec-label">Fresh From Our Kitchen</span>
+                <h2>Newly Added Recipes</h2>
               </div>
-              <Link to="/products?sort=newest" className="btn btn-outline">View All →</Link>
+              <Link to="/products?sort=newest" className="btn btn-outline">View All</Link>
             </div>
             <div className="products-grid stagger">
               {newArrivals.map(p => <ProductCard key={p._id} product={p} />)}
@@ -452,13 +461,13 @@ const Home = () => {
         </section>
       )}
 
-      {/* ── Festival Hampers ─────────────────────── */}
+      {/* â”€â”€ Festival Hampers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <section className="festivals-section">
         <div className="container">
           <div className="sec-head centered anim" style={{ marginBottom: 36 }}>
             <span className="home-sec-label">Special Collections</span>
             <h2>Festival Gift Hampers</h2>
-            <p className="festivals-subtitle">Authentic Andhra pickles, powders &amp; sweets — for every celebration.</p>
+            <p className="festivals-subtitle">Authentic Telugu pickles, powders &amp; sweets for every celebration.</p>
           </div>
           <div className="festivals-grid stagger">
             {FESTIVALS.map(f => (
@@ -468,7 +477,7 @@ const Home = () => {
                   <span className="festival-emoji">{f.emoji}</span>
                   <span className="festival-tag">{f.tag}</span>
                   <h3 className="festival-name">{f.name}</h3>
-                  <span className="festival-cta">Shop Now →</span>
+                  <span className="festival-cta">Shop Now</span>
                 </div>
               </Link>
             ))}
@@ -476,18 +485,18 @@ const Home = () => {
         </div>
       </section>
 
-      {/* ── Testimonials ─────────────────────────── */}
+      {/* â”€â”€ Testimonials â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <section className="testimonials-section">
         <div className="container">
           <div className="sec-head centered anim">
             <span className="home-sec-label">Happy Customers</span>
-            <h2>Loved by Andhra Families Worldwide</h2>
-            <p className="t-subtitle">★★★★★ Rated 4.9 / 5 across 10,000+ orders</p>
+            <h2>Loved by Telugu Families Worldwide</h2>
+            <p className="t-subtitle">Rated 4.9 / 5 across 10,000+ orders</p>
           </div>
           <div className="testimonials-grid stagger">
             {TESTIMONIALS.map(t => (
               <div key={t.name} className="testimonial-card">
-                <div className="t-stars">{'★'.repeat(t.rating)}</div>
+                <div className="t-stars">{t.rating}/5</div>
                 <p className="t-text">"{t.text}"</p>
                 <div className="t-author">
                   <div className="t-avatar">{t.initials}</div>
@@ -499,7 +508,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* ── Instagram feed ───────────────────────── */}
+      {/* â”€â”€ Instagram feed â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       {(igLoading || igPosts.length > 0) && (
         <section className="ig-section">
           <div className="container">
@@ -515,7 +524,7 @@ const Home = () => {
                     <a key={post.id} href={post.permalink} target="_blank" rel="noopener noreferrer" className="ig-tile">
                       <img src={post.url} alt={post.caption || 'Instagram post'} className="ig-img" />
                       <div className="ig-overlay">
-                        {post.isVideo && <span className="ig-play">▶</span>}
+                        {post.isVideo && <span className="ig-play">Video</span>}
                         {post.caption && <p className="ig-caption">{post.caption}</p>}
                       </div>
                     </a>
@@ -524,46 +533,15 @@ const Home = () => {
             </div>
             <div style={{ textAlign: 'center', marginTop: 28 }}>
               <a href="https://www.instagram.com/avakaayafoods" target="_blank" rel="noopener noreferrer" className="btn btn-outline">
-                View More on Instagram →
+                View More on Instagram
               </a>
             </div>
           </div>
         </section>
       )}
 
-      {/* ── Who We Are ──────────────────────────── */}
-      <section className="brand-split anim">
-        <div className="container brand-split-inner">
-          <div className="brand-split-img-col">
-            <img
-              src="/avakaaya-logo.png"
-              alt="Avakaaya Pickles House"
-              className="brand-split-img"
-              data-parallax="0.08"
-            />
-            <div className="brand-since-badge" data-parallax="-0.05">
-              <span>Making pickles since</span>
-              <strong>1980s</strong>
-            </div>
-          </div>
-          <div className="brand-split-text">
-            <span className="home-sec-label">Who We Are</span>
-            <h2 className="brand-split-heading">Handcrafted in Hyderabad,<br />Loved Across the World</h2>
-            <p className="brand-split-body">
-              Avakaaya began in a family kitchen — where seasonal raw mangoes, hand-ground spices, and cold-pressed oils came together every summer into jars of pickle that defined what Andhra cooking tasted like. Today we carry those same recipes to families across India and six countries.
-            </p>
-            <ul className="brand-bullets">
-              <li><span>✦</span> Zero artificial preservatives — natural preservation only</li>
-              <li><span>✦</span> Whole spices from Guntur, Khammam &amp; Nalgonda</li>
-              <li><span>✦</span> Cold-pressed groundnut oil in every batch</li>
-              <li><span>✦</span> Small batches — quality over volume, always</li>
-            </ul>
-            <Link to="/about" className="btn btn-primary" style={{ marginTop: 28 }}>Read Our Full Story →</Link>
-          </div>
-        </div>
-      </section>
 
-      {/* ── Newsletter ───────────────────────────── */}
+      {/* â”€â”€ Newsletter â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <section className="newsletter-section">
         <div className="container newsletter-inner anim">
           <div className="newsletter-copy">
@@ -571,19 +549,19 @@ const Home = () => {
             <p>Be the first to know about new pickles, festival hampers, and early-bird discounts.</p>
           </div>
           {subscribed
-            ? <div className="newsletter-thanks">🎉 Thank you! We'll be in touch soon.</div>
+            ? <div className="newsletter-thanks">Thank you! We'll be in touch soon.</div>
             : (
               <form className="newsletter-form" onSubmit={handleSubscribe}>
                 <input type="email" placeholder="Enter your email address" className="newsletter-input"
                   value={email} onChange={e => setEmail(e.target.value)} required />
-                <button type="submit" className="btn btn-gold">Subscribe →</button>
+                <button type="submit" className="btn btn-gold">Subscribe</button>
               </form>
             )
           }
         </div>
       </section>
 
-      {/* ── WhatsApp float ───────────────────────── */}
+      {/* â”€â”€ WhatsApp float â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <a href={`https://wa.me/${WHATSAPP_NUMBER}?text=Hi%2C%20I%20have%20a%20question%20about%20Avakaaya%20Foods`}
         target="_blank" rel="noopener noreferrer" className="whatsapp-float" aria-label="Chat on WhatsApp">
         <svg viewBox="0 0 24 24" fill="currentColor" width="28" height="28">

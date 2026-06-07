@@ -23,11 +23,11 @@ const VALUES = [
   {
     icon: '🌾',
     title: 'Farmer-First Sourcing',
-    desc: 'We work directly with farmers in Andhra Pradesh — fair prices, long-term relationships, seasonal produce. When our farmers thrive, the flavour shows in every jar.',
+    desc: 'We work directly with farmers in Telugu Pradesh — fair prices, long-term relationships, seasonal produce. When our farmers thrive, the flavour shows in every jar.',
   },
   {
     icon: '🌶️',
-    title: 'Authentic Andhra Spice',
+    title: 'Authentic Telugu Spice',
     desc: 'Whole spices ground fresh in-house for every single batch. Red chillies from Guntur, mustard from local farms, fenugreek seeds sourced seasonally — never pre-ground powders.',
   },
   {
@@ -43,15 +43,15 @@ const VALUES = [
 ];
 
 const INGREDIENTS = [
-  { emoji: '🥭', name: 'Raw Mangoes',        source: 'Guntur, Andhra Pradesh',  note: 'Sourced at peak raw season for the perfect tangy bite' },
+  { emoji: '🥭', name: 'Raw Mangoes',        source: 'Guntur, Telugu states',  note: 'Sourced at peak raw season for the perfect tangy bite' },
   { emoji: '🌶️', name: 'Red Chillies',       source: 'Khammam, Telangana',       note: 'Dried Guntur chillies — bold heat with deep colour' },
-  { emoji: '🌻', name: 'Sesame Seeds',        source: 'Nalgonda, Andhra Pradesh', note: 'Cold-pressed til oil for authentic richness' },
+  { emoji: '🌻', name: 'Sesame Seeds',        source: 'Nalgonda, Telugu states', note: 'Cold-pressed til oil for authentic richness' },
   { emoji: '🫘', name: 'Groundnut Oil',       source: 'Locally cold-pressed',     note: 'Traditional cold-press process, no refining' },
   { emoji: '🌿', name: 'Fenugreek & Mustard', source: 'Seasonal, direct from farms', note: 'Whole seeds ground fresh per batch — never powder' },
 ];
 
 const PROCESS = [
-  { step: '01', title: 'Seasonal Sourcing',  desc: 'We buy raw mangoes, chillies, and spices only at their seasonal peak from trusted Andhra farms — never year-round from cold storage.' },
+  { step: '01', title: 'Seasonal Sourcing',  desc: 'We buy raw mangoes, chillies, and spices only at their seasonal peak from trusted Telugu farms — never year-round from cold storage.' },
   { step: '02', title: 'Whole Spice Grinding', desc: 'Every spice is bought whole and ground fresh in-house. This preserves volatile oils and gives Avakaaya its unmistakable depth of flavour.' },
   { step: '03', title: 'Hand Mixing',         desc: 'Ingredients are mixed by hand in exact ratios — same as the original recipes. There is no machine that replicates the feel of proper hand blending.' },
   { step: '04', title: 'Curing & Resting',   desc: "Pickles rest and cure for the right amount of time — days for some, weeks for others. You can't rush authentic flavour development." },
@@ -61,9 +61,9 @@ const PROCESS = [
 
 const REVIEWS = [
   { name: 'Priya Reddy',   location: 'New Jersey, USA',  initials: 'PR', text: 'The avakaya tastes exactly like my grandmother used to make in Vijayawada. I have tried dozens of brands here in the US — nothing comes close. This is the real deal.' },
-  { name: 'Sandra M.',     location: 'London, UK',        initials: 'SM', text: 'The non-veg pickles are absolutely outstanding. Especially the chicken pickle. Highly recommend to anyone who misses proper Andhra food.' },
+  { name: 'Sandra M.',     location: 'London, UK',        initials: 'SM', text: 'The non-veg pickles are absolutely outstanding. Especially the chicken pickle. Highly recommend to anyone who misses proper Telugu food.' },
   { name: 'Ramesh Babu',   location: 'Hyderabad',         initials: 'RB', text: 'Ordered for our family function and everyone loved it. The gongura pachadi was finished before anything else. Will definitely order again.' },
-  { name: 'Sunitha Devi',  location: 'Singapore',         initials: 'SD', text: 'Fast international shipping, beautiful packaging, and the taste is 100% authentic. My children who grew up here finally understand what I mean by "real Andhra pickle".' },
+  { name: 'Sunitha Devi',  location: 'Singapore',         initials: 'SD', text: 'Fast international shipping, beautiful packaging, and the taste is 100% authentic. My children who grew up here finally understand what I mean by "real Telugu pickle".' },
 ];
 
 const About = () => {
@@ -75,10 +75,10 @@ const About = () => {
         <div className="about-hero-bg" />
         <div className="container about-hero-content">
           <span className="about-eyebrow">Our Story</span>
-          <h1 className="about-title">Handcrafted with Love,<br />Rooted in Andhra</h1>
+          <h1 className="about-title">Handcrafted with Love,<br />Rooted in Telugu</h1>
           <p className="about-tagline">
             From a Hyderabad kitchen to doorsteps across six countries —<br />
-            the same recipes, the same care, the same Andhra soul.
+            the same recipes, the same care, the same Telugu soul.
           </p>
           <div className="about-hero-actions">
             <Link to="/products" className="btn btn-gold btn-lg">Shop Our Pickles</Link>
@@ -119,7 +119,7 @@ const About = () => {
               Avakaaya began not as a business plan but as a memory. The founder grew up watching their mother and grandmother spend weeks every summer preparing the season's pickles — sorting raw mangoes, grinding spices by hand, mixing everything with a precision that came from decades of doing it the same way.
             </p>
             <p>
-              When those recipes risked being lost to faster, easier substitutes, Avakaaya was born: a deliberate effort to keep them alive and share them beyond the family table. What started as gifting jars to friends became a trusted name in Andhra households across the country.
+              When those recipes risked being lost to faster, easier substitutes, Avakaaya was born: a deliberate effort to keep them alive and share them beyond the family table. What started as gifting jars to friends became a trusted name in Telugu households across the country.
             </p>
             <p>
               Today, Avakaaya ships to six countries — but the process is unchanged. The same sourcing regions, the same grinding method, the same resting time. Because authentic flavour has no shortcut.
@@ -201,7 +201,7 @@ const About = () => {
           <div className="about-sec-head">
             <span className="about-sec-label">Customer Stories</span>
             <h2>What Our Customers Say</h2>
-            <p className="about-sec-sub">Real orders. Real families. Real Andhra flavour — wherever they are in the world.</p>
+            <p className="about-sec-sub">Real orders. Real families. Real Telugu flavour — wherever they are in the world.</p>
           </div>
           <div className="about-reviews-grid">
             {REVIEWS.map(r => (
@@ -226,7 +226,7 @@ const About = () => {
         <div className="container about-cta-inner">
           <div>
             <h2>Ready to taste the difference?</h2>
-            <p>Browse our full range of authentic Andhra pickles, powders, snacks &amp; gift hampers.</p>
+            <p>Browse our full range of authentic Telugu pickles, powders, snacks &amp; gift hampers.</p>
           </div>
           <div className="about-cta-btns">
             <Link to="/products" className="btn btn-gold btn-lg">Shop Now →</Link>

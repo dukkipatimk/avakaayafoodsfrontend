@@ -52,13 +52,13 @@ const STORE_SCHEMA = [
 
 const STATIC_PAGES = {
   '/': {
-    title: 'Authentic Andhra Pickles, Podis & Sweets Online | Avakaaya Foods',
-    description: 'Shop authentic Andhra pickles, podis, sweets, snacks and ghee handcrafted in Hyderabad. Delivery across India and worldwide shipping available.',
+    title: 'Authentic Telugu Pickles, Podis & Sweets Online | Avakaaya Foods',
+    description: 'Shop authentic Telugu pickles, podis, sweets, snacks and ghee handcrafted in Hyderabad. Delivery across India and worldwide shipping available.',
     jsonLd: [ORGANIZATION_SCHEMA, WEBSITE_SCHEMA],
   },
   '/about': {
-    title: 'Our Story | Traditional Andhra Recipes | Avakaaya Foods',
-    description: 'Learn about Avakaaya Foods, our traditional Andhra recipes, fresh spices and small-batch approach to authentic homemade flavours.',
+    title: 'Our Story | Traditional Telugu Recipes | Avakaaya Foods',
+    description: 'Learn about Avakaaya Foods, our traditional Telugu recipes, fresh spices and small-batch approach to authentic homemade flavours.',
   },
   '/shipping-info': {
     title: 'Shipping Information | Avakaaya Foods',
@@ -86,7 +86,7 @@ const STATIC_PAGES = {
     description: 'Learn how Avakaaya Foods handles order information, website activity and customer enquiries.',
   },
   '/gift-hamper': {
-    title: 'Build an Andhra Food Gift Hamper | Avakaaya Foods',
+    title: 'Build an Telugu Food Gift Hamper | Avakaaya Foods',
     description: 'Build a personalised gift hamper with Avakaaya Foods pickles, podis, sweets and traditional snacks.',
   },
 };

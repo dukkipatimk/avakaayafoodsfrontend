@@ -5,7 +5,14 @@
       "Bash(curl -sL -A \"Mozilla/5.0 \\(Windows NT 10.0\\)\" \"https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/Golconda_Fort_Hyderabad%2C_Golconda_Fort_Hyderabad_India.jpg/1280px-Golconda_Fort_Hyderabad%2C_Golconda_Fort_Hyderabad_India.jpg\" -o golconda.jpg)",
       "Bash(curl -sL -A \"Mozilla/5.0 \\(Windows NT 10.0\\)\" \"https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/Kakatiya_Kala_Thoranam_%28Warangal_Gate%29_and_Ruins.jpg/1280px-Kakatiya_Kala_Thoranam_%28Warangal_Gate%29_and_Ruins.jpg\" -o warangal.jpg)",
       "Bash(curl -sL -A \"Mozilla/5.0 \\(Windows NT 10.0\\)\" \"https://upload.wikimedia.org/wikipedia/commons/7/79/Alphonso_mango.jpg\" -o mangoes.jpg)",
-      "Bash(curl -sL -A \"Mozilla/5.0 \\(Windows NT 10.0\\)\" \"https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Drying_Guntur_Chilli.jpg/1280px-Drying_Guntur_Chilli.jpg\" -o chillies.jpg)"
+      "Bash(curl -sL -A \"Mozilla/5.0 \\(Windows NT 10.0\\)\" \"https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Drying_Guntur_Chilli.jpg/1280px-Drying_Guntur_Chilli.jpg\" -o chillies.jpg)",
+      "Bash(node -e \"for \\(const m of ['pngjs','upng-js','pngparse','canvas','get-pixels']\\){try{require.resolve\\(m\\);console.log\\('FOUND',m\\)}catch\\(e\\){}}\")",
+      "Bash(node -e ' *)",
+      "Bash(cp \"c:/Users/dukki/Downloads/3256a130-e19a-401e-8873-64d3efda79eb.png\" \"c:/Users/dukki/Documents/avakaayafoods/avakaayafoodsfrontend/public/images/features-strip.png\" && ls -la \"c:/Users/dukki/Documents/avakaayafoods/avakaayafoodsfrontend/public/images/features-strip.png\")",
+      "Bash(awk -F: '$1>3990 && $1<4110')"
+    ],
+    "additionalDirectories": [
+      "c:\\Users\\dukki\\Downloads"
     ]
   }
 }

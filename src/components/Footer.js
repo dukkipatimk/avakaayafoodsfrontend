@@ -13,7 +13,7 @@ const Footer = () => {
               <img src="/avakaaya-logo.png" alt="Avakaaya Foods" className="footer-logo-img" />
             </Link>
             <p className="footer-tagline">
-              Authentic Andhra flavours, crafted with love in Hyderabad since generations.
+              Authentic Telugu flavours, crafted with love in Hyderabad since generations.
             </p>
             <div className="footer-social">
               <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram">

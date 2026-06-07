@@ -41,7 +41,7 @@ const ShippingInfo = () => {
         <div className="container">
           <h1 className="shipping-hero-title">Shipping Information</h1>
           <p className="shipping-hero-sub">
-            Bringing authentic Andhra flavours from Hyderabad to your doorstep, anywhere in the world.
+            Bringing authentic Telugu flavours from Hyderabad to your doorstep, anywhere in the world.
           </p>
         </div>
       </div>

@@ -168,6 +168,7 @@ const OrderDetailModal = ({ order, onClose, onOrderUpdated }) => {
   const pickWeights = (pickProductObj?.variants || []).filter(v => v.price);
 
   const addr = data?.shippingAddress || order.shippingAddress || {};
+  const billAddr = data?.billingAddress || order.billingAddress || null;
   const history = data?.statusHistory || [];
 
   return (
@@ -349,6 +350,24 @@ const OrderDetailModal = ({ order, onClose, onOrderUpdated }) => {
               {[addr.city, addr.state, addr.pincode, addr.country].filter(Boolean).join(', ')}
             </p>
             {addr.phone && <p className="omd-line omd-muted">{addr.phone}</p>}
+          </section>
+
+          {/* Billing Address — only when different from shipping */}
+          <section className="omd-section">
+            <h3 className="omd-section-title">Billing Address</h3>
+            {billAddr ? (
+              <>
+                <p className="omd-line">{billAddr.fullName || billAddr.name}</p>
+                {billAddr.line1 && <p className="omd-line">{billAddr.line1}</p>}
+                {billAddr.line2 && <p className="omd-line">{billAddr.line2}</p>}
+                <p className="omd-line">
+                  {[billAddr.city, billAddr.state, billAddr.pincode, billAddr.country].filter(Boolean).join(', ')}
+                </p>
+                {billAddr.phone && <p className="omd-line omd-muted">{billAddr.phone}</p>}
+              </>
+            ) : (
+              <p className="omd-line omd-muted">Same as shipping address</p>
+            )}
           </section>
 
           {/* Payment */}
