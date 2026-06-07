@@ -9,6 +9,14 @@ const FILTER_OPTIONS = ['all', 'placed', 'confirmed', 'processing', 'packed', 's
 
 /* ── helpers ── */
 const fmtDate = iso => new Date(iso).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+// shippingAddress may arrive as an object or a JSON string — normalize to an object.
+const orderAddr = (order) => {
+  const value = order?.shippingAddress;
+  if (!value) return {};
+  if (typeof value === 'object') return value;
+  if (typeof value === 'string') { try { return JSON.parse(value) || {}; } catch { return {}; } }
+  return {};
+};
 
 const money = n => '₹' + Number(n || 0).toLocaleString('en-IN', { maximumFractionDigits: 2 });
 
@@ -17,8 +25,8 @@ const ordersToCSV = orders => {
   const rows = orders.map(o => [
     o.orderNumber,
     fmtDate(o.createdAt),
-    o.user?.name || o.shippingAddress?.fullName || o.shippingAddress?.name || '',
-    o.user?.email || o.shippingAddress?.email || '',
+    o.user?.name || orderAddr(o).fullName || orderAddr(o).name || '',
+    o.user?.email || orderAddr(o).email || o.guestEmail || '',
     o.items?.length ?? 0,
     o.total ?? 0,
     o.paymentStatus,
@@ -52,6 +60,11 @@ const OrderDetailModal = ({ order, onClose, onOrderUpdated }) => {
   const [note, setNote] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
+  const [payStatus, setPayStatus] = useState(order.paymentStatus || 'pending');
+  const [payMethod, setPayMethod] = useState(order.paymentMethod || 'razorpay');
+  const [payRef, setPayRef] = useState(order.paymentId || '');
+  const [savingPayment, setSavingPayment] = useState(false);
+
   const [editing, setEditing] = useState(false);
   const [editItems, setEditItems] = useState([]);
   const [pickProduct, setPickProduct] = useState('');
@@ -70,11 +83,38 @@ const OrderDetailModal = ({ order, onClose, onOrderUpdated }) => {
       setData(full);
       setNewStatus(full.orderStatus || '');
       setTrackingNumber(full.trackingNumber || '');
+      setPayStatus(full.paymentStatus || 'pending');
+      setPayMethod(full.paymentMethod || 'razorpay');
+      setPayRef(full.paymentId || '');
       setProducts(pRes.data.products || []);
       setZones(zRes.data.zones || []);
     }).catch(console.error).finally(() => { if (alive) setLoadingData(false); });
     return () => { alive = false; };
   }, [orderId]);
+
+  const savePayment = async () => {
+    setSavingPayment(true);
+    try {
+      const res = await api.put(`/orders/${orderId}/payment`, {
+        paymentStatus: payStatus,
+        paymentMethod: payMethod,
+        paymentId: payRef,
+      });
+      const u = res.data.order;
+      setData(prev => ({
+        ...prev,
+        paymentStatus: u.paymentStatus,
+        paymentMethod: u.paymentMethod,
+        paymentId: u.paymentId,
+        statusHistory: u.statusHistory,
+      }));
+      onOrderUpdated(orderId, { paymentStatus: u.paymentStatus });
+    } catch (err) {
+      alert(err.response?.data?.message || 'Failed to update payment');
+    } finally {
+      setSavingPayment(false);
+    }
+  };
 
   const handleUpdateStatus = async e => {
     e.preventDefault();
@@ -167,9 +207,23 @@ const OrderDetailModal = ({ order, onClose, onOrderUpdated }) => {
   const pickProductObj = products.find(x => String(x._id) === String(pickProduct));
   const pickWeights = (pickProductObj?.variants || []).filter(v => v.price);
 
-  const addr = data?.shippingAddress || order.shippingAddress || {};
-  const billAddr = data?.billingAddress || order.billingAddress || null;
+  // JSON columns can come back as objects OR JSON strings — parse defensively.
+  const parseMaybeJson = (value) => {
+    if (!value) return null;
+    if (typeof value === 'object') return value;
+    if (typeof value === 'string') {
+      try { return JSON.parse(value); } catch { return null; }
+    }
+    return null;
+  };
+  const addr = parseMaybeJson(data?.shippingAddress || order.shippingAddress) || {};
+  const billAddr = parseMaybeJson(data?.billingAddress || order.billingAddress);
   const history = data?.statusHistory || [];
+  const customer = {
+    name: data?.user?.name || order.user?.name || addr.fullName || addr.name || '—',
+    email: data?.user?.email || order.user?.email || addr.email || data?.guestEmail || order.guestEmail || '—',
+    phone: data?.user?.phone || addr.phone || '—',
+  };
 
   return (
     <div className="order-modal-overlay" onClick={onClose}>
@@ -340,6 +394,14 @@ const OrderDetailModal = ({ order, onClose, onOrderUpdated }) => {
             )}
           </section>
 
+          {/* Customer */}
+          <section className="omd-section">
+            <h3 className="omd-section-title">Customer</h3>
+            <p className="omd-line">{customer.name}</p>
+            <p className="omd-line omd-muted">{customer.email}</p>
+            <p className="omd-line omd-muted">{customer.phone}</p>
+          </section>
+
           {/* Shipping Address */}
           <section className="omd-section">
             <h3 className="omd-section-title">Shipping Address</h3>
@@ -370,22 +432,48 @@ const OrderDetailModal = ({ order, onClose, onOrderUpdated }) => {
             )}
           </section>
 
-          {/* Payment */}
-          <section className="omd-section omd-row-2">
-            <div>
-              <h3 className="omd-section-title">Payment</h3>
-              <p className="omd-line">Method: <strong>{data.paymentMethod || '—'}</strong></p>
-              <p className="omd-line">Status: <span className={`payment-status ${data.paymentStatus}`}>{data.paymentStatus}</span></p>
+          {/* Payment — editable */}
+          <section className="omd-section">
+            <h3 className="omd-section-title">Payment</h3>
+            <div className="omd-form-row">
+              <div className="omd-form-group">
+                <label>Payment Status</label>
+                <select value={payStatus} onChange={e => setPayStatus(e.target.value)}>
+                  {['pending', 'paid', 'failed', 'refunded'].map(s => <option key={s} value={s}>{s}</option>)}
+                </select>
+              </div>
+              <div className="omd-form-group">
+                <label>Method</label>
+                <select value={payMethod} onChange={e => setPayMethod(e.target.value)}>
+                  {['razorpay', 'icici', 'upi', 'cod', 'cash', 'bank_transfer'].map(m => (
+                    <option key={m} value={m}>{m === 'bank_transfer' ? 'Bank Transfer' : m.toUpperCase()}</option>
+                  ))}
+                </select>
+              </div>
             </div>
-            <div>
-              <h3 className="omd-section-title">Current Status</h3>
-              <span className={`order-status-badge status-${data.orderStatus}`}>{data.orderStatus}</span>
-              {data.trackingNumber && (
-                <p className="omd-line omd-muted" style={{ marginTop: '0.5rem' }}>
-                  Tracking: {data.trackingNumber}
-                </p>
-              )}
+            <div className="omd-form-group">
+              <label>Reference / Transaction ID</label>
+              <input
+                type="text"
+                value={payRef}
+                onChange={e => setPayRef(e.target.value)}
+                placeholder="e.g. UPI ref, bank txn no., receipt no."
+              />
             </div>
+            <button className="btn btn-primary btn-sm" onClick={savePayment} disabled={savingPayment}>
+              {savingPayment ? 'Saving…' : 'Save Payment Details'}
+            </button>
+          </section>
+
+          {/* Current order status */}
+          <section className="omd-section">
+            <h3 className="omd-section-title">Current Status</h3>
+            <span className={`order-status-badge status-${data.orderStatus}`}>{data.orderStatus}</span>
+            {data.trackingNumber && (
+              <p className="omd-line omd-muted" style={{ marginTop: '0.5rem' }}>
+                Tracking: {data.trackingNumber}
+              </p>
+            )}
           </section>
 
           {/* Status Update */}
@@ -593,8 +681,8 @@ const AdminDashboard = () => {
                     <td><strong>#{order.orderNumber}</strong></td>
                     <td>
                       <div className="customer-cell">
-                        <span>{order.user?.name || order.shippingAddress?.fullName || order.shippingAddress?.name}</span>
-                        <span className="cell-sub">{order.user?.email || order.shippingAddress?.email}</span>
+                        <span>{order.user?.name || orderAddr(order).fullName || orderAddr(order).name || '—'}</span>
+                        <span className="cell-sub">{order.user?.email || orderAddr(order).email || order.guestEmail || ''}</span>
                       </div>
                     </td>
                     <td>{order.items?.length}</td>
