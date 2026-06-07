@@ -3,7 +3,22 @@ import api from '../utils/api';
 import AdminTabs from '../components/AdminTabs';
 import './AdminLeads.css';
 
-const FILTERS = ['actionable', 'abandoned', 'hot', 'active', 'converted', 'dismissed', 'all'];
+const FILTERS = ['actionable', 'checkout', 'abandoned', 'hot', 'active', 'converted', 'dismissed', 'all'];
+const FILTER_LABELS = { checkout: 'Started Checkout' };
+const EVENT_LABELS = {
+  page_view: 'Page view',
+  product_view: 'Product view',
+  add_to_cart: 'Added to cart',
+  view_cart: 'Viewed cart',
+  begin_checkout: 'Started checkout',
+  address_submitted: 'Submitted address',
+  contact_whatsapp: 'Clicked WhatsApp',
+  contact_phone: 'Clicked Call',
+  order_created: 'Placed order',
+  order_completed: 'Completed order',
+  generic_click: 'Clicked',
+};
+const eventLabel = (type) => EVENT_LABELS[type] || (type || 'Event').replace(/_/g, ' ');
 const TREND_OPTIONS = [
   { value: 'daily', label: 'Daily', title: 'Last 30 Days' },
   { value: 'weekly', label: 'Weekly', title: 'Last 12 Weeks' },
@@ -176,6 +191,8 @@ const AdminLeads = () => {
   const [region, setRegion] = useState('all');
   const [loading, setLoading] = useState(true);
   const [selectedLead, setSelectedLead] = useState(null);
+  const [journey, setJourney] = useState([]);
+  const [journeyLoading, setJourneyLoading] = useState(false);
 
   const loadLeads = async (selected = filter, selectedRegion = region) => {
     setLoading(true);
@@ -214,8 +231,30 @@ const AdminLeads = () => {
     await api.patch(`/tracking/leads/${id}`, { status });
     loadLeads();
   };
-  const openLead = (lead) => setSelectedLead(normalizeLead(lead));
-  const closeLead = () => setSelectedLead(null);
+  const placeOrderFromLead = async (id) => {
+    if (!window.confirm("Mark this lead's pending order as Placed? It will move to the Orders page and the lead becomes Converted.")) return;
+    try {
+      await api.post(`/tracking/leads/${id}/place-order`);
+      loadLeads();
+    } catch (err) {
+      window.alert(err.response?.data?.message || 'Could not place the order.');
+    }
+  };
+  const openLead = async (lead) => {
+    const normalized = normalizeLead(lead);
+    setSelectedLead(normalized);
+    setJourney([]);
+    setJourneyLoading(true);
+    try {
+      const res = await api.get(`/tracking/leads/${leadId(normalized)}/journey`);
+      setJourney(res.data.events || []);
+    } catch {
+      setJourney([]);
+    } finally {
+      setJourneyLoading(false);
+    }
+  };
+  const closeLead = () => { setSelectedLead(null); setJourney([]); };
   const onLeadKeyDown = (event, lead) => {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
@@ -290,7 +329,7 @@ const AdminLeads = () => {
           <label htmlFor="lead-filter">Show</label>
           <select id="lead-filter" value={filter} onChange={e => setFilter(e.target.value)}>
             {FILTERS.map(option => (
-              <option key={option} value={option}>{option.charAt(0).toUpperCase() + option.slice(1)}</option>
+              <option key={option} value={option}>{FILTER_LABELS[option] || (option.charAt(0).toUpperCase() + option.slice(1))}</option>
             ))}
           </select>
           <label htmlFor="lead-region">Region</label>
@@ -361,6 +400,9 @@ const AdminLeads = () => {
                   <span>Last activity: {dateTime(lead.lastEventAt)}</span>
                   {lead.order?.orderNumber && <span>Order: #{lead.order.orderNumber} ({lead.order.paymentStatus})</span>}
                   <div className="lead-actions">
+                    {lead.order?.orderStatus === 'awaiting_payment' && (
+                      <button className="lead-place-order" onClick={(event) => { event.stopPropagation(); placeOrderFromLead(leadId(lead)); }}>Mark Placed</button>
+                    )}
                     {lead.status !== 'dismissed' && lead.status !== 'converted' && (
                       <button onClick={(event) => { event.stopPropagation(); changeStatus(leadId(lead), 'dismissed'); }}>Dismiss</button>
                     )}
@@ -421,7 +463,29 @@ const AdminLeads = () => {
               <div className="lead-no-products">No product details captured for this lead yet.</div>
             )}
 
+            <div className="lead-journey">
+              <h3>Pages Visited</h3>
+              {journeyLoading ? (
+                <p className="lead-journey-empty">Loading activity…</p>
+              ) : journey.length > 0 ? (
+                <ol className="lead-journey-list">
+                  {journey.map((ev, index) => (
+                    <li key={index} className="lead-journey-item">
+                      <span className={`lej-type lej-${ev.eventType}`}>{eventLabel(ev.eventType)}</span>
+                      <span className="lej-path">{ev.path || '—'}</span>
+                      <span className="lej-time">{dateTime(ev.createdAt)}</span>
+                    </li>
+                  ))}
+                </ol>
+              ) : (
+                <p className="lead-journey-empty">No page activity recorded for this visitor.</p>
+              )}
+            </div>
+
             <div className="lead-detail-actions">
+              {selectedLead.order?.orderStatus === 'awaiting_payment' && (
+                <button className="lead-place-order" onClick={() => placeOrderFromLead(leadId(selectedLead))}>Mark Order Placed</button>
+              )}
               {selectedLead.status !== 'dismissed' && selectedLead.status !== 'converted' && (
                 <button onClick={() => changeStatus(leadId(selectedLead), 'dismissed')}>Dismiss Lead</button>
               )}

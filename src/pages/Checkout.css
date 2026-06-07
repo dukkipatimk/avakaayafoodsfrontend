@@ -110,7 +110,20 @@
   transition: var(--transition);
 }
 
-.form-input:focus, .form-select:focus { border-color: var(--green-mid); background: var(--white); }
+.form-input:focus, .form-select:focus { border-color: var(--green-mid); background-color: var(--white); }
+
+/* Make the select clearly look like a dropdown — custom chevron + spacing */
+.form-select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  cursor: pointer;
+  padding-right: 42px;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'><path d='M2 4l4 4 4-4' fill='none' stroke='%231c4a0e' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  background-size: 12px 12px;
+}
 
 .checkout-next-btn { width: 100%; justify-content: center; margin-top: 16px; }
 

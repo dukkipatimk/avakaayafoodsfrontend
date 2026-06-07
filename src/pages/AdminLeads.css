@@ -517,6 +517,78 @@
   margin: 0;
 }
 
+/* Pages-visited timeline */
+.lead-journey {
+  background: #fffaf0;
+  border: 1px solid #eee6d7;
+  border-radius: 8px;
+  margin: 0 0 1rem;
+  padding: 0.85rem 0.9rem;
+}
+.lead-journey h3 {
+  color: var(--color-forest, #1a2e1a);
+  font: 600 0.76rem 'Josefin Sans', sans-serif;
+  letter-spacing: 0.08em;
+  margin: 0 0 0.6rem;
+  text-transform: uppercase;
+}
+.lead-journey-empty {
+  color: var(--color-text-muted, #6b6b6b);
+  font-size: 0.85rem;
+  margin: 0;
+}
+.lead-journey-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 260px;
+  overflow-y: auto;
+}
+.lead-journey-item {
+  display: grid;
+  grid-template-columns: minmax(110px, auto) 1fr auto;
+  gap: 0.5rem 0.75rem;
+  align-items: baseline;
+  padding: 0.4rem 0;
+  border-bottom: 1px solid #f0e8d8;
+  font-size: 0.82rem;
+}
+.lead-journey-item:last-child { border-bottom: 0; }
+.lej-type {
+  font-weight: 700;
+  color: var(--color-forest, #1a2e1a);
+  white-space: nowrap;
+}
+.lej-type.lej-begin_checkout,
+.lej-type.lej-address_submitted { color: #b45309; }
+.lej-type.lej-order_created,
+.lej-type.lej-order_completed { color: #047857; }
+.lej-type.lej-contact_whatsapp,
+.lej-type.lej-contact_phone { color: #1d4ed8; }
+.lej-path {
+  color: #4b4b4b;
+  word-break: break-all;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.78rem;
+}
+.lej-time {
+  color: var(--color-text-muted, #6b6b6b);
+  white-space: nowrap;
+  font-size: 0.76rem;
+}
+
+/* Convert-lead-to-order button */
+.lead-place-order {
+  background: #1a2e1a;
+  border: 1px solid #1a2e1a;
+  color: #fff;
+  font-weight: 700;
+}
+.lead-place-order:hover {
+  background: #244024;
+  border-color: #244024;
+}
+
 .lead-customer-address address span {
   display: block;
 }

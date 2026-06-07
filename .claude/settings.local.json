@@ -14,7 +14,10 @@
       "Bash(BABEL_ENV=development NODE_ENV=development node -e ' *)",
       "Bash(git check-ignore *)",
       "Bash(node --check routes/tracking.js)",
-      "Bash(BABEL_ENV=development NODE_ENV=development node -e \"require\\('@babel/core'\\).transformFileSync\\('src/pages/Checkout.js',{presets:[require.resolve\\('babel-preset-react-app'\\)]}\\); console.log\\('Checkout.js OK'\\)\")"
+      "Bash(BABEL_ENV=development NODE_ENV=development node -e \"require\\('@babel/core'\\).transformFileSync\\('src/pages/Checkout.js',{presets:[require.resolve\\('babel-preset-react-app'\\)]}\\); console.log\\('Checkout.js OK'\\)\")",
+      "Read(//c/Users/dukki/Documents/avakaayafoodsfrontend/src/pages/**)",
+      "Bash(powershell -Command \"\\(Get-Content src/pages/AdminLeads.css | Measure-Object -Line\\).Lines\")",
+      "Bash(BABEL_ENV=development NODE_ENV=development node -e \"require\\('@babel/core'\\).transformFileSync\\('src/pages/AdminLeads.js',{presets:[require.resolve\\('babel-preset-react-app'\\)]}\\); console.log\\('AdminLeads.js OK'\\)\")"
     ]
   }
 }
