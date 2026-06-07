@@ -12,7 +12,8 @@
       "Bash(node --check utils/migrations.js)",
       "Bash(node -e ' *)",
       "Bash(BABEL_ENV=development NODE_ENV=development node -e ' *)",
-      "Bash(git check-ignore *)"
+      "Bash(git check-ignore *)",
+      "Bash(node --check routes/tracking.js)"
     ]
   }
 }

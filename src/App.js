@@ -68,7 +68,7 @@ function App() {
               <Route path="/collections/:category" element={<Products collectionPage />} />
               <Route path="/products/:slug" element={<ProductDetail />} />
               <Route path="/cart" element={<Cart />} />
-              <Route path="/checkout" element={<Checkout />} />
+              <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
               <Route path="/order/success" element={<OrderSuccess />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
