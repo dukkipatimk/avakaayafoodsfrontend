@@ -11,7 +11,8 @@
       "Bash(node --check models/Order.js)",
       "Bash(node --check utils/migrations.js)",
       "Bash(node -e ' *)",
-      "Bash(BABEL_ENV=development NODE_ENV=development node -e ' *)"
+      "Bash(BABEL_ENV=development NODE_ENV=development node -e ' *)",
+      "Bash(git check-ignore *)"
     ]
   }
 }
