@@ -118,7 +118,9 @@ const Checkout = () => {
   const handleBillingChange = (e) =>
     setBilling((b) => ({ ...b, [e.target.name]: e.target.value }));
 
-  const paymentMethod = 'razorpay';
+  // Enabled payment methods (admin-controlled). Defaults to online until loaded.
+  const [enabledMethods, setEnabledMethods] = useState({ razorpay: true, cod: false, upi: false });
+  const [paymentMethod, setPaymentMethod] = useState('razorpay');
   const [upiPayment, setUpiPayment] = useState(null); // { order, upiUrl, qrCodeUrl, vpa, payeeName, amount, reference }
   const [upiTxnRef, setUpiTxnRef] = useState('');
   const [upiPayerVpa, setUpiPayerVpa] = useState('');
@@ -230,6 +232,18 @@ const Checkout = () => {
     }, 500);
     return () => { cancelled = true; clearTimeout(timer); };
   }, [address.pincode, address.country]);
+
+  // Load which payment methods the admin has enabled
+  useEffect(() => {
+    api.get('/settings/payment-methods')
+      .then(res => {
+        const methods = res.data.methods || {};
+        setEnabledMethods(methods);
+        const firstEnabled = ['razorpay', 'cod', 'upi'].find(k => methods[k]);
+        if (firstEnabled) setPaymentMethod(firstEnabled);
+      })
+      .catch(() => {});
+  }, []);
 
   // Auto-fill billing city + state from the postal code (debounced)
   useEffect(() => {
@@ -763,9 +777,28 @@ const Checkout = () => {
                     </span>
                     <button className="review-edit" onClick={() => setStep(0)}>Edit</button>
                   </div>
-                  <div className="review-row">
+                  <div className="review-row review-row--payment">
                     <span className="review-key">Payment</span>
-                    <span className="review-val">💳 Pay Online · UPI · Card · Netbanking · Wallets</span>
+                    <div className="pay-method-options">
+                      {[
+                        ['razorpay', '💳 Pay Online', 'UPI · Card · Netbanking · Wallets'],
+                        ['cod', '💵 Cash on Delivery', 'Pay when your order arrives'],
+                        ['upi', '📲 UPI (direct)', 'Pay to our UPI & confirm'],
+                      ].filter(([k]) => enabledMethods[k]).map(([k, label, desc]) => (
+                        <label key={k} className={`pay-method${paymentMethod === k ? ' selected' : ''}`}>
+                          <input
+                            type="radio"
+                            name="paymentMethod"
+                            checked={paymentMethod === k}
+                            onChange={() => setPaymentMethod(k)}
+                          />
+                          <span className="pay-method-text">
+                            <strong>{label}</strong>
+                            <span>{desc}</span>
+                          </span>
+                        </label>
+                      ))}
+                    </div>
                   </div>
                 </div>
 
@@ -797,7 +830,9 @@ const Checkout = () => {
                 </div>
 
                 <div className="payment-security-note">
-                  🔒 Secured by Razorpay — payment is auto-verified the moment your transfer confirms.
+                  {paymentMethod === 'cod'
+                    ? '💵 Pay in cash when your order is delivered.'
+                    : '🔒 Secured by Razorpay — payment is auto-verified the moment your transfer confirms.'}
                 </div>
 
                 <div className="checkout-step-btns">

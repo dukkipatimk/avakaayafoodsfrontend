@@ -557,6 +557,21 @@ const AdminDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [statusFilter, setStatusFilter] = useState('active');
+  const [payMethods, setPayMethods] = useState(null);
+
+  const togglePayMethod = async (key) => {
+    if (!payMethods) return;
+    const prev = payMethods;
+    const next = { ...payMethods, [key]: !payMethods[key] };
+    setPayMethods(next); // optimistic
+    try {
+      const res = await api.put('/settings/payment-methods', next);
+      setPayMethods(res.data.methods);
+    } catch (err) {
+      setPayMethods(prev); // revert on failure
+      alert(err.response?.data?.message || 'Could not update payment methods');
+    }
+  };
 
   const fetchOrders = (tabKey = statusFilter) => {
     const tab = ORDER_TABS.find(t => t.key === tabKey) || ORDER_TABS[0];
@@ -574,6 +589,9 @@ const AdminDashboard = () => {
     if (isAdmin) {
       api.get('/admin/dashboard')
         .then(res => setStats(res.data.stats || res.data))
+        .catch(console.error);
+      api.get('/settings/payment-methods')
+        .then(res => setPayMethods(res.data.methods))
         .catch(console.error);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -634,6 +652,33 @@ const AdminDashboard = () => {
             </div>
           ))}
         </div>
+        )}
+
+        {/* Payment Methods — admin only */}
+        {isAdmin && payMethods && (
+          <div className="admin-section payment-settings">
+            <h2 className="section-title">Payment Methods</h2>
+            <p className="payment-settings-sub">Choose which payment options customers can use at checkout.</p>
+            <div className="payment-toggle-list">
+              {[
+                ['razorpay', 'Online Payment', 'Cards, UPI & netbanking via Razorpay'],
+                ['cod', 'Cash on Delivery', 'Customer pays when the order is delivered'],
+                ['upi', 'UPI (direct)', 'Pay-to-UPI with manual confirmation'],
+              ].map(([key, label, desc]) => (
+                <label key={key} className={`payment-toggle${payMethods[key] ? ' on' : ''}`}>
+                  <div className="payment-toggle-text">
+                    <strong>{label}</strong>
+                    <span>{desc}</span>
+                  </div>
+                  <input
+                    type="checkbox"
+                    checked={!!payMethods[key]}
+                    onChange={() => togglePayMethod(key)}
+                  />
+                </label>
+              ))}
+            </div>
+          </div>
         )}
 
         {/* Recent Orders */}

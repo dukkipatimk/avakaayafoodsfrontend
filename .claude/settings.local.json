@@ -18,7 +18,18 @@
       "Read(//c/Users/dukki/Documents/avakaayafoodsfrontend/src/pages/**)",
       "Bash(powershell -Command \"\\(Get-Content src/pages/AdminLeads.css | Measure-Object -Line\\).Lines\")",
       "Bash(BABEL_ENV=development NODE_ENV=development node -e \"require\\('@babel/core'\\).transformFileSync\\('src/pages/AdminLeads.js',{presets:[require.resolve\\('babel-preset-react-app'\\)]}\\); console.log\\('AdminLeads.js OK'\\)\")",
-      "Bash(BABEL_ENV=development NODE_ENV=development node -e \"require\\('@babel/core'\\).transformFileSync\\('src/pages/AdminDashboard.js',{presets:[require.resolve\\('babel-preset-react-app'\\)]}\\); console.log\\('AdminDashboard.js OK'\\)\")"
+      "Bash(BABEL_ENV=development NODE_ENV=development node -e \"require\\('@babel/core'\\).transformFileSync\\('src/pages/AdminDashboard.js',{presets:[require.resolve\\('babel-preset-react-app'\\)]}\\); console.log\\('AdminDashboard.js OK'\\)\")",
+      "Bash(node --check routes/settings.js)",
+      "Bash(node --check models/Setting.js)",
+      "Bash(node --check models/index.js)",
+      "Bash(node --check server.js)",
+      "Bash(node -e \"console.log\\(JSON.stringify\\(require\\('./package.json'\\).scripts, null, 2\\)\\)\")",
+      "Bash(node -e \"const p=require\\('./package.json'\\); console.log\\('valid JSON ✓'\\); console.log\\('preinstall:', p.scripts.preinstall\\)\")",
+      "Bash(node -e \"require\\('fs'\\).rmSync\\('node_modules/.bin',{recursive:true,force:true}\\); console.log\\('rmSync ran OK \\(force no-ops if missing\\)'\\)\")",
+      "Bash(node -e \"console.log\\('preinstall:', require\\('./package.json'\\).scripts.preinstall\\)\")",
+      "Bash(node -e \"process.stdout.write\\(process.platform\\)\")",
+      "Bash(echo \"--- guard test on this platform \\($\\(node -e \"process.stdout.write\\(process.platform\\)\"\\)\\) ---\")",
+      "Bash(node -e \"process.platform==='linux'&&require\\('fs'\\).rmSync\\('node_modules/.bin',{recursive:true,force:true}\\); console.log\\('ran without touching .bin on non-linux ✓'\\)\")"
     ]
   }
 }

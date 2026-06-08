@@ -16,6 +16,7 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
+    "preinstall": "node -e \"process.platform==='linux'&&require('fs').rmSync('node_modules/.bin',{recursive:true,force:true})\"",
     "start": "react-scripts start",
     "seo:sitemap": "node scripts/generate-sitemap.js",
     "prebuild": "node scripts/generate-sitemap.js",
