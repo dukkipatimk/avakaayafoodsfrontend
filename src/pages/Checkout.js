@@ -118,6 +118,34 @@ const Checkout = () => {
   const handleBillingChange = (e) =>
     setBilling((b) => ({ ...b, [e.target.name]: e.target.value }));
 
+  // Prefill the delivery address from the customer's saved (default) address so
+  // they don't re-enter it every time. Only fills blank fields the user hasn't
+  // already typed.
+  useEffect(() => {
+    if (!user) return;
+    let cancelled = false;
+    api.get('/auth/me')
+      .then((res) => {
+        if (cancelled) return;
+        const list = res.data.user?.addresses || [];
+        const saved = list.find((a) => a.isDefault) || list[0];
+        if (!saved) return;
+        setAddress((prev) => ({
+          ...prev,
+          fullName: prev.fullName || saved.fullName || '',
+          phone: prev.phone || saved.phone || '',
+          line1: prev.line1 || saved.line1 || '',
+          line2: prev.line2 || saved.line2 || '',
+          city: prev.city || saved.city || '',
+          state: prev.state || saved.state || '',
+          pincode: prev.pincode || saved.pincode || '',
+          country: saved.country || prev.country,
+        }));
+      })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, [user]);
+
   // Enabled payment methods (admin-controlled). Defaults to online until loaded.
   const [enabledMethods, setEnabledMethods] = useState({ razorpay: true, cod: false, upi: false });
   const [paymentMethod, setPaymentMethod] = useState('razorpay');
@@ -344,6 +372,20 @@ const Checkout = () => {
     if (!isFreeShipping && !selectedService) {
       toast.error('Could not get a shipping rate for this pincode. Please recheck it.');
       return;
+    }
+    // Persist the delivery address to the customer's account so it is remembered
+    // for next time (fire-and-forget — never blocks the checkout).
+    if (user) {
+      api.put('/auth/checkout-address', {
+        fullName: address.fullName,
+        phone: address.phone,
+        line1: address.line1,
+        line2: address.line2,
+        city: address.city,
+        state: address.state,
+        pincode: address.pincode,
+        country: address.country,
+      }).catch(() => {});
     }
     trackEvent('address_submitted', {
       cartValue: total,

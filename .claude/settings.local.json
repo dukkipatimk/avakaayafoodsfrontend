@@ -31,7 +31,8 @@
       "Bash(echo \"--- guard test on this platform \\($\\(node -e \"process.stdout.write\\(process.platform\\)\"\\)\\) ---\")",
       "Bash(node -e \"process.platform==='linux'&&require\\('fs'\\).rmSync\\('node_modules/.bin',{recursive:true,force:true}\\); console.log\\('ran without touching .bin on non-linux ✓'\\)\")",
       "Bash(node node_modules/react-scripts/bin/react-scripts.js build)",
-      "PowerShell(Set-Location \"c:\\\\Users\\\\dukki\\\\Documents\\\\avakaayafoods\\\\avakaayafoodsfrontend\"; if \\(Test-Path node_modules\\) { Remove-Item -Recurse -Force node_modules -ErrorAction SilentlyContinue }; \"node_modules removed: $\\(-not \\(Test-Path node_modules\\)\\)\")"
+      "PowerShell(Set-Location \"c:\\\\Users\\\\dukki\\\\Documents\\\\avakaayafoods\\\\avakaayafoodsfrontend\"; if \\(Test-Path node_modules\\) { Remove-Item -Recurse -Force node_modules -ErrorAction SilentlyContinue }; \"node_modules removed: $\\(-not \\(Test-Path node_modules\\)\\)\")",
+      "Bash(node --check routes/auth.js)"
     ]
   }
 }

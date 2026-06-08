@@ -763,9 +763,8 @@ const AdminDashboard = () => {
                       </span>
                     </td>
                     <td className="cell-date">
-                      {new Date(order.createdAt).toLocaleDateString('en-IN', {
-                        day: 'numeric', month: 'short'
-                      })}
+                      <span>{new Date(order.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+                      <span className="cell-sub">{new Date(order.createdAt).toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit', hour12: true })}</span>
                     </td>
                   </tr>
                 ))}
