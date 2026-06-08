@@ -16,14 +16,13 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "preinstall": "node -e \"process.platform==='linux'&&require('fs').rmSync('node_modules/.bin',{recursive:true,force:true})\"",
-    "start": "react-scripts start",
+    "start": "node node_modules/react-scripts/bin/react-scripts.js start",
     "seo:sitemap": "node scripts/generate-sitemap.js",
     "prebuild": "node scripts/generate-sitemap.js",
-    "build": "react-scripts build",
+    "build": "node node_modules/react-scripts/bin/react-scripts.js build",
     "postbuild": "node scripts/generate-seo-snapshots.js",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "test": "node node_modules/react-scripts/bin/react-scripts.js test",
+    "eject": "node node_modules/react-scripts/bin/react-scripts.js eject"
   },
   "eslintConfig": {
     "extends": ["react-app", "react-app/jest"]
