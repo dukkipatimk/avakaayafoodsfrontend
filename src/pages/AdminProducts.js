@@ -4,15 +4,30 @@ import AdminTabs from '../components/AdminTabs';
 import './AdminProducts.css';
 
 const WEIGHTS = ['100g', '200g', '250g', '500g', '1kg'];
-const CATEGORIES = ['pickles', 'powders', 'snacks', 'sweets', 'gift-hampers'];
+const CATEGORIES = ['pickles', 'powders', 'snacks', 'sweets', 'ghee', 'gift-hampers'];
+
+// shippingType values must match the Product model enum: 'standard' | 'international' | 'both'
+const SHIPPING_TYPES = [
+  { value: 'both', label: 'India + International' },
+  { value: 'standard', label: 'India Only' },
+  { value: 'international', label: 'International Only' },
+];
 
 const emptyVariant = w => ({ weight: w, price: '', mrp: '', stock: 100, sku: '' });
 
 const emptyProduct = {
-  name: '', description: '', category: 'pickles', isVeg: true, isFeatured: false,
-  ingredients: '', shippingType: 'both', thumbnail: '', images: [],
+  name: '', description: '', shortDescription: '', category: 'pickles',
+  isVeg: true, isFeatured: false, ingredients: '', allergens: '', shelfLife: '',
+  tags: [], shippingType: 'both', thumbnail: '', images: [],
   variants: WEIGHTS.map(emptyVariant)
 };
+
+// Storefront stores ingredients/allergens/tags as JSON arrays; the form edits them
+// as comma/newline text. Convert between the two on load and save.
+const splitToArray = str =>
+  String(str || '').split(/[,\n]/).map(s => s.trim()).filter(Boolean);
+const joinToText = val =>
+  Array.isArray(val) ? val.join(', ') : String(val || '');
 
 /* ── Stock status helper ── */
 const getStockStatus = variants => {
@@ -220,6 +235,11 @@ const AdminProducts = () => {
   const openEdit = product => {
     setForm({
       ...product,
+      shortDescription: product.shortDescription || '',
+      shelfLife: product.shelfLife || '',
+      ingredients: joinToText(product.ingredients),
+      allergens: joinToText(product.allergens),
+      tags: Array.isArray(product.tags) ? product.tags : [],
       thumbnail: product.thumbnail || '',
       images: Array.isArray(product.images) ? product.images : [],
       variants: WEIGHTS.map(w => {
@@ -288,6 +308,9 @@ const AdminProducts = () => {
     try {
       const payload = {
         ...form,
+        ingredients: splitToArray(form.ingredients),
+        allergens: splitToArray(form.allergens),
+        tags: Array.isArray(form.tags) ? form.tags : [],
         variants: form.variants.filter(v => v.price && v.mrp)
           .map(v => ({ ...v, price: Number(v.price), mrp: Number(v.mrp), stock: Number(v.stock) }))
       };
@@ -485,6 +508,13 @@ const AdminProducts = () => {
               </div>
 
               <div className="form-group">
+                <label>Short Description</label>
+                <input type="text" value={form.shortDescription}
+                  placeholder="One-line summary shown on product cards & search"
+                  onChange={e => setForm({ ...form, shortDescription: e.target.value })} />
+              </div>
+
+              <div className="form-group">
                 <label>Description *</label>
                 <textarea required rows={3} value={form.description}
                   onChange={e => setForm({ ...form, description: e.target.value })} />
@@ -493,7 +523,24 @@ const AdminProducts = () => {
               <div className="form-group">
                 <label>Ingredients</label>
                 <textarea rows={2} value={form.ingredients}
+                  placeholder="Comma-separated, e.g. Mango, Sesame oil, Salt, Red chilli"
                   onChange={e => setForm({ ...form, ingredients: e.target.value })} />
+                <p className="field-note">Separate each ingredient with a comma.</p>
+              </div>
+
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Shelf Life</label>
+                  <input type="text" value={form.shelfLife}
+                    placeholder="e.g. 6 months from manufacture"
+                    onChange={e => setForm({ ...form, shelfLife: e.target.value })} />
+                </div>
+                <div className="form-group">
+                  <label>Allergens</label>
+                  <input type="text" value={form.allergens}
+                    placeholder="Comma-separated, e.g. Mustard, Sesame"
+                    onChange={e => setForm({ ...form, allergens: e.target.value })} />
+                </div>
               </div>
 
               <div className="form-row">
@@ -511,13 +558,23 @@ const AdminProducts = () => {
                     Featured
                   </label>
                 </div>
+                <div className="form-group checkbox-group">
+                  <label className="checkbox-label">
+                    <input type="checkbox" checked={form.tags?.includes('bestseller')}
+                      onChange={e => setForm(prev => ({
+                        ...prev,
+                        tags: e.target.checked
+                          ? [...new Set([...(prev.tags || []), 'bestseller'])]
+                          : (prev.tags || []).filter(t => t !== 'bestseller'),
+                      }))} />
+                    Bestseller
+                  </label>
+                </div>
                 <div className="form-group">
                   <label>Ships To</label>
                   <select value={form.shippingType}
                     onChange={e => setForm({ ...form, shippingType: e.target.value })}>
-                    <option value="both">India + International</option>
-                    <option value="india-only">India Only</option>
-                    <option value="international-only">International Only</option>
+                    {SHIPPING_TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
                   </select>
                 </div>
               </div>
