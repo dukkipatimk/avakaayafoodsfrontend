@@ -79,10 +79,16 @@ const MiniCart = ({ isOpen, onClose }) => {
             </div>
 
             <div className="mini-cart-footer">
-              {/* Delivery info */}
-              <div className="mini-shipping-bar mini-shipping-bar--free">
-                🚚 <strong>1–2 day delivery</strong> within India · <strong>3–7 days</strong> international
-              </div>
+              {/* Free-shipping nudge — matches checkout's ₹999 India rule */}
+              {subtotal < 999 ? (
+                <div className="mini-shipping-bar">
+                  Add <strong>₹{(999 - subtotal).toLocaleString()}</strong> more for <strong>FREE shipping</strong> within India
+                </div>
+              ) : (
+                <div className="mini-shipping-bar mini-shipping-bar--free">
+                  🎉 <strong>FREE shipping unlocked</strong> within India
+                </div>
+              )}
 
               {savings > 0 && (
                 <div className="mini-cart-savings">

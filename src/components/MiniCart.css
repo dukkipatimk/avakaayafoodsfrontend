@@ -274,6 +274,10 @@
   background: var(--ivory);
   border-radius: var(--radius-sm);
   padding: 10px 12px;
+  font-family: var(--font-ui);
+  font-size: 0.82rem;
+  color: var(--text-mid);
+  text-align: center;
 }
 
 .mini-shipping-bar--free {

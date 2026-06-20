@@ -165,6 +165,8 @@
 
 /* Quantity */
 .quantity-row { display: flex; align-items: center; gap: 16px; }
+.quantity-row .btn { flex: 1; }
+.buy-now-btn { width: 100%; margin-top: 12px; }
 
 .quantity-control {
   display: flex;
@@ -284,6 +286,9 @@
 .review-stars { color: var(--gold); }
 .review-text { color: var(--text-mid); line-height: 1.6; }
 
+/* Sticky mobile buy bar — hidden on desktop, shown below 768px */
+.sticky-buy-bar { display: none; }
+
 @media (max-width: 1024px) {
   .product-detail-grid { grid-template-columns: 1fr; gap: 32px; }
 }
@@ -292,6 +297,32 @@
   .quantity-row { flex-wrap: wrap; }
   .tab-nav { overflow-x: auto; scrollbar-width: none; }
   .tab-nav::-webkit-scrollbar { display: none; }
+
+  .sticky-buy-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: fixed;
+    left: 0;
+    right: 0;
+    /* sit directly above the mobile bottom toolbar (~56px + safe area) */
+    bottom: calc(56px + env(safe-area-inset-bottom, 0px));
+    z-index: 996;
+    padding: 10px 14px;
+    background: rgba(255, 255, 255, 0.97);
+    -webkit-backdrop-filter: blur(12px) saturate(140%);
+    backdrop-filter: blur(12px) saturate(140%);
+    border-top: 1px solid var(--ivory-deep, #e8d8c0);
+    box-shadow: 0 -6px 18px -6px rgba(20, 20, 20, 0.12);
+  }
+  .sticky-buy-info { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+  .sticky-buy-name {
+    font-family: var(--font-ui); font-size: 0.78rem; color: var(--text-mid);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .sticky-buy-price { font-weight: 700; color: var(--green-deep); font-size: 1rem; }
+  .sticky-buy-weight { font-weight: 400; color: var(--text-light, #999); font-size: 0.78rem; }
+  .sticky-buy-btn { flex: 0 0 auto; padding: 10px 14px; white-space: nowrap; }
 }
 
 @media (max-width: 480px) {

@@ -121,7 +121,7 @@ const ProductCard = ({ product }) => {
         </div>
 
         <button
-          className={`btn btn-primary btn-sm add-to-cart-btn ${adding ? 'adding' : ''}`}
+          className={`btn btn-gold btn-sm add-to-cart-btn ${adding ? 'adding' : ''}`}
           onClick={handleAddToCart}
           disabled={selectedVariant.stock === 0}
         >

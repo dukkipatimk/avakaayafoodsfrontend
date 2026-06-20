@@ -44,6 +44,10 @@ const Cart = () => {
     );
   }
 
+  const FREE_SHIP_THRESHOLD = 999; // matches checkout free-shipping rule (India)
+  const remainingForFree = Math.max(0, FREE_SHIP_THRESHOLD - subtotal);
+  const freeShipPct = Math.min(100, Math.round((subtotal / FREE_SHIP_THRESHOLD) * 100));
+
   const totalWeightGrams = items.reduce((sum, item) => sum + parseWeightGrams(item.weight) * item.quantity, 0);
   const regularItems = items.filter(item => !item.bundleId);
   const hamperGroups = items.filter(item => item.bundleType === 'hamper').reduce((groups, item) => {
@@ -86,9 +90,20 @@ const Cart = () => {
     <div className="cart-page">
       <div className="container">
         <h1 className="cart-title">Your Cart <span className="cart-count">({items.reduce((sum, item) => sum + item.quantity, 0)} items)</span></h1>
-        <div className="shipping-bar shipping-bar--achieved">
-          <strong>1-2 day delivery</strong> within India | <strong>3-7 days</strong> international
-        </div>
+        {remainingForFree > 0 ? (
+          <div className="shipping-bar">
+            <div className="shipping-bar-text">
+              Add <strong>INR {remainingForFree.toLocaleString()}</strong> more for <strong>FREE shipping</strong> within India
+            </div>
+            <div className="shipping-bar-track">
+              <div className="shipping-bar-fill" style={{ width: `${freeShipPct}%` }} />
+            </div>
+          </div>
+        ) : (
+          <div className="shipping-bar shipping-bar--achieved">
+            🎉 <strong>You've unlocked FREE shipping</strong> within India
+          </div>
+        )}
 
         <div className="cart-layout">
           <div className="cart-items">

@@ -156,6 +156,7 @@
 
 .add-to-cart-btn.adding {
   background: var(--green-mid);
+  color: var(--gold-light);
 }
 
 /* Wishlist button */

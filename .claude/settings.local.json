@@ -32,7 +32,23 @@
       "Bash(node -e \"process.platform==='linux'&&require\\('fs'\\).rmSync\\('node_modules/.bin',{recursive:true,force:true}\\); console.log\\('ran without touching .bin on non-linux ✓'\\)\")",
       "Bash(node node_modules/react-scripts/bin/react-scripts.js build)",
       "PowerShell(Set-Location \"c:\\\\Users\\\\dukki\\\\Documents\\\\avakaayafoods\\\\avakaayafoodsfrontend\"; if \\(Test-Path node_modules\\) { Remove-Item -Recurse -Force node_modules -ErrorAction SilentlyContinue }; \"node_modules removed: $\\(-not \\(Test-Path node_modules\\)\\)\")",
-      "Bash(node --check routes/auth.js)"
+      "Bash(node --check routes/auth.js)",
+      "Bash(netstat -ano)",
+      "Bash(tasklist)",
+      "Bash(timeout 20 node server.js)",
+      "Bash(sc query *)",
+      "Bash(where mysql *)",
+      "Bash(powershell -Command 'Get-Service 2>$null | Where-Object { $_.Name -match '\\\\''mysql|maria'\\\\'' } | Select-Object Name,Status')",
+      "Read(//c/Program Files/**)",
+      "Read(//c/xampp/mysql/**)",
+      "Bash(node -e \"const l=require\\('./utils/logger'\\); l.debug\\('hidden debug'\\); l.info\\('visible info'\\); l.warn\\('visible warn'\\); l.error\\('visible error'\\);\")",
+      "Bash(LOG_LEVEL=debug node -e \"const l=require\\('./utils/logger'\\); l.debug\\('now visible'\\); l.info\\('info'\\);\")",
+      "Bash(LOG_LEVEL=error node -e \"const l=require\\('./utils/logger'\\); l.info\\('hidden'\\); l.error\\('only error'\\);\")",
+      "Bash(curl -s -i -X OPTIONS \"https://api.avakaayafoods.com/api/products\" -H \"Origin: http://localhost:3000\" -H \"Access-Control-Request-Method: GET\" -H \"Access-Control-Request-Headers: x-dbsetup-secret,authorization\" --max-time 20)",
+      "Bash(curl -s -i \"https://api.avakaayafoods.com/api/health\" -H \"Origin: http://localhost:3000\" --max-time 20)",
+      "Bash(curl -s -i \"https://api.avakaayafoods.com/api/health\" --max-time 20)",
+      "Bash(curl -s -i \"https://api.avakaayafoods.com/api/health\" -H \"Origin: https://avakaayafoods.com\" --max-time 20)",
+      "Bash(curl -s \"https://api.avakaayafoods.com/api/health\" --max-time 20)"
     ]
   }
 }

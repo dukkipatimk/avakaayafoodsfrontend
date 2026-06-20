@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
@@ -36,6 +36,7 @@ const getDeliveryDate = (country) => {
 
 const ProductDetail = () => {
   const { slug } = useParams();
+  const navigate = useNavigate();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [selectedVariant, setSelectedVariant] = useState(null);
@@ -184,6 +185,24 @@ const ProductDetail = () => {
     toast.success(`${product.name} (${selectedVariant.weight} × ${quantity}) added to cart!`);
   };
 
+  const handleBuyNow = () => {
+    if (isOutOfStock) return;
+    addItem(product, selectedVariant, quantity);
+    const addedValue = (Number(selectedVariant.price) || 0) * quantity;
+    trackEvent('add_to_cart', {
+      productId: product._id,
+      cartValue: subtotal + addedValue,
+      cartItems: [{ productId: product._id, name: product.name, weight: selectedVariant.weight, quantity, price: selectedVariant.price }],
+      metadata: { source: 'product_detail_buy_now', addedValue },
+    });
+    trackEvent('begin_checkout', {
+      cartValue: subtotal + addedValue,
+      cartItems: [{ productId: product._id, name: product.name, weight: selectedVariant.weight, quantity, price: selectedVariant.price }],
+      metadata: { source: 'product_detail_buy_now', subtotal: subtotal + addedValue, shippingStatus: 'pending_address' },
+    });
+    navigate('/checkout');
+  };
+
   const hasUserReviewed = user && product.reviews?.some(r => r.user?.toString() === user._id?.toString());
 
   const handleReviewSubmit = async (e) => {
@@ -321,13 +340,21 @@ const ProductDetail = () => {
                   <button onClick={() => setQuantity(q => q + 1)} className="qty-btn">+</button>
                 </div>
                 <button
-                  className="btn btn-gold btn-lg"
+                  className="btn btn-outline btn-lg"
                   onClick={handleAddToCart}
                   disabled={isOutOfStock}
                 >
                   {isOutOfStock ? 'Out of Stock' : 'Add to Cart'}
                 </button>
               </div>
+              {!isOutOfStock && (
+                <button
+                  className="btn btn-gold btn-lg buy-now-btn"
+                  onClick={handleBuyNow}
+                >
+                  Buy Now
+                </button>
+              )}
             </div>
 
             {/* Trust signals */}
@@ -495,6 +522,25 @@ const ProductDetail = () => {
               ))}
             </div>
           </div>
+        )}
+      </div>
+
+      {/* Sticky mobile buy bar — keeps the purchase CTA in view while scrolling */}
+      <div className="sticky-buy-bar">
+        <div className="sticky-buy-info">
+          <span className="sticky-buy-name">{product.name}</span>
+          <span className="sticky-buy-price">
+            ₹{selectedVariant?.price}
+            <span className="sticky-buy-weight"> / {selectedVariant?.weight}</span>
+          </span>
+        </div>
+        {isOutOfStock ? (
+          <button className="btn btn-outline sticky-buy-btn" disabled>Out of Stock</button>
+        ) : (
+          <>
+            <button className="btn btn-outline sticky-buy-btn" onClick={handleAddToCart}>Add</button>
+            <button className="btn btn-gold sticky-buy-btn" onClick={handleBuyNow}>Buy Now</button>
+          </>
         )}
       </div>
     </div>
