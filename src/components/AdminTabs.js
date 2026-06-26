@@ -7,12 +7,14 @@ const AdminTabs = () => {
   const { user } = useAuth();
   const isAdmin = user?.role === 'admin';
 
-  // Store managers only get the Orders tab; admins get everything.
-  const tabs = [{ to: '/admin', label: 'Orders', end: true }];
+  // Store managers get Orders + Leads; admins get everything.
+  const tabs = [
+    { to: '/admin', label: 'Orders', end: true },
+    { to: '/admin/leads', label: 'Leads' },
+  ];
   if (isAdmin) {
     tabs.push(
       { to: '/admin/products', label: 'Products' },
-      { to: '/admin/leads', label: 'Leads' },
       { to: '/admin/coupons', label: 'Coupons' },
       { to: '/admin/stores', label: 'Stores' },
       { to: '/admin/customers', label: 'Customers' },

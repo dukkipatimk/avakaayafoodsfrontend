@@ -93,7 +93,7 @@ function App() {
               <Route path="/admin/users" element={<AdminRoute><AdminUsers /></AdminRoute>} />
               <Route path="/admin/coupons" element={<AdminRoute><AdminCoupons /></AdminRoute>} />
               <Route path="/admin/stores" element={<AdminRoute><AdminStores /></AdminRoute>} />
-              <Route path="/admin/leads" element={<AdminRoute><AdminLeads /></AdminRoute>} />
+              <Route path="/admin/leads" element={<AdminRoute roles={['admin', 'store_manager']}><AdminLeads /></AdminRoute>} />
             </Routes>
           </main>
           <Footer />
