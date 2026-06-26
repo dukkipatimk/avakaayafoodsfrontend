@@ -542,11 +542,40 @@ const Checkout = () => {
       rzp.on('payment.failed', (response) => {
         const reason = response?.error?.description || response?.error?.reason || 'Payment failed';
         toast.error(`Payment failed: ${reason}`);
+        // Track checkout failure
+        trackEvent('checkout_failed', {
+          cartValue: subtotal,
+          cartItems: items,
+          contact: { name: address.fullName, email: address.email, phone: address.phone },
+          metadata: {
+            source: 'razorpay_failed',
+            reason: reason.slice(0, 100),
+            subtotal,
+            shippingCost: shippingCost ?? 0,
+            discount: discountAmount,
+            total,
+          },
+        });
       });
 
       rzp.open();
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Something went wrong. Please try again.');
+      const errorMsg = err.response?.data?.message || err.message || 'Something went wrong. Please try again.';
+      toast.error(errorMsg);
+      // Track checkout failure
+      trackEvent('checkout_failed', {
+        cartValue: subtotal,
+        cartItems: items,
+        contact: { name: address.fullName, email: address.email, phone: address.phone },
+        metadata: {
+          source: 'checkout_error',
+          reason: errorMsg.slice(0, 100),
+          subtotal,
+          shippingCost: shippingCost ?? 0,
+          discount: discountAmount,
+          total,
+        },
+      });
     } finally {
       setProcessing(false);
     }
