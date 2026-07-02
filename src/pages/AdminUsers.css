@@ -212,3 +212,46 @@
   gap: 0.6rem;
   margin-top: 0.5rem;
 }
+
+/* ── Users tab: summary chips + per-customer orders ── */
+.users-summary {
+  margin-bottom: 1.25rem;
+}
+
+/* Clickable order-count link in the users table */
+.user-orders-link {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: var(--color-gold, #b8860b);
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.user-orders-link:hover { opacity: 0.8; }
+
+/* Customer orders modal — wider than the staff modals to fit the table */
+.user-orders-modal {
+  max-width: 760px;
+  width: 92vw;
+}
+.user-orders-table { font-size: 0.85rem; }
+.user-orders-table .pay-paid    { color: #10b981; font-weight: 600; text-transform: capitalize; }
+.user-orders-table .pay-pending { color: #b45309; text-transform: capitalize; }
+
+.order-status-pill {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: capitalize;
+  background: #eef2f7;
+  color: #334155;
+}
+
+.admin-table .cell-revenue { font-weight: 600; color: #10b981; white-space: nowrap; }
+
+.admin-table .cell-lead-revenue { font-weight: 600; color: #ec4899; white-space: nowrap; }

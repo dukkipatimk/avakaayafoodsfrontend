@@ -15,6 +15,9 @@ const fmtDate = iso => new Date(iso).toLocaleDateString('en-IN', {
   day: 'numeric', month: 'short', year: 'numeric',
 });
 
+const fmtMoney = (n, ccy = 'INR') =>
+  `${ccy === 'INR' ? '₹' : ccy + ' '}${(Number(n) || 0).toLocaleString('en-IN')}`;
+
 const emptyStaff = { name: '', email: '', password: '', phone: '', role: 'store_manager' };
 
 /* ── Create Staff Modal ── */
@@ -169,22 +172,86 @@ const ResetPasswordModal = ({ user, onClose }) => {
   );
 };
 
+/* ── Customer Orders Modal ── */
+const UserOrdersModal = ({ user, onClose }) => {
+  const [orders, setOrders] = useState(null); // null = loading
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    api.get(`/admin/users/${user._id}/orders`)
+      .then(res => setOrders(res.data.orders || []))
+      .catch(err => setError(err.response?.data?.message || 'Could not load orders'));
+  }, [user._id]);
+
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="staff-modal user-orders-modal" onClick={e => e.stopPropagation()}>
+        <div className="modal-header">
+          <h2>Orders — {user.name}</h2>
+          <button className="modal-close" onClick={onClose} aria-label="Close">✕</button>
+        </div>
+
+        {error && <p className="staff-form-error">{error}</p>}
+        {!error && orders === null && (
+          <div className="loading-spinner" style={{ margin: '3rem auto' }} />
+        )}
+        {!error && orders && orders.length === 0 && (
+          <div className="table-empty">This customer has no orders yet.</div>
+        )}
+        {!error && orders && orders.length > 0 && (
+          <div className="admin-table-wrap">
+            <table className="admin-table user-orders-table">
+              <thead>
+                <tr>
+                  <th>Order</th>
+                  <th>Date</th>
+                  <th>Items</th>
+                  <th>Status</th>
+                  <th>Payment</th>
+                  <th>Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                {orders.map(o => (
+                  <tr key={o._id || o.id}>
+                    <td><strong>{o.orderNumber || `#${o._id || o.id}`}</strong></td>
+                    <td className="cell-date">{fmtDate(o.createdAt)}</td>
+                    <td>{(o.items || []).reduce((n, i) => n + (i.quantity || 0), 0)}</td>
+                    <td><span className={`order-status-pill status-${o.orderStatus}`}>{o.orderStatus}</span></td>
+                    <td className={o.paymentStatus === 'paid' ? 'pay-paid' : 'pay-pending'}>{o.paymentStatus}</td>
+                    <td>{fmtMoney(o.total, o.currency)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
 /* ── Main Component ── */
 const AdminUsers = () => {
   const { user: currentUser } = useAuth();
   const myId = String(currentUser?._id || currentUser?.id || '');
 
   const [users, setUsers] = useState([]);
+  const [counts, setCounts] = useState({ users: 0, orders: 0, revenue: 0, leads: 0, leadRevenue: 0 });
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [roleFilter, setRoleFilter] = useState('all');
   const [showCreate, setShowCreate] = useState(false);
   const [passwordUser, setPasswordUser] = useState(null);
+  const [ordersUser, setOrdersUser] = useState(null);
   const [busyId, setBusyId] = useState(null);
 
   const fetchUsers = () => {
     api.get('/admin/users')
-      .then(res => setUsers(res.data.users || []))
+      .then(res => {
+        setUsers(res.data.users || []);
+        if (res.data.counts) setCounts(res.data.counts);
+      })
       .catch(console.error)
       .finally(() => setLoading(false));
   };
@@ -221,6 +288,26 @@ const AdminUsers = () => {
         </div>
 
         <AdminTabs />
+
+        <div className="stats-grid users-summary">
+          {[
+            { label: 'Total Users',   display: (counts.users || 0).toLocaleString('en-IN'),  icon: '👥', color: '#f59e0b' },
+            { label: 'Orders',        display: (counts.orders || 0).toLocaleString('en-IN'), icon: '📦', color: '#3b82f6' },
+            { label: 'Revenue',       display: fmtMoney(counts.revenue),                     icon: '💰', color: '#10b981' },
+            { label: 'Leads',         display: (counts.leads || 0).toLocaleString('en-IN'),  icon: '🎯', color: '#8b5cf6' },
+            { label: 'Leads Revenue', display: fmtMoney(counts.leadRevenue),                 icon: '📈', color: '#ec4899' },
+          ].map(stat => (
+            <div key={stat.label} className="stat-card">
+              <div className="stat-icon" style={{ background: stat.color + '18', color: stat.color }}>
+                {stat.icon}
+              </div>
+              <div>
+                <p className="stat-value">{stat.display}</p>
+                <p className="stat-label">{stat.label}</p>
+              </div>
+            </div>
+          ))}
+        </div>
 
         <div className="section-header-row">
           <h2 className="section-title">Users ({users.length})</h2>
@@ -259,6 +346,10 @@ const AdminUsers = () => {
                   <th>Phone</th>
                   <th>Role</th>
                   <th>Status</th>
+                  <th>Orders</th>
+                  <th>Revenue</th>
+                  <th>Leads</th>
+                  <th>Leads Revenue</th>
                   <th>Joined</th>
                   <th>Actions</th>
                 </tr>
@@ -298,6 +389,18 @@ const AdminUsers = () => {
                           {u.isActive ? 'Active' : 'Inactive'}
                         </button>
                       </td>
+                      <td>
+                        <button
+                          className="user-orders-link"
+                          onClick={() => setOrdersUser(u)}
+                          title="View this customer's orders"
+                        >
+                          {u.orderCount || 0} {u.orderCount === 1 ? 'order' : 'orders'}
+                        </button>
+                      </td>
+                      <td className="cell-revenue">{fmtMoney(u.revenue)}</td>
+                      <td>{u.leadCount || 0}</td>
+                      <td className="cell-lead-revenue">{fmtMoney(u.leadRevenue)}</td>
                       <td className="cell-date">{fmtDate(u.createdAt)}</td>
                       <td>
                         <button
@@ -330,6 +433,12 @@ const AdminUsers = () => {
         <ResetPasswordModal
           user={passwordUser}
           onClose={() => setPasswordUser(null)}
+        />
+      )}
+      {ordersUser && (
+        <UserOrdersModal
+          user={ordersUser}
+          onClose={() => setOrdersUser(null)}
         />
       )}
     </div>
