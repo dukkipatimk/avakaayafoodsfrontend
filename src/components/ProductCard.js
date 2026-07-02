@@ -16,6 +16,23 @@ const ProductCard = ({ product }) => {
   const [wishlisted, setWishlisted] = useState(false);
   const [wishlistLoading, setWishlistLoading] = useState(false);
 
+  // Image fallback chain: thumbnail → THIS product's own gallery images → …
+  // → neutral placeholder. Covers both a missing thumbnail field and a thumbnail
+  // URL that 404s (onError advances to the next candidate). The final placeholder
+  // is a neutral brand box (NOT another product's photo), so a product without
+  // its own images never borrows someone else's picture.
+  const PLACEHOLDER_IMG =
+    'data:image/svg+xml;utf8,' + encodeURIComponent(
+      '<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400">' +
+      '<rect width="100%" height="100%" fill="#f2efe9"/>' +
+      '<text x="50%" y="50%" font-family="Georgia, serif" font-size="24" fill="#b7ad9c" ' +
+      'text-anchor="middle" dominant-baseline="middle">Avakaaya Foods</text></svg>'
+    );
+  const imgCandidates = [...new Set(
+    [product.thumbnail, ...(product.images || [])].filter(Boolean)
+  )];
+  const [imgIdx, setImgIdx] = useState(0);
+
   const discount = Math.round((1 - selectedVariant.price / selectedVariant.mrp) * 100);
 
   const handleAddToCart = async (e) => {
@@ -52,10 +69,11 @@ const ProductCard = ({ product }) => {
       <Link to={`/products/${product.slug}`} className="product-card-img-link">
         <div className="product-card-img-wrap">
           <img
-            src={product.thumbnail || '/images/products/2024/10/gongura_pickle_pp.jpg'}
+            src={imgCandidates[imgIdx] || PLACEHOLDER_IMG}
             alt={product.name}
             className="product-card-img"
             loading="lazy"
+            onError={() => setImgIdx(i => Math.min(i + 1, imgCandidates.length))}
           />
           {discount > 5 && <span className="product-card-discount">-{discount}%</span>}
           <div className="product-card-badges">
