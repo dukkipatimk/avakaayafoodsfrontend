@@ -44,7 +44,7 @@ const Cart = () => {
     );
   }
 
-  const FREE_SHIP_THRESHOLD = 999; // matches checkout free-shipping rule (India)
+  const FREE_SHIP_THRESHOLD = 2000; // matches checkout free-shipping rule (India)
   const remainingForFree = Math.max(0, FREE_SHIP_THRESHOLD - subtotal);
   const freeShipPct = Math.min(100, Math.round((subtotal / FREE_SHIP_THRESHOLD) * 100));
 

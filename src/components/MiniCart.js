@@ -79,10 +79,10 @@ const MiniCart = ({ isOpen, onClose }) => {
             </div>
 
             <div className="mini-cart-footer">
-              {/* Free-shipping nudge — matches checkout's ₹999 India rule */}
-              {subtotal < 999 ? (
+              {/* Free-shipping nudge — matches checkout's ₹2000 India rule */}
+              {subtotal < 2000 ? (
                 <div className="mini-shipping-bar">
-                  Add <strong>₹{(999 - subtotal).toLocaleString()}</strong> more for <strong>FREE shipping</strong> within India
+                  Add <strong>₹{(2000 - subtotal).toLocaleString()}</strong> more for <strong>FREE shipping</strong> within India
                 </div>
               ) : (
                 <div className="mini-shipping-bar mini-shipping-bar--free">

@@ -167,7 +167,7 @@ const Checkout = () => {
 
   const countryConfig = COUNTRIES.find(c => c.value === address.country) || COUNTRIES[0];
   const isIndia = countryConfig.zone === 'india';
-  const isFreeShipping = isIndia && subtotal >= 999;
+  const isFreeShipping = isIndia && subtotal >= 2000;
 
   // Estimated delivery time: 6 hrs in Hyderabad, 1–2 days rest of India, 3–7 days international
   const isHyderabad = isIndia && (
