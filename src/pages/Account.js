@@ -81,7 +81,7 @@ const Account = () => {
               <Link to="/wishlist" className="account-nav-item">
                 <span>♥</span> Wishlist
               </Link>
-              {user?.role === 'admin' && (
+              {(user?.role === 'admin' || user?.role === 'super_admin') && (
                 <Link to="/admin" className="account-nav-item admin-link">
                   <span>⚙️</span> Admin Dashboard
                 </Link>

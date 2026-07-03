@@ -550,7 +550,8 @@ const OrderDetailModal = ({ order, onClose, onOrderUpdated }) => {
 /* ── Main Component ── */
 const AdminDashboard = () => {
   const { user } = useAuth();
-  const isAdmin = user?.role === 'admin';
+  const isAdmin = user?.role === 'admin' || user?.role === 'super_admin';
+  const isSuperAdmin = user?.role === 'super_admin';   // financials + payment settings
 
   const [stats, setStats] = useState(null);
   const [recentOrders, setRecentOrders] = useState([]);
@@ -590,12 +591,15 @@ const AdminDashboard = () => {
       api.get('/admin/dashboard')
         .then(res => setStats(res.data.stats || res.data))
         .catch(console.error);
+    }
+    // Payment settings are super-admin only.
+    if (isSuperAdmin) {
       api.get('/settings/payment-methods')
         .then(res => setPayMethods(res.data.methods))
         .catch(console.error);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isAdmin]);
+  }, [isAdmin, isSuperAdmin]);
 
   const handleFilterChange = async filter => {
     setStatusFilter(filter);
@@ -637,7 +641,8 @@ const AdminDashboard = () => {
         <div className="stats-grid">
           {[
             { label: 'Total Orders', value: stats?.totalOrders || 0, icon: '📦', color: '#3b82f6' },
-            { label: 'Revenue', value: `₹${(stats?.totalRevenue || 0).toLocaleString()}`, icon: '💰', color: '#10b981' },
+            // Revenue is financial data — super admin only.
+            ...(isSuperAdmin ? [{ label: 'Revenue', value: `₹${(stats?.totalRevenue || 0).toLocaleString()}`, icon: '💰', color: '#10b981' }] : []),
             { label: 'Products', value: stats?.totalProducts || 0, icon: '🥫', color: '#8b5cf6' },
             { label: 'Customers', value: stats?.totalUsers || 0, icon: '👥', color: '#f59e0b' },
           ].map(stat => (
@@ -654,8 +659,8 @@ const AdminDashboard = () => {
         </div>
         )}
 
-        {/* Payment Methods — admin only */}
-        {isAdmin && payMethods && (
+        {/* Payment Methods — super admin only */}
+        {isSuperAdmin && payMethods && (
           <div className="admin-section payment-settings">
             <h2 className="section-title">Payment Methods</h2>
             <p className="payment-settings-sub">Choose which payment options customers can use at checkout.</p>

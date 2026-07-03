@@ -117,7 +117,12 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout, refreshUser, isAdmin: user?.role === 'admin' }}>
+    <AuthContext.Provider value={{
+      user, loading, login, register, logout, refreshUser,
+      // super_admin is a superset of admin.
+      isAdmin: user?.role === 'admin' || user?.role === 'super_admin',
+      isSuperAdmin: user?.role === 'super_admin',
+    }}>
       {children}
     </AuthContext.Provider>
   );

@@ -15,7 +15,9 @@ const AdminRoute = ({ children, roles = ['admin'] }) => {
     );
   }
 
-  if (!user || !roles.includes(user.role)) {
+  // super_admin is the highest role — it may view any admin page regardless of
+  // the page's explicit `roles` list.
+  if (!user || (user.role !== 'super_admin' && !roles.includes(user.role))) {
     return <Navigate to="/" replace />;
   }
 

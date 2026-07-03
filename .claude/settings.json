@@ -9,7 +9,10 @@
       "Bash(node -e \"for \\(const m of ['pngjs','upng-js','pngparse','canvas','get-pixels']\\){try{require.resolve\\(m\\);console.log\\('FOUND',m\\)}catch\\(e\\){}}\")",
       "Bash(node -e ' *)",
       "Bash(cp \"c:/Users/dukki/Downloads/3256a130-e19a-401e-8873-64d3efda79eb.png\" \"c:/Users/dukki/Documents/avakaayafoods/avakaayafoodsfrontend/public/images/features-strip.png\" && ls -la \"c:/Users/dukki/Documents/avakaayafoods/avakaayafoodsfrontend/public/images/features-strip.png\")",
-      "Bash(awk -F: '$1>3990 && $1<4110')"
+      "Bash(awk -F: '$1>3990 && $1<4110')",
+      "Bash(npx eslint *)",
+      "Bash(sleep 1; cat /c/Users/dukki/AppData/Local/Temp/claude/c--Users-dukki-Documents-avakaayafoods-avakaayafoodsfrontend/c6ec9f54-ea74-4be3-8642-d2c4d5b939e9/tasks/b7unqb14c.output 2>/dev/null | tail -30 || echo \"still building...\")",
+      "Read(//c/Users/dukki/AppData/Local/Temp/claude/c--Users-dukki-Documents-avakaayafoods-avakaayafoodsfrontend/c6ec9f54-ea74-4be3-8642-d2c4d5b939e9/tasks/**)"
     ],
     "additionalDirectories": [
       "c:\\Users\\dukki\\Downloads"

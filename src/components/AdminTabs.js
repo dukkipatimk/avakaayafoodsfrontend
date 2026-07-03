@@ -5,7 +5,7 @@ import './AdminTabs.css';
 
 const AdminTabs = () => {
   const { user } = useAuth();
-  const isAdmin = user?.role === 'admin';
+  const isAdmin = user?.role === 'admin' || user?.role === 'super_admin';
 
   // Store managers get Orders + Leads; admins get everything.
   const tabs = [

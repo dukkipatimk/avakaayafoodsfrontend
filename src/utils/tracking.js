@@ -1,7 +1,7 @@
 import api from './api';
 
 const SESSION_KEY = 'akf_tracking_session';
-const STAFF_ROLES = new Set(['admin', 'store_manager']);
+const STAFF_ROLES = new Set(['admin', 'store_manager', 'super_admin']);
 
 const isStaffViewer = () => {
   try {

@@ -9,6 +9,7 @@ const ROLES = [
   { value: 'customer', label: 'Customer' },
   { value: 'store_manager', label: 'Store Manager' },
   { value: 'admin', label: 'Admin' },
+  { value: 'super_admin', label: 'Super Admin' },
 ];
 
 const fmtDate = iso => new Date(iso).toLocaleDateString('en-IN', {
@@ -21,7 +22,7 @@ const fmtMoney = (n, ccy = 'INR') =>
 const emptyStaff = { name: '', email: '', password: '', phone: '', role: 'store_manager' };
 
 /* ── Create Staff Modal ── */
-const CreateStaffModal = ({ onClose, onCreated }) => {
+const CreateStaffModal = ({ onClose, onCreated, canCreateSuper }) => {
   const [form, setForm] = useState(emptyStaff);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
@@ -74,7 +75,9 @@ const CreateStaffModal = ({ onClose, onCreated }) => {
             <label>Role *</label>
             <select value={form.role}
               onChange={e => setForm({ ...form, role: e.target.value })}>
-              {ROLES.map(r => <option key={r.value} value={r.value}>{r.label}</option>)}
+              {ROLES
+                .filter(r => r.value !== 'super_admin' || canCreateSuper)
+                .map(r => <option key={r.value} value={r.value}>{r.label}</option>)}
             </select>
           </div>
           {error && <p className="staff-form-error">{error}</p>}
@@ -235,6 +238,7 @@ const UserOrdersModal = ({ user, onClose }) => {
 const AdminUsers = () => {
   const { user: currentUser } = useAuth();
   const myId = String(currentUser?._id || currentUser?.id || '');
+  const isSuperAdmin = currentUser?.role === 'super_admin';   // revenue visibility
 
   const [users, setUsers] = useState([]);
   const [counts, setCounts] = useState({ users: 0, orders: 0, revenue: 0, leads: 0, leadRevenue: 0 });
@@ -293,9 +297,10 @@ const AdminUsers = () => {
           {[
             { label: 'Total Users',   display: (counts.users || 0).toLocaleString('en-IN'),  icon: '👥', color: '#f59e0b' },
             { label: 'Orders',        display: (counts.orders || 0).toLocaleString('en-IN'), icon: '📦', color: '#3b82f6' },
-            { label: 'Revenue',       display: fmtMoney(counts.revenue),                     icon: '💰', color: '#10b981' },
+            // Revenue figures — super admin only.
+            ...(isSuperAdmin ? [{ label: 'Revenue', display: fmtMoney(counts.revenue), icon: '💰', color: '#10b981' }] : []),
             { label: 'Leads',         display: (counts.leads || 0).toLocaleString('en-IN'),  icon: '🎯', color: '#8b5cf6' },
-            { label: 'Leads Revenue', display: fmtMoney(counts.leadRevenue),                 icon: '📈', color: '#ec4899' },
+            ...(isSuperAdmin ? [{ label: 'Leads Revenue', display: fmtMoney(counts.leadRevenue), icon: '📈', color: '#ec4899' }] : []),
           ].map(stat => (
             <div key={stat.label} className="stat-card">
               <div className="stat-icon" style={{ background: stat.color + '18', color: stat.color }}>
@@ -347,9 +352,9 @@ const AdminUsers = () => {
                   <th>Role</th>
                   <th>Status</th>
                   <th>Orders</th>
-                  <th>Revenue</th>
+                  {isSuperAdmin && <th>Revenue</th>}
                   <th>Leads</th>
-                  <th>Leads Revenue</th>
+                  {isSuperAdmin && <th>Leads Revenue</th>}
                   <th>Joined</th>
                   <th>Actions</th>
                 </tr>
@@ -370,13 +375,21 @@ const AdminUsers = () => {
                         <select
                           className={`role-select role-${u.role}`}
                           value={u.role}
-                          disabled={isSelf || busy}
-                          title={isSelf ? 'You cannot change your own role' : ''}
+                          disabled={isSelf || busy || (u.role === 'super_admin' && !isSuperAdmin)}
+                          title={
+                            isSelf ? 'You cannot change your own role'
+                            : (u.role === 'super_admin' && !isSuperAdmin) ? 'Only a super admin can change a super admin'
+                            : ''
+                          }
                           onChange={e => patchUser(u._id, { role: e.target.value })}
                         >
-                          {ROLES.map(r => (
-                            <option key={r.value} value={r.value}>{r.label}</option>
-                          ))}
+                          {ROLES
+                            // Only a super admin may assign the super_admin role. Still
+                            // render the option when the row already is one, so its label shows.
+                            .filter(r => r.value !== 'super_admin' || isSuperAdmin || u.role === 'super_admin')
+                            .map(r => (
+                              <option key={r.value} value={r.value}>{r.label}</option>
+                            ))}
                         </select>
                       </td>
                       <td>
@@ -398,9 +411,9 @@ const AdminUsers = () => {
                           {u.orderCount || 0} {u.orderCount === 1 ? 'order' : 'orders'}
                         </button>
                       </td>
-                      <td className="cell-revenue">{fmtMoney(u.revenue)}</td>
+                      {isSuperAdmin && <td className="cell-revenue">{fmtMoney(u.revenue)}</td>}
                       <td>{u.leadCount || 0}</td>
-                      <td className="cell-lead-revenue">{fmtMoney(u.leadRevenue)}</td>
+                      {isSuperAdmin && <td className="cell-lead-revenue">{fmtMoney(u.leadRevenue)}</td>}
                       <td className="cell-date">{fmtDate(u.createdAt)}</td>
                       <td>
                         <button
@@ -427,6 +440,7 @@ const AdminUsers = () => {
         <CreateStaffModal
           onClose={() => setShowCreate(false)}
           onCreated={u => setUsers(prev => [u, ...prev])}
+          canCreateSuper={isSuperAdmin}
         />
       )}
       {passwordUser && (
