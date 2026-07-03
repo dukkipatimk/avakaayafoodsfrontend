@@ -86,8 +86,8 @@ const SalesReport = () => {
   };
 
   const exportBuckets = () => downloadCSV(`sales-${period}`,
-    ['Period', 'Start', 'End', 'Orders', 'Paid orders', 'Revenue', 'Items sold', 'AOV'],
-    (data?.buckets || []).map(b => [bucketLabel(b, period), b.start, b.end, b.orders, b.paidOrders, b.revenue, b.itemsSold, b.aov]));
+    ['Period', 'Start', 'End', 'Orders', 'Order value', 'Paid orders', 'Collected', 'Items sold', 'AOV'],
+    (data?.buckets || []).map(b => [bucketLabel(b, period), b.start, b.end, b.orders, b.revenue, b.paidOrders, b.collected, b.itemsSold, b.aov]));
 
   if (loading) return <Loading />;
   const t = data?.totals || {};
@@ -106,24 +106,25 @@ const SalesReport = () => {
       </div>
 
       <div className="stats-grid report-kpis">
-        <Kpi label="Revenue" value={money(t.revenue)} sub={delta(t.revenue, data?.previous?.revenue)} />
+        <Kpi label="Order Value" value={money(t.revenue)} sub={delta(t.revenue, data?.previous?.revenue)} />
         <Kpi label="Orders" value={numf(t.orders)} sub={delta(t.orders, data?.previous?.orders)} />
+        <Kpi label="Collected (paid)" value={money(t.collected)} sub={`${numf(t.paidOrders)} paid`} />
         <Kpi label="Avg Order Value" value={money(t.aov)} />
-        <Kpi label="Items Sold" value={numf(t.itemsSold)} />
       </div>
 
       <div className="admin-table-wrap">
         <table className="admin-table">
           <thead>
-            <tr><th>Period</th><th>Orders</th><th>Paid</th><th>Revenue</th><th>Items</th><th>AOV</th><th></th></tr>
+            <tr><th>Period</th><th>Orders</th><th>Order Value</th><th>Paid</th><th>Collected</th><th>Items</th><th>AOV</th><th></th></tr>
           </thead>
           <tbody>
             {(data?.buckets || []).map(b => (
               <tr key={b.bucket}>
                 <td><strong>{bucketLabel(b, period)}</strong></td>
                 <td>{numf(b.orders)}</td>
+                <td><strong>{money(b.revenue)}</strong></td>
                 <td>{numf(b.paidOrders)}</td>
-                <td>{money(b.revenue)}</td>
+                <td>{money(b.collected)}</td>
                 <td>{numf(b.itemsSold)}</td>
                 <td>{money(b.aov)}</td>
                 <td><button className="user-orders-link" onClick={() => openDrill(b)}>View orders →</button></td>
