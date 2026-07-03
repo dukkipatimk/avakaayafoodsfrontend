@@ -316,9 +316,11 @@ const AdminUsers = () => {
 
         <div className="section-header-row">
           <h2 className="section-title">Users ({users.length})</h2>
-          <button className="btn btn-primary" onClick={() => setShowCreate(true)}>
-            + Add Staff
-          </button>
+          {isSuperAdmin && (
+            <button className="btn btn-primary" onClick={() => setShowCreate(true)}>
+              + Add Staff
+            </button>
+          )}
         </div>
 
         <div className="users-toolbar">
@@ -375,10 +377,10 @@ const AdminUsers = () => {
                         <select
                           className={`role-select role-${u.role}`}
                           value={u.role}
-                          disabled={isSelf || busy || (u.role === 'super_admin' && !isSuperAdmin)}
+                          disabled={!isSuperAdmin || isSelf || busy}
                           title={
-                            isSelf ? 'You cannot change your own role'
-                            : (u.role === 'super_admin' && !isSuperAdmin) ? 'Only a super admin can change a super admin'
+                            !isSuperAdmin ? 'Only a super admin can change user roles'
+                            : isSelf ? 'You cannot change your own role'
                             : ''
                           }
                           onChange={e => patchUser(u._id, { role: e.target.value })}

@@ -33,8 +33,9 @@ const Login = () => {
       <div className="auth-container">
         <div className="auth-header">
           <Link to="/" className="auth-logo">
+            <img src="/avakaaya-logo.png" alt="Avakaaya Foods" className="auth-logo-img" />
             <span className="logo-main">Avakaaya</span>
-            <span className="logo-sub">Pickles House</span>
+            <span className="logo-sub">Foods</span>
           </Link>
           <h1 className="auth-title">Welcome Back</h1>
           <p className="auth-subtitle">Sign in to your account</p>

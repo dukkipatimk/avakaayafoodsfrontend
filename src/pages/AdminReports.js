@@ -22,6 +22,15 @@ const downloadCSV = (name, headers, rows) => {
   URL.revokeObjectURL(url);
 };
 
+// Human label for a sales bucket. Daily = the date; weekly/monthly = start – end.
+const bucketLabel = (b, period) => {
+  const d = s => new Date(`${s}T00:00:00`);
+  const full = s => d(s).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+  const short = s => d(s).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+  if (period === 'daily' || !b.end || b.start === b.end) return full(b.start);
+  return `${short(b.start)} – ${full(b.end)}`;
+};
+
 // IST-anchored bucket → [from, to) for the order drill-down.
 const bucketRange = (bucket, period) => {
   const from = new Date(`${bucket}T00:00:00+05:30`);
@@ -62,11 +71,12 @@ const SalesReport = () => {
 
   const openDrill = async (b) => {
     const { from, to } = bucketRange(b.bucket, period);
-    setDrill({ label: b.bucket, orders: null });
+    const label = bucketLabel(b, period);
+    setDrill({ label, orders: null });
     try {
       const res = await api.get(`/reports/orders?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`);
-      setDrill({ label: b.bucket, orders: res.data.orders || [] });
-    } catch { setDrill({ label: b.bucket, orders: [] }); }
+      setDrill({ label, orders: res.data.orders || [] });
+    } catch { setDrill({ label, orders: [] }); }
   };
 
   const delta = (cur, prev) => {
@@ -76,8 +86,8 @@ const SalesReport = () => {
   };
 
   const exportBuckets = () => downloadCSV(`sales-${period}`,
-    ['Period', 'Orders', 'Paid orders', 'Revenue', 'Items sold', 'AOV'],
-    (data?.buckets || []).map(b => [b.bucket, b.orders, b.paidOrders, b.revenue, b.itemsSold, b.aov]));
+    ['Period', 'Start', 'End', 'Orders', 'Paid orders', 'Revenue', 'Items sold', 'AOV'],
+    (data?.buckets || []).map(b => [bucketLabel(b, period), b.start, b.end, b.orders, b.paidOrders, b.revenue, b.itemsSold, b.aov]));
 
   if (loading) return <Loading />;
   const t = data?.totals || {};
@@ -110,7 +120,7 @@ const SalesReport = () => {
           <tbody>
             {(data?.buckets || []).map(b => (
               <tr key={b.bucket}>
-                <td><strong>{b.bucket}</strong></td>
+                <td><strong>{bucketLabel(b, period)}</strong></td>
                 <td>{numf(b.orders)}</td>
                 <td>{numf(b.paidOrders)}</td>
                 <td>{money(b.revenue)}</td>

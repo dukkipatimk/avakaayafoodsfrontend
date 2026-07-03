@@ -29,6 +29,12 @@
   margin-bottom: 1.5rem;
 }
 
+.auth-logo .auth-logo-img {
+  height: 64px;
+  width: auto;
+  margin-bottom: 0.6rem;
+}
+
 .auth-logo .logo-main {
   font-family: 'Cormorant Garamond', serif;
   font-size: 2rem;
