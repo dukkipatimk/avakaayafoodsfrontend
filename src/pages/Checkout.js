@@ -344,13 +344,24 @@ const Checkout = () => {
   };
 
   const validateAddress = () => {
-    const required = ['fullName', 'email', 'phone', 'line1', 'city', 'country'];
+    // Phone + a complete address are mandatory; email is optional (guest checkout).
+    const required = ['fullName', 'phone', 'line1', 'city', 'country'];
     if (isIndia) required.push('pincode', 'state');
     for (const field of required) {
       if (!address[field]?.trim()) {
         toast.error(`Please fill in ${field.replace(/([A-Z])/g, ' $1').toLowerCase()}`);
         return false;
       }
+    }
+    // Phone must contain enough digits to be dialable.
+    if ((address.phone.replace(/\D/g, '').length) < 8) {
+      toast.error('Please enter a valid phone number');
+      return false;
+    }
+    // Email is optional, but if given it must look valid (order updates go there).
+    if (address.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(address.email.trim())) {
+      toast.error('Please enter a valid email, or leave it blank');
+      return false;
     }
     // When a separate billing address is chosen, validate its core fields too.
     if (!billingSameAsDelivery) {
@@ -639,6 +650,15 @@ const Checkout = () => {
               <div className="checkout-card">
                 <h2 className="checkout-card-title">Delivery Address</h2>
 
+                {!user && (
+                  <p className="checkout-guest-note">
+                    Checking out as guest — no account needed.{' '}
+                    <button type="button" className="checkout-guest-login" onClick={() => navigate('/login', { state: { from: { pathname: '/checkout' } } })}>
+                      Log in
+                    </button>{' '}for faster checkout &amp; order history.
+                  </p>
+                )}
+
                 <div className="addr-search-wrap">
                   <div className="addr-search-input-row">
                     <span className="addr-search-icon">🔍</span>
@@ -679,8 +699,8 @@ const Checkout = () => {
                     <input name="fullName" value={address.fullName} onChange={handleAddressChange} className="form-input" placeholder="As on delivery ID" />
                   </div>
                   <div className="form-group">
-                    <label>Email *</label>
-                    <input name="email" type="email" value={address.email} onChange={handleAddressChange} className="form-input" placeholder="For order updates" />
+                    <label>Email (optional)</label>
+                    <input name="email" type="email" value={address.email} onChange={handleAddressChange} className="form-input" placeholder="For order updates (optional)" />
                   </div>
                 </div>
 

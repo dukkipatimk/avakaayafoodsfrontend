@@ -6,8 +6,10 @@ import './AdminTabs.css';
 const AdminTabs = () => {
   const { user } = useAuth();
   const isAdmin = user?.role === 'admin' || user?.role === 'super_admin';
+  const isSuperAdmin = user?.role === 'super_admin';
 
-  // Store managers get Orders + Leads; admins get everything.
+  // Store managers get Orders + Leads; admins get everything; only super admins
+  // get Reports (financial data).
   const tabs = [
     { to: '/admin', label: 'Orders', end: true },
     { to: '/admin/leads', label: 'Leads' },
@@ -20,6 +22,9 @@ const AdminTabs = () => {
       { to: '/admin/customers', label: 'Customers' },
       { to: '/admin/users', label: 'Users' },
     );
+  }
+  if (isSuperAdmin) {
+    tabs.push({ to: '/admin/reports', label: 'Reports' });
   }
 
   return (

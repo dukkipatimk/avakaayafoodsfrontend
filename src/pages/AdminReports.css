@@ -1,0 +1,54 @@
+/* Admin Reports */
+.report-section-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0 0 1.25rem;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 0.75rem;
+}
+.report-section-btn {
+  background: #f5f5f5;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  padding: 0.4rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #555;
+  cursor: pointer;
+}
+.report-section-btn.active {
+  background: var(--color-forest, #1a2e1a);
+  color: #fff;
+}
+
+.report-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+.report-period-toggle { display: inline-flex; gap: 0.25rem; background: #f0f0f0; border-radius: 8px; padding: 3px; }
+.report-period-btn {
+  border: none; background: none; cursor: pointer;
+  padding: 0.35rem 0.9rem; border-radius: 6px; font-size: 0.82rem; font-weight: 600; color: #555;
+}
+.report-period-btn.active { background: #fff; color: var(--color-forest, #1a2e1a); box-shadow: 0 1px 3px rgba(0,0,0,0.12); }
+
+.report-kpis { margin-bottom: 1.5rem; }
+.report-kpi-sub { font-size: 0.75rem; color: #888; margin: 2px 0 0; }
+.report-delta.up   { color: #10b981; font-weight: 600; }
+.report-delta.down { color: #ef4444; font-weight: 600; }
+
+.report-block { margin-bottom: 1.75rem; }
+.report-block-head {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 0.5rem;
+}
+.report-block-head h3 { font-size: 1rem; margin: 0; color: var(--color-forest, #1a2e1a); }
+
+.report-muted { color: #999; font-size: 0.78rem; }
+.admin-table .pay-paid    { color: #10b981; font-weight: 600; text-transform: capitalize; }
+.admin-table .pay-pending { color: #b45309; text-transform: capitalize; }

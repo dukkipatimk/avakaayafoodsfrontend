@@ -12,7 +12,8 @@
       "Bash(awk -F: '$1>3990 && $1<4110')",
       "Bash(npx eslint *)",
       "Bash(sleep 1; cat /c/Users/dukki/AppData/Local/Temp/claude/c--Users-dukki-Documents-avakaayafoods-avakaayafoodsfrontend/c6ec9f54-ea74-4be3-8642-d2c4d5b939e9/tasks/b7unqb14c.output 2>/dev/null | tail -30 || echo \"still building...\")",
-      "Read(//c/Users/dukki/AppData/Local/Temp/claude/c--Users-dukki-Documents-avakaayafoods-avakaayafoodsfrontend/c6ec9f54-ea74-4be3-8642-d2c4d5b939e9/tasks/**)"
+      "Read(//c/Users/dukki/AppData/Local/Temp/claude/c--Users-dukki-Documents-avakaayafoods-avakaayafoodsfrontend/c6ec9f54-ea74-4be3-8642-d2c4d5b939e9/tasks/**)",
+      "Bash(node -c routes/reports.js)"
     ],
     "additionalDirectories": [
       "c:\\Users\\dukki\\Downloads"

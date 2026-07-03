@@ -24,6 +24,7 @@ import AdminUsers from './pages/AdminUsers';
 import AdminCoupons from './pages/AdminCoupons';
 import AdminStores from './pages/AdminStores';
 import AdminLeads from './pages/AdminLeads';
+import AdminReports from './pages/AdminReports';
 import ShippingInfo from './pages/ShippingInfo';
 import About from './pages/About';
 import Contact from './pages/Contact';
@@ -70,7 +71,7 @@ function App() {
               <Route path="/collections/:category" element={<Products collectionPage />} />
               <Route path="/products/:slug" element={<ProductDetail />} />
               <Route path="/cart" element={<Cart />} />
-              <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
+              <Route path="/checkout" element={<Checkout />} />
               <Route path="/order/success" element={<OrderSuccess />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
@@ -94,6 +95,7 @@ function App() {
               <Route path="/admin/coupons" element={<AdminRoute><AdminCoupons /></AdminRoute>} />
               <Route path="/admin/stores" element={<AdminRoute><AdminStores /></AdminRoute>} />
               <Route path="/admin/leads" element={<AdminRoute roles={['admin', 'store_manager']}><AdminLeads /></AdminRoute>} />
+              <Route path="/admin/reports" element={<AdminRoute roles={['super_admin']}><AdminReports /></AdminRoute>} />
             </Routes>
           </main>
           <Footer />
