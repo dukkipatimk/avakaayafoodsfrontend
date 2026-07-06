@@ -52,3 +52,15 @@
 .report-muted { color: #999; font-size: 0.78rem; }
 .admin-table .pay-paid    { color: #10b981; font-weight: 600; text-transform: capitalize; }
 .admin-table .pay-pending { color: #b45309; text-transform: capitalize; }
+
+.report-caption {
+  background: #f7f4ec;
+  border: 1px solid #ece5d3;
+  border-radius: 8px;
+  padding: 0.6rem 0.85rem;
+  margin: -0.5rem 0 1.25rem;
+  font-size: 0.82rem;
+  color: #6b6b6b;
+  line-height: 1.5;
+}
+.report-caption strong { color: var(--color-forest, #1a2e1a); }

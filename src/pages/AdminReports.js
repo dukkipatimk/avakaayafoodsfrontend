@@ -112,6 +112,12 @@ const SalesReport = () => {
         <Kpi label="Avg Order Value" value={money(t.aov)} />
       </div>
 
+      <p className="report-caption">
+        <strong>Order Value</strong> = total of all placed orders ({numf(t.orders)}), including pending COD.
+        <strong> Collected</strong> = received from the {numf(t.paidOrders)} paid orders so far.
+        The gap ({money((t.revenue || 0) - (t.collected || 0))}) is payment not yet collected — mark COD orders paid to move it into Collected.
+      </p>
+
       <div className="admin-table-wrap">
         <table className="admin-table">
           <thead>
