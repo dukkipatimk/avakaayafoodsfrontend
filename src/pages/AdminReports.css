@@ -64,3 +64,15 @@
   line-height: 1.5;
 }
 .report-caption strong { color: var(--color-forest, #1a2e1a); }
+
+.report-guest-tag {
+  margin-left: 6px;
+  font-size: 0.62rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  background: #eef2f7;
+  color: #64748b;
+  padding: 1px 6px;
+  border-radius: 10px;
+  vertical-align: middle;
+}

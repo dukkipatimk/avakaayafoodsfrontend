@@ -234,6 +234,62 @@ const UserOrdersModal = ({ user, onClose }) => {
   );
 };
 
+/* ── Customer Leads Modal ── */
+const UserLeadsModal = ({ user, isSuperAdmin, onClose }) => {
+  const [data, setData] = useState(null); // { leads, revenue }
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    api.get(`/admin/users/${user._id}/leads`)
+      .then(res => setData({ leads: res.data.leads || [], revenue: res.data.revenue }))
+      .catch(err => setError(err.response?.data?.message || 'Could not load leads'));
+  }, [user._id]);
+
+  const fmtWhen = iso => new Date(iso).toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="staff-modal user-orders-modal" onClick={e => e.stopPropagation()}>
+        <div className="modal-header">
+          <h2>Leads — {user.name}</h2>
+          <button className="modal-close" onClick={onClose} aria-label="Close">✕</button>
+        </div>
+
+        {isSuperAdmin && data && data.revenue != null && (
+          <p className="leads-modal-revenue">Leads revenue (potential): <strong>{fmtMoney(data.revenue)}</strong></p>
+        )}
+        {error && <p className="staff-form-error">{error}</p>}
+        {!error && data === null && <div className="loading-spinner" style={{ margin: '3rem auto' }} />}
+        {!error && data && data.leads.length === 0 && <div className="table-empty">No open leads for this customer.</div>}
+        {!error && data && data.leads.length > 0 && (
+          <div className="admin-table-wrap">
+            <table className="admin-table user-orders-table">
+              <thead>
+                <tr>
+                  <th>Stage</th><th>Status</th><th>Products</th><th>Score</th><th>Last activity</th>
+                  {isSuperAdmin && <th>Cart value</th>}
+                </tr>
+              </thead>
+              <tbody>
+                {data.leads.map(l => (
+                  <tr key={l.id}>
+                    <td><span className={`order-status-pill status-${l.stage}`}>{l.stage}</span></td>
+                    <td>{l.status}</td>
+                    <td>{l.products}</td>
+                    <td>{l.score}</td>
+                    <td className="cell-date">{fmtWhen(l.lastEventAt)}</td>
+                    {isSuperAdmin && <td className="cell-lead-revenue">{fmtMoney(l.cartValue)}</td>}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
 /* ── Main Component ── */
 const AdminUsers = () => {
   const { user: currentUser } = useAuth();
@@ -248,6 +304,7 @@ const AdminUsers = () => {
   const [showCreate, setShowCreate] = useState(false);
   const [passwordUser, setPasswordUser] = useState(null);
   const [ordersUser, setOrdersUser] = useState(null);
+  const [leadsUser, setLeadsUser] = useState(null);
   const [busyId, setBusyId] = useState(null);
 
   const fetchUsers = () => {
@@ -354,9 +411,7 @@ const AdminUsers = () => {
                   <th>Role</th>
                   <th>Status</th>
                   <th>Orders</th>
-                  {isSuperAdmin && <th>Revenue</th>}
                   <th>Leads</th>
-                  {isSuperAdmin && <th>Leads Revenue</th>}
                   <th>Joined</th>
                   <th>Actions</th>
                 </tr>
@@ -410,12 +465,19 @@ const AdminUsers = () => {
                           onClick={() => setOrdersUser(u)}
                           title="View this customer's orders"
                         >
-                          {u.orderCount || 0} {u.orderCount === 1 ? 'order' : 'orders'}
+                          {u.orderCount || 0}
+                        </button>
+                        {isSuperAdmin && <span className="cell-inline-rev">{fmtMoney(u.revenue)}</span>}
+                      </td>
+                      <td>
+                        <button
+                          className="user-orders-link"
+                          onClick={() => setLeadsUser(u)}
+                          title="View this customer's leads &amp; lead revenue"
+                        >
+                          {u.leadCount || 0}
                         </button>
                       </td>
-                      {isSuperAdmin && <td className="cell-revenue">{fmtMoney(u.revenue)}</td>}
-                      <td>{u.leadCount || 0}</td>
-                      {isSuperAdmin && <td className="cell-lead-revenue">{fmtMoney(u.leadRevenue)}</td>}
                       <td className="cell-date">{fmtDate(u.createdAt)}</td>
                       <td>
                         <button
@@ -455,6 +517,13 @@ const AdminUsers = () => {
         <UserOrdersModal
           user={ordersUser}
           onClose={() => setOrdersUser(null)}
+        />
+      )}
+      {leadsUser && (
+        <UserLeadsModal
+          user={leadsUser}
+          isSuperAdmin={isSuperAdmin}
+          onClose={() => setLeadsUser(null)}
         />
       )}
     </div>

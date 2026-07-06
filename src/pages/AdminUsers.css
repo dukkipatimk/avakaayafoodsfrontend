@@ -256,3 +256,21 @@
 .admin-table .cell-revenue { font-weight: 600; color: #10b981; white-space: nowrap; }
 
 .admin-table .cell-lead-revenue { font-weight: 600; color: #ec4899; white-space: nowrap; }
+
+/* Inline revenue next to the order count */
+.admin-table .cell-inline-rev {
+  margin-left: 8px;
+  color: #10b981;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.leads-modal-revenue {
+  background: #fdf2f8;
+  border: 1px solid #fbcfe8;
+  border-radius: 8px;
+  padding: 0.5rem 0.75rem;
+  margin: 0 0 0.75rem;
+  font-size: 0.85rem;
+  color: #6b6b6b;
+}
+.leads-modal-revenue strong { color: #ec4899; }

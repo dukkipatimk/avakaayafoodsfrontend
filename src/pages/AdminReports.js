@@ -250,10 +250,18 @@ const CustomersReport = () => {
         </div>
         <div className="admin-table-wrap">
           <table className="admin-table">
-            <thead><tr><th>Name</th><th>Email</th><th>Orders</th><th>Revenue</th></tr></thead>
+            <thead><tr><th>Name</th><th>Email / Phone</th><th>Orders</th><th>Revenue</th></tr></thead>
             <tbody>
               {(d.topCustomers || []).map((c, i) => (
-                <tr key={i}><td><strong>{c.name}</strong></td><td>{c.email}</td><td>{numf(c.orders)}</td><td>{money(c.revenue)}</td></tr>
+                <tr key={i}>
+                  <td>
+                    <strong>{c.name}</strong>
+                    {c.type === 'guest' && <span className="report-guest-tag">guest</span>}
+                  </td>
+                  <td>{c.email}</td>
+                  <td>{numf(c.orders)}</td>
+                  <td>{money(c.revenue)}</td>
+                </tr>
               ))}
             </tbody>
           </table>
