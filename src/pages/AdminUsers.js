@@ -12,6 +12,9 @@ const ROLES = [
   { value: 'super_admin', label: 'Super Admin' },
 ];
 
+// Short chips shown before the name: C / A / SA / SM.
+const ROLE_ABBR = { customer: 'C', admin: 'A', super_admin: 'SA', store_manager: 'SM' };
+
 const fmtDate = iso => new Date(iso).toLocaleDateString('en-IN', {
   day: 'numeric', month: 'short', year: 'numeric',
 });
@@ -43,8 +46,8 @@ const CreateStaffModal = ({ onClose, onCreated, canCreateSuper }) => {
   };
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="staff-modal" onClick={e => e.stopPropagation()}>
+    <div className="modal-overlay modal-right" onClick={onClose}>
+      <div className="staff-modal drawer" onClick={e => e.stopPropagation()}>
         <div className="modal-header">
           <h2>Add Staff Account</h2>
           <button className="modal-close" onClick={onClose}>✕</button>
@@ -93,28 +96,34 @@ const CreateStaffModal = ({ onClose, onCreated, canCreateSuper }) => {
   );
 };
 
-const ResetPasswordModal = ({ user, onClose }) => {
+/* ── Manage User drawer (role + reset password), right-aligned ── */
+const UserManageModal = ({ user, isSuperAdmin, isSelf, onRoleChange, onClose }) => {
+  const [role, setRole] = useState(user.role);
+  const [roleSaving, setRoleSaving] = useState(false);
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
-  const handleSubmit = async e => {
-    e.preventDefault();
-    setError('');
-    setSuccess('');
-    if (password !== confirmPassword) {
-      setError('Passwords do not match');
-      return;
-    }
+  const saveRole = async e => {
+    const next = e.target.value;
+    setRole(next);
+    setRoleSaving(true);
+    try { await onRoleChange(user._id, { role: next }); }
+    catch { setRole(user.role); }
+    finally { setRoleSaving(false); }
+  };
 
+  const submitPassword = async e => {
+    e.preventDefault();
+    setError(''); setSuccess('');
+    if (password !== confirmPassword) { setError('Passwords do not match'); return; }
     setSaving(true);
     try {
       await api.patch(`/admin/users/${user._id}/password`, { password });
-      setPassword('');
-      setConfirmPassword('');
-      setSuccess('Password updated. Share the new password securely with the user.');
+      setPassword(''); setConfirmPassword('');
+      setSuccess('Password updated. Share it securely with the user.');
     } catch (err) {
       setError(err.response?.data?.message || 'Could not update password');
     } finally {
@@ -123,53 +132,52 @@ const ResetPasswordModal = ({ user, onClose }) => {
   };
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="staff-modal" onClick={e => e.stopPropagation()}>
+    <div className="modal-overlay modal-right" onClick={onClose}>
+      <div className="staff-modal drawer" onClick={e => e.stopPropagation()}>
         <div className="modal-header">
-          <h2>Reset Password</h2>
+          <h2>Manage — {user.name}</h2>
           <button className="modal-close" onClick={onClose} aria-label="Close">✕</button>
         </div>
-        <form className="staff-form" onSubmit={handleSubmit}>
-          <p className="reset-password-user">
-            Set a temporary password for <strong>{user.name}</strong><br />
-            <span>{user.email}</span>
-          </p>
+        <div className="drawer-body">
+          <p className="drawer-user-email">{user.email}</p>
+
           <div className="form-group">
-            <label>New Password *</label>
-            <input
-              type="password"
-              required
-              minLength={6}
-              autoComplete="new-password"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              placeholder="At least 6 characters"
-            />
+            <label>Role</label>
+            <select
+              className={`role-select role-${role}`}
+              value={role}
+              disabled={!isSuperAdmin || isSelf || roleSaving}
+              title={!isSuperAdmin ? 'Only a super admin can change user roles'
+                : isSelf ? 'You cannot change your own role' : ''}
+              onChange={saveRole}
+            >
+              {ROLES
+                .filter(r => r.value !== 'super_admin' || isSuperAdmin || role === 'super_admin')
+                .map(r => <option key={r.value} value={r.value}>{r.label}</option>)}
+            </select>
           </div>
-          <div className="form-group">
-            <label>Confirm Password *</label>
-            <input
-              type="password"
-              required
-              minLength={6}
-              autoComplete="new-password"
-              value={confirmPassword}
-              onChange={e => setConfirmPassword(e.target.value)}
-            />
-          </div>
-          {error && <p className="staff-form-error">{error}</p>}
-          {success && <p className="staff-form-success">{success}</p>}
-          <div className="modal-footer">
-            <button type="button" className="btn btn-outline" onClick={onClose}>
-              {success ? 'Close' : 'Cancel'}
+
+          <hr className="drawer-divider" />
+
+          <form className="staff-form drawer-form" onSubmit={submitPassword}>
+            <h3 className="drawer-section-title">Reset Password</h3>
+            <div className="form-group">
+              <label>New Password *</label>
+              <input type="password" required minLength={6} autoComplete="new-password"
+                value={password} onChange={e => setPassword(e.target.value)} placeholder="At least 6 characters" />
+            </div>
+            <div className="form-group">
+              <label>Confirm Password *</label>
+              <input type="password" required minLength={6} autoComplete="new-password"
+                value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} />
+            </div>
+            {error && <p className="staff-form-error">{error}</p>}
+            {success && <p className="staff-form-success">{success}</p>}
+            <button type="submit" className="btn btn-primary" disabled={saving}>
+              {saving ? 'Updating…' : 'Update Password'}
             </button>
-            {!success && (
-              <button type="submit" className="btn btn-primary" disabled={saving}>
-                {saving ? 'Updating...' : 'Update Password'}
-              </button>
-            )}
-          </div>
-        </form>
+          </form>
+        </div>
       </div>
     </div>
   );
@@ -187,8 +195,8 @@ const UserOrdersModal = ({ user, onClose }) => {
   }, [user._id]);
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="staff-modal user-orders-modal" onClick={e => e.stopPropagation()}>
+    <div className="modal-overlay modal-right" onClick={onClose}>
+      <div className="staff-modal user-orders-modal drawer" onClick={e => e.stopPropagation()}>
         <div className="modal-header">
           <h2>Orders — {user.name}</h2>
           <button className="modal-close" onClick={onClose} aria-label="Close">✕</button>
@@ -248,8 +256,8 @@ const UserLeadsModal = ({ user, isSuperAdmin, onClose }) => {
   const fmtWhen = iso => new Date(iso).toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="staff-modal user-orders-modal" onClick={e => e.stopPropagation()}>
+    <div className="modal-overlay modal-right" onClick={onClose}>
+      <div className="staff-modal user-orders-modal drawer" onClick={e => e.stopPropagation()}>
         <div className="modal-header">
           <h2>Leads — {user.name}</h2>
           <button className="modal-close" onClick={onClose} aria-label="Close">✕</button>
@@ -261,30 +269,48 @@ const UserLeadsModal = ({ user, isSuperAdmin, onClose }) => {
         {error && <p className="staff-form-error">{error}</p>}
         {!error && data === null && <div className="loading-spinner" style={{ margin: '3rem auto' }} />}
         {!error && data && data.leads.length === 0 && <div className="table-empty">No open leads for this customer.</div>}
-        {!error && data && data.leads.length > 0 && (
-          <div className="admin-table-wrap">
-            <table className="admin-table user-orders-table">
-              <thead>
-                <tr>
-                  <th>Stage</th><th>Status</th><th>Products</th><th>Score</th><th>Last activity</th>
-                  {isSuperAdmin && <th>Cart value</th>}
-                </tr>
-              </thead>
-              <tbody>
-                {data.leads.map(l => (
-                  <tr key={l.id}>
-                    <td><span className={`order-status-pill status-${l.stage}`}>{l.stage}</span></td>
-                    <td>{l.status}</td>
-                    <td>{l.products}</td>
-                    <td>{l.score}</td>
-                    <td className="cell-date">{fmtWhen(l.lastEventAt)}</td>
-                    {isSuperAdmin && <td className="cell-lead-revenue">{fmtMoney(l.cartValue)}</td>}
+
+        {!error && data && data.leads.map(l => (
+          <div className="lead-detail-card" key={l.id}>
+            <div className="lead-detail-head">
+              <span className={`order-status-pill status-${l.stage}`}>{l.stage}</span>
+              <span className="lead-detail-status">{l.status}</span>
+              <span className="lead-detail-when">{fmtWhen(l.lastEventAt)}</span>
+            </div>
+            <div className="lead-detail-metrics">
+              {isSuperAdmin && l.cartValue != null && <span><strong>{fmtMoney(l.cartValue)}</strong> cart</span>}
+              <span><strong>{l.products}</strong> qty</span>
+              <span><strong>{l.score}</strong> score</span>
+              <span><strong>{l.productViews}</strong> views</span>
+              <span><strong>{l.cartAdds}</strong> adds</span>
+              {l.region && <span>{l.region}</span>}
+            </div>
+            {l.items && l.items.length > 0 ? (
+              <table className="admin-table lead-cart-mini">
+                <thead>
+                  <tr>
+                    <th>Product</th><th>Qty</th>
+                    {isSuperAdmin && <><th>Price</th><th>Total</th></>}
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {l.items.map((it, idx) => (
+                    <tr key={idx}>
+                      <td>
+                        <strong>{it.name}</strong>
+                        {it.weight ? <small> · {it.weight}</small> : null}
+                        {it.bundleType === 'hamper' ? <small> · Hamper</small> : null}
+                      </td>
+                      <td>{it.quantity}</td>
+                      {isSuperAdmin && <td>{fmtMoney(it.price)}</td>}
+                      {isSuperAdmin && <td>{fmtMoney((Number(it.price) || 0) * (Number(it.quantity) || 1))}</td>}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            ) : <p className="report-muted" style={{ margin: '0.4rem 0 0' }}>No cart products captured.</p>}
           </div>
-        )}
+        ))}
       </div>
     </div>
   );
@@ -302,7 +328,7 @@ const AdminUsers = () => {
   const [search, setSearch] = useState('');
   const [roleFilter, setRoleFilter] = useState('all');
   const [showCreate, setShowCreate] = useState(false);
-  const [passwordUser, setPasswordUser] = useState(null);
+  const [manageUser, setManageUser] = useState(null);
   const [ordersUser, setOrdersUser] = useState(null);
   const [leadsUser, setLeadsUser] = useState(null);
   const [busyId, setBusyId] = useState(null);
@@ -408,12 +434,9 @@ const AdminUsers = () => {
                   <th>Name</th>
                   <th>Email</th>
                   <th>Phone</th>
-                  <th>Role</th>
-                  <th>Status</th>
                   <th>Orders</th>
                   <th>Leads</th>
                   <th>Joined</th>
-                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -421,48 +444,35 @@ const AdminUsers = () => {
                   const isSelf = String(u._id) === myId;
                   const busy = String(busyId) === String(u._id);
                   return (
-                    <tr key={u._id} className={busy ? 'row-busy' : ''}>
+                    <tr
+                      key={u._id}
+                      className={`user-row${busy ? ' row-busy' : ''}`}
+                      onClick={() => setManageUser(u)}
+                      title="Click to manage role &amp; password"
+                    >
                       <td>
+                        <button
+                          className={`status-tick ${u.isActive ? 'active' : 'inactive'}`}
+                          disabled={isSelf || busy}
+                          title={isSelf ? "You can't change your own status"
+                            : u.isActive ? 'Active — click to deactivate'
+                            : 'Inactive — click to activate'}
+                          onClick={e => { e.stopPropagation(); patchUser(u._id, { isActive: !u.isActive }); }}
+                        >
+                          {u.isActive ? '✓' : '✕'}
+                        </button>
+                        <span className={`role-chip role-${u.role}`} title={ROLES.find(r => r.value === u.role)?.label || u.role}>
+                          {ROLE_ABBR[u.role] || '?'}
+                        </span>
                         <strong>{u.name}</strong>
                         {isSelf && <span className="self-tag">you</span>}
                       </td>
                       <td>{u.email}</td>
                       <td>{u.phone || '—'}</td>
                       <td>
-                        <select
-                          className={`role-select role-${u.role}`}
-                          value={u.role}
-                          disabled={!isSuperAdmin || isSelf || busy}
-                          title={
-                            !isSuperAdmin ? 'Only a super admin can change user roles'
-                            : isSelf ? 'You cannot change your own role'
-                            : ''
-                          }
-                          onChange={e => patchUser(u._id, { role: e.target.value })}
-                        >
-                          {ROLES
-                            // Only a super admin may assign the super_admin role. Still
-                            // render the option when the row already is one, so its label shows.
-                            .filter(r => r.value !== 'super_admin' || isSuperAdmin || u.role === 'super_admin')
-                            .map(r => (
-                              <option key={r.value} value={r.value}>{r.label}</option>
-                            ))}
-                        </select>
-                      </td>
-                      <td>
-                        <button
-                          className={`status-toggle ${u.isActive ? 'active' : 'inactive'}`}
-                          disabled={isSelf || busy}
-                          title={isSelf ? 'You cannot deactivate yourself' : 'Click to toggle'}
-                          onClick={() => patchUser(u._id, { isActive: !u.isActive })}
-                        >
-                          {u.isActive ? 'Active' : 'Inactive'}
-                        </button>
-                      </td>
-                      <td>
                         <button
                           className="user-orders-link"
-                          onClick={() => setOrdersUser(u)}
+                          onClick={e => { e.stopPropagation(); setOrdersUser(u); }}
                           title="View this customer's orders"
                         >
                           {u.orderCount || 0}
@@ -472,22 +482,13 @@ const AdminUsers = () => {
                       <td>
                         <button
                           className="user-orders-link"
-                          onClick={() => setLeadsUser(u)}
+                          onClick={e => { e.stopPropagation(); setLeadsUser(u); }}
                           title="View this customer's leads &amp; lead revenue"
                         >
                           {u.leadCount || 0}
                         </button>
                       </td>
                       <td className="cell-date">{fmtDate(u.createdAt)}</td>
-                      <td>
-                        <button
-                          className="password-reset-btn"
-                          onClick={() => setPasswordUser(u)}
-                          disabled={busy}
-                        >
-                          Reset Password
-                        </button>
-                      </td>
                     </tr>
                   );
                 })}
@@ -507,10 +508,13 @@ const AdminUsers = () => {
           canCreateSuper={isSuperAdmin}
         />
       )}
-      {passwordUser && (
-        <ResetPasswordModal
-          user={passwordUser}
-          onClose={() => setPasswordUser(null)}
+      {manageUser && (
+        <UserManageModal
+          user={manageUser}
+          isSuperAdmin={isSuperAdmin}
+          isSelf={String(manageUser._id) === myId}
+          onRoleChange={patchUser}
+          onClose={() => setManageUser(null)}
         />
       )}
       {ordersUser && (

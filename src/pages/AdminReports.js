@@ -7,7 +7,6 @@ import './AdminReports.css';
 /* ── helpers ── */
 const money = n => '₹' + Number(n || 0).toLocaleString('en-IN', { maximumFractionDigits: 0 });
 const numf  = n => Number(n || 0).toLocaleString('en-IN');
-const fmtDate = iso => new Date(iso).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
 const fmtDateTime = iso => new Date(iso).toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
 
 const toCSV = (headers, rows) => {
