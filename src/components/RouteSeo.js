@@ -30,7 +30,7 @@ const WEBSITE_SCHEMA = {
 };
 
 const STORE_SCHEMA = [
-  ['Kukatpally', 'LIG-75, 1st Phase, Dharma Reddy Colony Phase I, Kukatpally', '500072', '+91-91155-95959'],
+  ['Kukatpally', '15-27-737, 1st Phase, Dharma Reddy Colony Phase I, Kukatpally', '500072', '+91-91155-95959'],
   ['Chanda Nagar', 'Under Shoe Lala Building, H.3-10, Near RS Brothers, Gangaram, Chanda Nagar', '500050', '+91-91155-95959'],
   ['Ameerpet', 'H No. 7-1-455/2 & 3, Green House Building, Beside Passport Office, Ameerpet', '500038', '+91-62693-99399'],
 ].map(([area, streetAddress, postalCode, telephone]) => ({

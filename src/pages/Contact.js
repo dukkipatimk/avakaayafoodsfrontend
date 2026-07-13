@@ -31,7 +31,7 @@ const Contact = () => {
               <div className="contact-detail-icon">📍</div>
               <div className="contact-detail-text">
                 <strong>Address</strong>
-                <span>LIG-75, 1st Phase, Dharma Reddy Colony Phase I,<br />Kukatpally, Hyderabad, Telangana 500072</span>
+                <span>15-27-737, 1st Phase, Dharma Reddy Colony Phase I,<br />Kukatpally, Hyderabad, Telangana 500072</span>
               </div>
             </div>
 
