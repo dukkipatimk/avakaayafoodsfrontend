@@ -897,7 +897,12 @@ const Checkout = () => {
                         ['icici', '🏦 Pay Online (ICICI Bank)', 'Admin only · UPI · Card · Netbanking'],
                         ['cod', '💵 Cash on Delivery', 'Pay when your order arrives'],
                         ['upi', '📲 UPI (direct)', 'Pay to our UPI & confirm'],
-                      ].filter(([k]) => enabledMethods[k] && (k !== 'icici' || isAdmin)).map(([k, label, desc]) => (
+                      ]
+                        // ICICI is admin-only for now: admins always see it (no
+                        // separate enabled-methods toggle needed). Other methods
+                        // follow the admin's enabled-methods setting.
+                        .filter(([k]) => (k === 'icici' ? isAdmin : enabledMethods[k]))
+                        .map(([k, label, desc]) => (
                         <label key={k} className={`pay-method${paymentMethod === k ? ' selected' : ''}`}>
                           <input
                             type="radio"
