@@ -267,7 +267,7 @@ const Checkout = () => {
       .then(res => {
         const methods = res.data.methods || {};
         setEnabledMethods(methods);
-        const firstEnabled = ['razorpay', 'cod', 'upi'].find(k => methods[k]);
+        const firstEnabled = ['razorpay', 'icici', 'cod', 'upi'].find(k => methods[k]);
         if (firstEnabled) setPaymentMethod(firstEnabled);
       })
       .catch(() => {});
@@ -484,7 +484,27 @@ const Checkout = () => {
         return;
       }
 
-      // 2. Create Razorpay order (ICICI bank gateway)
+      // ICICI Bank PG: server starts the sale, we redirect the browser to ICICI.
+      // The bank posts the result back to our returnURL, which returns the user
+      // to /order/success or /checkout/failed.
+      if (paymentMethod === 'icici') {
+        const iciciRes = await api.post('/payment/icici/initiate', { orderId: order._id });
+        if (iciciRes.data.mock) {
+          await api.post('/payment/verify', {
+            razorpay_order_id: 'order_mock_' + Date.now(), razorpay_payment_id: 'mock_pay_' + Date.now(),
+            razorpay_signature: 'mock_sig', orderId: order._id,
+          });
+          clearCart();
+          navigate(`/order/success?orderId=${order._id}&orderNumber=${order.orderNumber}`);
+          return;
+        }
+        if (!iciciRes.data.paymentUrl) throw new Error('Could not start ICICI payment. Please try again.');
+        // Cart clears on the success page after the bank confirms payment.
+        window.location.href = iciciRes.data.paymentUrl;
+        return;
+      }
+
+      // 2. Create Razorpay order
       const payRes = await api.post('/payment/create-order', {
         orderId: order._id,
         amount: Number(order.total),
@@ -873,6 +893,7 @@ const Checkout = () => {
                     <div className="pay-method-options">
                       {[
                         ['razorpay', '💳 Pay Online', 'UPI · Card · Netbanking · Wallets'],
+                        ['icici', '🏦 Pay Online (ICICI Bank)', 'UPI · Card · Netbanking · Wallets'],
                         ['cod', '💵 Cash on Delivery', 'Pay when your order arrives'],
                         ['upi', '📲 UPI (direct)', 'Pay to our UPI & confirm'],
                       ].filter(([k]) => enabledMethods[k]).map(([k, label, desc]) => (
