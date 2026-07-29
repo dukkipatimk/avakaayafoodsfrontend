@@ -81,7 +81,7 @@ const STEPS = ['Address', 'Review'];
 
 const Checkout = () => {
   const { items, subtotal, clearCart } = useCart();
-  const { user } = useAuth();
+  const { user, isAdmin } = useAuth();
   const navigate = useNavigate();
 
   const [step, setStep] = useState(0);
@@ -267,7 +267,8 @@ const Checkout = () => {
       .then(res => {
         const methods = res.data.methods || {};
         setEnabledMethods(methods);
-        const firstEnabled = ['razorpay', 'icici', 'cod', 'upi'].find(k => methods[k]);
+        // ICICI is admin-only for now, so it's never the default method.
+        const firstEnabled = ['razorpay', 'cod', 'upi'].find(k => methods[k]);
         if (firstEnabled) setPaymentMethod(firstEnabled);
       })
       .catch(() => {});
@@ -893,10 +894,10 @@ const Checkout = () => {
                     <div className="pay-method-options">
                       {[
                         ['razorpay', '💳 Pay Online', 'UPI · Card · Netbanking · Wallets'],
-                        ['icici', '🏦 Pay Online (ICICI Bank)', 'UPI · Card · Netbanking · Wallets'],
+                        ['icici', '🏦 Pay Online (ICICI Bank)', 'Admin only · UPI · Card · Netbanking'],
                         ['cod', '💵 Cash on Delivery', 'Pay when your order arrives'],
                         ['upi', '📲 UPI (direct)', 'Pay to our UPI & confirm'],
-                      ].filter(([k]) => enabledMethods[k]).map(([k, label, desc]) => (
+                      ].filter(([k]) => enabledMethods[k] && (k !== 'icici' || isAdmin)).map(([k, label, desc]) => (
                         <label key={k} className={`pay-method${paymentMethod === k ? ' selected' : ''}`}>
                           <input
                             type="radio"
