@@ -12,6 +12,7 @@ const Footer = () => {
             <Link to="/" className="footer-logo">
               <img src="/avakaaya-logo.png" alt="Avakaaya Foods" className="footer-logo-img" />
             </Link>
+            <div className="footer-company">Avakaaya Foods Pvt Ltd</div>
             <p className="footer-tagline">
               Authentic Telugu flavours, crafted with love in Hyderabad since generations.
             </p>
