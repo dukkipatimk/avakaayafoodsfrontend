@@ -70,9 +70,9 @@
 }
 
 .logo-img {
-  height: 84px;
+  height: 104px;
   width: auto;
-  max-width: 260px;
+  max-width: 320px;
   display: block;
   object-fit: contain;
   padding: 6px 0;
@@ -89,7 +89,7 @@
 }
 
 @media (max-width: 768px) {
-  .logo-img { height: 60px; max-width: 190px; padding: 4px 0; }
+  .logo-img { height: 72px; max-width: 220px; padding: 4px 0; }
   .logo-name { font-size: 1.35rem; }
 }
 /* Hide the wordmark on very small screens so the logo image has room. */
