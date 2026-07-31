@@ -23,7 +23,7 @@ const BANNERS = [
     slideClass: 'worldwide',
     headline: 'From our kitchen\nto your doorstep',
     points: [
-      { icon: 'HYD', text: '6 hours in Hyderabad' },
+      { icon: 'HYD', text: '24 hours in Hyderabad' },
       { icon: 'IND', text: '1-2 business days across India' },
       { icon: 'INTL', text: '3-7 business days international' },
     ],
@@ -271,7 +271,7 @@ const Home = () => {
               <span className="promo-item-icon">HYD</span>
               <div className="promo-item-text">
                 <strong>In Hyderabad</strong>
-                <span>6 hours express delivery</span>
+                <span>24 hours express delivery</span>
               </div>
             </div>
             <div className="promo-item">

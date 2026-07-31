@@ -157,6 +157,7 @@ const Header = () => {
           {/* Logo */}
           <Link to="/" className="logo">
             <img src="/avakaaya-logo.png" alt="Avakaaya Foods" className="logo-img" />
+            <span className="logo-name">Avakaaya Foods</span>
           </Link>
 
           {/* Nav */}

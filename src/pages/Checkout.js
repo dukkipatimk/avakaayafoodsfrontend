@@ -169,14 +169,14 @@ const Checkout = () => {
   const isIndia = countryConfig.zone === 'india';
   const isFreeShipping = isIndia && subtotal >= 2000;
 
-  // Estimated delivery time: 6 hrs in Hyderabad, 1–2 days rest of India, 3–7 days international
+  // Estimated delivery time: 24 hrs in Hyderabad, 1–2 days rest of India, 3–7 days international
   const isHyderabad = isIndia && (
     /hyderabad|secunderabad/i.test(address.city || '') ||
     /^(500|501|502|503)/.test(String(address.pincode || '').trim())
   );
   const deliveryEstimate = !isIndia
     ? '3–7 business days'
-    : isHyderabad ? 'within 6 hours' : '1–2 business days';
+    : isHyderabad ? 'within 24 hours' : '1–2 business days';
 
   // shippingCost is only known once a service is selected
   const shippingConfirmed = selectedService !== null || isFreeShipping;

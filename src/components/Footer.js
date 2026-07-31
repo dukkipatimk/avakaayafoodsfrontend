@@ -13,6 +13,10 @@ const Footer = () => {
               <img src="/avakaaya-logo.png" alt="Avakaaya Foods" className="footer-logo-img" />
             </Link>
             <div className="footer-company">Avakaaya Foods Pvt Ltd</div>
+            <address className="footer-address">
+              15-27-737, 1st Phase, Dharma Reddy Colony Phase I,<br />
+              Kukatpally, Hyderabad, Telangana 500072
+            </address>
             <p className="footer-tagline">
               Authentic Telugu flavours, crafted with love in Hyderabad since generations.
             </p>
