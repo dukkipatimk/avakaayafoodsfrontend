@@ -81,7 +81,7 @@ const STEPS = ['Address', 'Review'];
 
 const Checkout = () => {
   const { items, subtotal, clearCart } = useCart();
-  const { user, isAdmin } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
 
   const [step, setStep] = useState(0);
@@ -267,8 +267,7 @@ const Checkout = () => {
       .then(res => {
         const methods = res.data.methods || {};
         setEnabledMethods(methods);
-        // ICICI is admin-only for now, so it's never the default method.
-        const firstEnabled = ['razorpay', 'cod', 'upi'].find(k => methods[k]);
+        const firstEnabled = ['icici', 'razorpay', 'cod', 'upi'].find(k => methods[k]);
         if (firstEnabled) setPaymentMethod(firstEnabled);
       })
       .catch(() => {});
@@ -893,15 +892,12 @@ const Checkout = () => {
                     <span className="review-key">Payment</span>
                     <div className="pay-method-options">
                       {[
-                        ['razorpay', '💳 Pay Online', 'UPI · Card · Netbanking · Wallets'],
-                        ['icici', '🏦 Pay Online (ICICI Bank)', 'Admin only · UPI · Card · Netbanking'],
+                        ['icici', '🏦 Pay Online (ICICI Bank)', 'UPI · Cards (incl. international) · Netbanking · Wallets'],
+                        ['razorpay', '💳 Pay Online (Razorpay)', 'UPI · Card · Netbanking · Wallets'],
                         ['cod', '💵 Cash on Delivery', 'Pay when your order arrives'],
                         ['upi', '📲 UPI (direct)', 'Pay to our UPI & confirm'],
                       ]
-                        // ICICI is admin-only for now: admins always see it (no
-                        // separate enabled-methods toggle needed). Other methods
-                        // follow the admin's enabled-methods setting.
-                        .filter(([k]) => (k === 'icici' ? isAdmin : enabledMethods[k]))
+                        .filter(([k]) => enabledMethods[k])
                         .map(([k, label, desc]) => (
                         <label key={k} className={`pay-method${paymentMethod === k ? ' selected' : ''}`}>
                           <input
