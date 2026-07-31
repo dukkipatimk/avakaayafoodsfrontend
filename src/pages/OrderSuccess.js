@@ -95,7 +95,7 @@ const OrderSuccess = () => {
         )}
 
         <div className="success-actions">
-          <Link to="/account/orders" className="btn btn-primary">Track Your Order</Link>
+          <Link to="/my-orders" className="btn btn-primary">Track Your Order</Link>
           <Link to="/products" className="btn btn-outline">Continue Shopping</Link>
         </div>
 
