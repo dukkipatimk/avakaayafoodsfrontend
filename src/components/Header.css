@@ -84,7 +84,7 @@
   font-weight: 600;
   letter-spacing: 0.01em;
   line-height: 1;
-  color: var(--green-deep);
+  color: #d42a1e;   /* matches the red Telugu lettering in the logo */
   white-space: nowrap;
 }
 
@@ -101,9 +101,17 @@
 /* Nav */
 .nav {
   display: flex;
+  flex-direction: column;   /* menu row on top, contact row below it */
+  align-items: center;
+  gap: 6px;
+}
+.nav-primary,
+.nav-contact {
+  display: flex;
   align-items: center;
   gap: 4px;
 }
+.nav-contact { gap: 14px; }
 
 .nav-link {
   font-family: var(--font-ui);
@@ -485,6 +493,8 @@
     z-index: 999;
   }
   .nav--open { display: flex; }
+  /* In the drawer, unwrap the two groups so links stack full-width as before. */
+  .nav-primary, .nav-contact { display: contents; }
   .nav-link { padding: 12px 16px; font-size: 0.85rem; }
 
   /* Hide the "Shop ▾" toggle — show children directly */

@@ -162,6 +162,7 @@ const Header = () => {
 
           {/* Nav */}
           <nav className={`nav ${menuOpen ? 'nav--open' : ''}`}>
+            <div className="nav-primary">
             <Link to="/" className="nav-link">Home</Link>
             <div className="nav-dropdown">
               <Link to="/products" className="nav-link">Shop ▾</Link>
@@ -174,6 +175,8 @@ const Header = () => {
             </div>
             <Link to="/shipping-info" className="nav-link">Shipping</Link>
             <Link to="/about" className="nav-link">About</Link>
+            </div>
+            <div className="nav-contact">
             <a
               href="tel:+919105299399"
               className="nav-link nav-link--phone"
@@ -196,6 +199,7 @@ const Header = () => {
               </svg>
               <span>+91 91155 95959</span>
             </a>
+            </div>
           </nav>
 
           {/* Actions */}

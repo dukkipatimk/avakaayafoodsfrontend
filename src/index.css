@@ -37,7 +37,7 @@
   --font-body: 'EB Garamond', Georgia, serif;
   --font-ui: 'Josefin Sans', sans-serif;
   --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  --header-h: 72px;
+  --header-h: 120px;
   --banner-h: 36px;
 }
 
@@ -229,5 +229,5 @@ input, select, textarea { font-family: var(--font-body); }
 @media (max-width: 768px) {
   .container { padding: 0 16px; }
   .section { padding: 48px 0; }
-  :root { --header-h: 60px; --banner-h: 32px; }
+  :root { --header-h: 88px; --banner-h: 32px; }
 }
