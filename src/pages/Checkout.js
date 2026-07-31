@@ -892,7 +892,7 @@ const Checkout = () => {
                     <span className="review-key">Payment</span>
                     <div className="pay-method-options">
                       {[
-                        ['icici', '🏦 Pay Online (ICICI Bank)', 'UPI · Cards (incl. international) · Netbanking · Wallets'],
+                        ['icici', '🏦 Pay Online (ICICI Bank) - Incl International Cards', 'UPI · Card · Netbanking · Wallets'],
                         ['razorpay', '💳 Pay Online (Razorpay)', 'UPI · Card · Netbanking · Wallets'],
                         ['cod', '💵 Cash on Delivery', 'Pay when your order arrives'],
                         ['upi', '📲 UPI (direct)', 'Pay to our UPI & confirm'],
