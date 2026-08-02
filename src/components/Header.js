@@ -8,7 +8,12 @@ import NavCoupon from './NavCoupon';
 import api from '../utils/api';
 import toast from 'react-hot-toast';
 import { trackEvent } from '../utils/tracking';
+import { collectionApiFilters } from '../utils/seo';
 import './Header.css';
+
+const CAT_PLACEHOLDER = 'data:image/svg+xml;utf8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="72" height="72"><rect width="72" height="72" fill="#f3ecdc"/></svg>');
+const catImg = (p) => p.thumbnail || (p.images && p.images[0]) || CAT_PLACEHOLDER;
+const catLowPrice = (p) => { const ps = (p.variants || []).map((v) => Number(v.price)).filter((n) => n > 0); return ps.length ? Math.min(...ps) : null; };
 
 const ANNOUNCE_ITEMS = [
   '🚚 Delivery in 1–2 days within India',
@@ -126,6 +131,26 @@ const Header = () => {
     toast.success(`${product.name} (${variant.weight}) added to cart!`);
     setAddedIds(prev => ({ ...prev, [product._id]: true }));
     setTimeout(() => setAddedIds(prev => { const n = { ...prev }; delete n[product._id]; return n; }), 1500);
+  };
+
+  // Category mega-menu (hover a category → preview its products).
+  const [openCat, setOpenCat] = useState(null);
+  const [catProducts, setCatProducts] = useState({});
+  const [catLoading, setCatLoading] = useState(false);
+  const catCloseTimer = useRef(null);
+  const cancelCatClose = () => clearTimeout(catCloseTimer.current);
+  const scheduleCatClose = () => { clearTimeout(catCloseTimer.current); catCloseTimer.current = setTimeout(() => setOpenCat(null), 150); };
+  const openCategory = (slug) => {
+    cancelCatClose();
+    setOpenCat(slug);
+    if (slug && !catProducts[slug]) {
+      setCatLoading(true);
+      const params = new URLSearchParams({ ...collectionApiFilters(slug), limit: 8 });
+      api.get(`/products?${params}`)
+        .then((r) => setCatProducts((p) => ({ ...p, [slug]: r.data.products || [] })))
+        .catch(() => setCatProducts((p) => ({ ...p, [slug]: [] })))
+        .finally(() => setCatLoading(false));
+    }
   };
 
   const categories = [
@@ -335,13 +360,40 @@ const Header = () => {
         )}
       </header>
 
-      {/* Quick category bar — jump straight into a collection */}
-      <nav className="cat-bar" aria-label="Shop by category">
-        <NavLink to="/products" end className={({ isActive }) => `cat-bar-link${isActive ? ' active' : ''}`}>All</NavLink>
-        {categories.filter((c) => c.path !== '/collections/gift-hampers').map((c) => (
-          <NavLink key={c.label} to={c.path} className={({ isActive }) => `cat-bar-link${isActive ? ' active' : ''}`}>{c.label}</NavLink>
-        ))}
-      </nav>
+      {/* Quick category bar with a product mega-menu on hover */}
+      <div className="cat-bar-wrap">
+        <nav className="cat-bar" aria-label="Shop by category" onMouseLeave={scheduleCatClose} onMouseEnter={cancelCatClose}>
+          <NavLink to="/products" end onMouseEnter={() => { cancelCatClose(); setOpenCat(null); }} className={({ isActive }) => `cat-bar-link${isActive ? ' active' : ''}`}>All</NavLink>
+          {categories.filter((c) => c.path !== '/collections/gift-hampers').map((c) => {
+            const slug = c.path.startsWith('/collections/') ? c.path.split('/').pop() : null;
+            return (
+              <NavLink key={c.label} to={c.path}
+                onMouseEnter={() => { if (slug) openCategory(slug); else { cancelCatClose(); setOpenCat(null); } }}
+                className={({ isActive }) => `cat-bar-link${isActive ? ' active' : ''}`}>{c.label}</NavLink>
+            );
+          })}
+        </nav>
+        {openCat && (
+          <div className="cat-mega" onMouseEnter={cancelCatClose} onMouseLeave={scheduleCatClose}>
+            <div className="cat-mega-inner">
+              {(!catProducts[openCat] && catLoading)
+                ? <div className="cat-mega-empty">Loading…</div>
+                : (catProducts[openCat]?.length ? (
+                  <>
+                    {catProducts[openCat].slice(0, 8).map((p) => (
+                      <Link key={p._id} to={`/products/${p.slug}`} className="cat-mega-item" onClick={() => setOpenCat(null)}>
+                        <img src={catImg(p)} alt={p.name} className="cat-mega-img" loading="lazy" />
+                        <span className="cat-mega-name">{p.name}</span>
+                        {catLowPrice(p) != null && <span className="cat-mega-price">₹{catLowPrice(p)}</span>}
+                      </Link>
+                    ))}
+                    <Link to={`/collections/${openCat}`} className="cat-mega-all" onClick={() => setOpenCat(null)}>View all ›</Link>
+                  </>
+                ) : <div className="cat-mega-empty">No products in this category yet.</div>)}
+            </div>
+          </div>
+        )}
+      </div>
 
       <MiniCart isOpen={cartOpen} onClose={() => setCartOpen(false)} />
 
