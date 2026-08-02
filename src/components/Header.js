@@ -338,7 +338,7 @@ const Header = () => {
       {/* Quick category bar — jump straight into a collection */}
       <nav className="cat-bar" aria-label="Shop by category">
         <NavLink to="/products" end className={({ isActive }) => `cat-bar-link${isActive ? ' active' : ''}`}>All</NavLink>
-        {categories.map((c) => (
+        {categories.filter((c) => c.path !== '/collections/gift-hampers').map((c) => (
           <NavLink key={c.label} to={c.path} className={({ isActive }) => `cat-bar-link${isActive ? ' active' : ''}`}>{c.label}</NavLink>
         ))}
       </nav>
