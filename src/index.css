@@ -39,6 +39,7 @@
   --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   --header-h: 120px;
   --banner-h: 36px;
+  --catbar-h: 46px;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -229,5 +230,5 @@ input, select, textarea { font-family: var(--font-body); }
 @media (max-width: 768px) {
   .container { padding: 0 16px; }
   .section { padding: 48px 0; }
-  :root { --header-h: 88px; --banner-h: 32px; }
+  :root { --header-h: 88px; --banner-h: 32px; --catbar-h: 42px; }
 }

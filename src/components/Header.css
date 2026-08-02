@@ -47,6 +47,39 @@
   height: var(--header-h);
 }
 
+/* Quick category bar — fixed, directly under the main header */
+.cat-bar {
+  position: fixed;
+  top: calc(var(--banner-h) + var(--header-h));
+  left: 0; right: 0;
+  z-index: 999;
+  height: var(--catbar-h);
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 0 16px;
+  background: var(--green-deep);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.cat-bar::-webkit-scrollbar { display: none; }
+.cat-bar-link {
+  flex: 0 0 auto;
+  color: var(--gold-light);
+  text-decoration: none;
+  font-family: var(--font-ui);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 6px 12px;
+  border-radius: 6px;
+  white-space: nowrap;
+  transition: var(--transition);
+}
+.cat-bar-link:hover { background: rgba(255,255,255,0.10); color: #fff; }
+.cat-bar-link.active { background: var(--gold); color: var(--green-deep); }
+
 .header--scrolled {
   border-bottom-color: var(--ivory-deep);
   box-shadow: var(--shadow-sm);
@@ -475,11 +508,11 @@
   .logo-tagline { display: none; }
   .menu-toggle { display: flex; }
 
-  /* Mobile nav drawer */
+  /* Mobile nav drawer — opens below the header + category bar */
   .nav {
     display: none;
     position: fixed;
-    top: calc(var(--banner-h) + var(--header-h));
+    top: calc(var(--banner-h) + var(--header-h) + var(--catbar-h));
     left: 0; right: 0;
     background: var(--white);
     border-bottom: 1px solid var(--ivory-deep);
@@ -488,9 +521,9 @@
     padding: 12px 8px 20px;
     gap: 2px;
     box-shadow: var(--shadow-md);
-    max-height: calc(100vh - var(--banner-h) - var(--header-h));
+    max-height: calc(100vh - var(--banner-h) - var(--header-h) - var(--catbar-h));
     overflow-y: auto;
-    z-index: 999;
+    z-index: 998;
   }
   .nav--open { display: flex; }
   /* In the drawer, unwrap the two groups so links stack full-width as before. */

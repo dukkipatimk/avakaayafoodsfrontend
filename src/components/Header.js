@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import MiniCart from './MiniCart';
@@ -334,6 +334,14 @@ const Header = () => {
           </div>
         )}
       </header>
+
+      {/* Quick category bar — jump straight into a collection */}
+      <nav className="cat-bar" aria-label="Shop by category">
+        <NavLink to="/products" end className={({ isActive }) => `cat-bar-link${isActive ? ' active' : ''}`}>All</NavLink>
+        {categories.map((c) => (
+          <NavLink key={c.label} to={c.path} className={({ isActive }) => `cat-bar-link${isActive ? ' active' : ''}`}>{c.label}</NavLink>
+        ))}
+      </nav>
 
       <MiniCart isOpen={cartOpen} onClose={() => setCartOpen(false)} />
 

@@ -65,7 +65,7 @@ function App() {
           <AnalyticsTracker />
           <ScrollToTop />
           <Header />
-          <main style={{ minHeight: '60vh', paddingTop: 'calc(var(--header-h) + var(--banner-h))' }}>
+          <main style={{ minHeight: '60vh', paddingTop: 'calc(var(--header-h) + var(--banner-h) + var(--catbar-h))' }}>
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/products" element={<Products />} />
