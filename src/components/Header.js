@@ -199,8 +199,6 @@ const Header = () => {
             <img src="/avakaaya-logo.png" alt="Avakaaya Foods" className="logo-img" />
           </Link>
 
-          <span className="hdr-divider" aria-hidden="true" />
-
           {/* Brand wordmark */}
           <Link to="/" className="brand-block" aria-label="Avakaaya Foods home">
             <span className="brand-flourish" aria-hidden="true">&#10086;</span>
@@ -210,6 +208,8 @@ const Header = () => {
             </span>
             <span className="brand-flourish" aria-hidden="true">&#10086;</span>
           </Link>
+
+          <span className="hdr-divider" aria-hidden="true" />
 
           {/* Nav */}
           <nav className={`nav ${menuOpen ? 'nav--open' : ''}`}>
