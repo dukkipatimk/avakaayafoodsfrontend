@@ -1,6 +1,7 @@
 .header-banner {
   position: fixed;
-  top: 0;
+  top: auto;
+  bottom: 0;            /* scrolling announcement now sits at the bottom of the page */
   left: 0;
   right: 0;
   z-index: 1001;
@@ -36,7 +37,7 @@
 
 .header {
   position: fixed;
-  top: var(--banner-h);
+  top: 0;
   left: 0;
   right: 0;
   z-index: 1000;
@@ -50,7 +51,7 @@
 /* Quick category bar — fixed, directly under the main header */
 .cat-bar {
   position: fixed;
-  top: calc(var(--banner-h) + var(--header-h));
+  top: var(--header-h);
   left: 0; right: 0;
   z-index: 999;
   height: var(--catbar-h);
@@ -84,7 +85,7 @@
 /* Category mega-menu (product preview under the bar) */
 .cat-mega {
   position: fixed;
-  top: calc(var(--banner-h) + var(--header-h) + var(--catbar-h));
+  top: calc(var(--header-h) + var(--catbar-h));
   left: 0; right: 0;
   z-index: 998;
   background: var(--white);
@@ -117,6 +118,10 @@
   justify-content: space-between;
   height: 100%;
   gap: 24px;
+  /* Full width (not the centered .container) so the logo + brand name sit at
+     the far left of the header and the actions at the far right. */
+  width: 100%;
+  padding: 0 32px;
 }
 
 /* Logo */
@@ -529,7 +534,8 @@
 .hamburger.open::after { transform: rotate(-45deg); top: 0; }
 
 @media (max-width: 768px) {
-  .header { top: var(--banner-h); }
+  .header { top: 0; }
+  .header-inner { padding: 0 16px; }
   .header-banner { font-size: 0.65rem; }
   .logo-tagline { display: none; }
   .menu-toggle { display: flex; }
@@ -538,7 +544,7 @@
   .nav {
     display: none;
     position: fixed;
-    top: calc(var(--banner-h) + var(--header-h) + var(--catbar-h));
+    top: calc(var(--header-h) + var(--catbar-h));
     left: 0; right: 0;
     background: var(--white);
     border-bottom: 1px solid var(--ivory-deep);
@@ -547,7 +553,7 @@
     padding: 12px 8px 20px;
     gap: 2px;
     box-shadow: var(--shadow-md);
-    max-height: calc(100vh - var(--banner-h) - var(--header-h) - var(--catbar-h));
+    max-height: calc(100vh - var(--header-h) - var(--catbar-h));
     overflow-y: auto;
     z-index: 998;
   }
@@ -803,5 +809,10 @@
     display: flex;
     align-items: center;
     justify-content: space-around;
+  }
+  /* Sit the scrolling announcement just above the mobile bottom toolbar
+     (toolbar height ≈ 64px + the iOS safe-area inset). */
+  .header-banner {
+    bottom: calc(64px + env(safe-area-inset-bottom, 0px));
   }
 }

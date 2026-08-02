@@ -52,11 +52,14 @@ body {
   color: var(--text-dark);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+  /* Reserve space for the fixed scrolling announcement bar pinned to the bottom */
+  padding-bottom: var(--banner-h);
 }
 
-/* Reserve space at the bottom on mobile so the toolbar doesn't cover content */
+/* On mobile also reserve space for the bottom toolbar (which sits below the
+   announcement bar) so neither covers page content. */
 @media (max-width: 1023px) {
-  body { padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px)); }
+  body { padding-bottom: calc(64px + var(--banner-h) + env(safe-area-inset-bottom, 0px)); }
 }
 
 /* Typography */

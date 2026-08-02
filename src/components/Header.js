@@ -166,7 +166,7 @@ const Header = () => {
 
   return (
     <>
-      {/* Top scrolling announcement bar */}
+      {/* Scrolling announcement bar — pinned to the bottom of the page */}
       <div className="header-banner">
         <div className="header-banner-track">
           {[...ANNOUNCE_ITEMS, ...ANNOUNCE_ITEMS].map((item, i) => (
@@ -178,7 +178,7 @@ const Header = () => {
       </div>
 
       <header className={`header ${scrolled ? 'header--scrolled' : ''}`}>
-        <div className="header-inner container">
+        <div className="header-inner">
           {/* Logo */}
           <Link to="/" className="logo">
             <img src="/avakaaya-logo.png" alt="Avakaaya Foods" className="logo-img" />
