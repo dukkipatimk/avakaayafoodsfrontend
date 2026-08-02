@@ -15,6 +15,21 @@ const CAT_PLACEHOLDER = 'data:image/svg+xml;utf8,' + encodeURIComponent('<svg xm
 const catImg = (p) => p.thumbnail || (p.images && p.images[0]) || CAT_PLACEHOLDER;
 const catLowPrice = (p) => { const ps = (p.variants || []).map((v) => Number(v.price)).filter((n) => n > 0); return ps.length ? Math.min(...ps) : null; };
 
+// Little line-icons shown next to each category in the quick category bar.
+const catIco = (children) => (
+  <svg className="cat-bar-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{children}</svg>
+);
+const CAT_ICONS = {
+  'all':             catIco(<><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20h14V9.5"/><path d="M10 20v-5h4v5"/></>),
+  'veg-pickles':     catIco(<><path d="M7 8h10v11a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2z"/><path d="M8 8V6h8v2"/><path d="M9 4h6"/></>),
+  'non-veg-pickles': catIco(<><path d="M5 16c7 3 13-3 14-11-3 2-4 0-7 1s-6 4-7 10z"/><path d="M12 5c1-1 2-2 4-2"/></>),
+  'powders':         catIco(<><path d="M4 11h16a8 8 0 0 1-16 0z"/><path d="M13 3l-2 8"/></>),
+  'snacks':          catIco(<><path d="M12 4 21 20H3z"/><path d="M12 4v16"/></>),
+  'sweets':          catIco(<><circle cx="12" cy="12" r="7"/><circle cx="9.5" cy="11" r="1"/><circle cx="14" cy="13" r="1"/></>),
+  'ghee':            catIco(<><path d="M6 9h12l-1 9a3 3 0 0 1-3 3h-4a3 3 0 0 1-3-3z"/><path d="M5 9h14"/><path d="M9 9V7a3 3 0 0 1 6 0v2"/></>),
+  'gift-hamper':     catIco(<><rect x="3" y="8" width="18" height="13" rx="1.5"/><path d="M3 12h18"/><path d="M12 8v13"/><path d="M12 8C10 8 8 7 8 5.5S9.5 3 12 5c2.5-2 4-1.5 4 0S14 8 12 8z"/></>),
+};
+
 const ANNOUNCE_ITEMS = [
   '🚚 Delivery in 1–2 days within India',
   '🌿 No preservatives — 100% natural ingredients',
@@ -182,13 +197,24 @@ const Header = () => {
           {/* Logo */}
           <Link to="/" className="logo">
             <img src="/avakaaya-logo.png" alt="Avakaaya Foods" className="logo-img" />
-            <span className="logo-name">Avakaaya Foods</span>
+          </Link>
+
+          <span className="hdr-divider" aria-hidden="true" />
+
+          {/* Brand wordmark */}
+          <Link to="/" className="brand-block" aria-label="Avakaaya Foods home">
+            <span className="brand-flourish" aria-hidden="true">&#10086;</span>
+            <span className="brand-name">Avakaaya Foods</span>
+            <span className="brand-tagline">
+              Authentic Telugu Pickles <span className="brand-dot">&bull;</span> Sweets <span className="brand-dot">&bull;</span> Snacks
+            </span>
+            <span className="brand-flourish" aria-hidden="true">&#10086;</span>
           </Link>
 
           {/* Nav */}
           <nav className={`nav ${menuOpen ? 'nav--open' : ''}`}>
             <div className="nav-primary">
-            <Link to="/" className="nav-link">Home</Link>
+            <NavLink to="/" end className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>Home</NavLink>
             <div className="nav-dropdown">
               <Link to="/products" className="nav-link">Shop ▾</Link>
               <div className="dropdown-menu">
@@ -198,8 +224,9 @@ const Header = () => {
                 ))}
               </div>
             </div>
-            <Link to="/shipping-info" className="nav-link">Shipping</Link>
-            <Link to="/about" className="nav-link">About</Link>
+            <NavLink to="/shipping-info" className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>Shipping</NavLink>
+            <NavLink to="/about" className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>About</NavLink>
+            <NavLink to="/contact" className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>Contact Us</NavLink>
             </div>
             <div className="nav-contact">
             <a
@@ -227,35 +254,46 @@ const Header = () => {
             </div>
           </nav>
 
+          <span className="hdr-divider hdr-divider--actions" aria-hidden="true" />
+
           {/* Actions */}
           <div className="header-actions">
             {/* Offers */}
             <button
-              className="icon-btn offers-icon-btn"
+              className="action-btn"
               onClick={() => setOffersOpen(true)}
               aria-label="View available offers"
               title="Offers"
             >
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="20" height="20">
-                <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/>
-                <line x1="7" y1="7" x2="7.01" y2="7"/>
-              </svg>
+              <span className="action-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="24" height="24">
+                  <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/>
+                  <line x1="7" y1="7" x2="7.01" y2="7"/>
+                </svg>
+              </span>
+              <span className="action-label">Offers</span>
             </button>
 
             {/* Search */}
-            <button className="icon-btn" onClick={() => setSearchOpen(!searchOpen)} aria-label="Search">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
-              </svg>
+            <button className="action-btn" onClick={() => setSearchOpen(!searchOpen)} aria-label="Search">
+              <span className="action-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+                </svg>
+              </span>
+              <span className="action-label">Search</span>
             </button>
 
             {/* Account */}
             {user ? (
-              <div className="nav-dropdown">
-                <button className="icon-btn" aria-label="Open account menu">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
-                  </svg>
+              <div className="nav-dropdown action-dropdown">
+                <button className="action-btn" aria-label="Open account menu">
+                  <span className="action-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                    </svg>
+                  </span>
+                  <span className="action-label">Account</span>
                 </button>
                 <div className="dropdown-menu dropdown-menu--right">
                   <span className="dropdown-name">Hi, {user.name.split(' ')[0]}</span>
@@ -266,20 +304,26 @@ const Header = () => {
                 </div>
               </div>
             ) : (
-              <Link to="/login" className="icon-btn">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
-                </svg>
+              <Link to="/login" className="action-btn">
+                <span className="action-icon">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                  </svg>
+                </span>
+                <span className="action-label">Login</span>
               </Link>
             )}
 
             {/* Cart */}
-            <button className="icon-btn cart-btn" onClick={() => setCartOpen(true)} aria-label="Open cart">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
-                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
-              </svg>
-              {totalItems > 0 && <span className="cart-badge">{totalItems}</span>}
+            <button className="action-btn cart-action" onClick={() => setCartOpen(true)} aria-label="Open cart">
+              <span className="action-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+                  <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                </svg>
+                {totalItems > 0 && <span className="cart-badge">{totalItems}</span>}
+              </span>
+              <span className="action-label">Cart</span>
             </button>
 
             {/* Mobile hamburger */}
@@ -363,13 +407,18 @@ const Header = () => {
       {/* Quick category bar with a product mega-menu on hover */}
       <div className="cat-bar-wrap">
         <nav className="cat-bar" aria-label="Shop by category" onMouseLeave={scheduleCatClose} onMouseEnter={cancelCatClose}>
-          <NavLink to="/products" end onMouseEnter={() => { cancelCatClose(); setOpenCat(null); }} className={({ isActive }) => `cat-bar-link${isActive ? ' active' : ''}`}>All</NavLink>
+          <NavLink to="/products" end onMouseEnter={() => { cancelCatClose(); setOpenCat(null); }} className={({ isActive }) => `cat-bar-link${isActive ? ' active' : ''}`}>
+            {CAT_ICONS['all']}<span className="cat-bar-label">All</span>
+          </NavLink>
           {categories.filter((c) => c.path !== '/collections/gift-hampers').map((c) => {
             const slug = c.path.startsWith('/collections/') ? c.path.split('/').pop() : null;
+            const iconKey = c.path.split('/').pop();
             return (
               <NavLink key={c.label} to={c.path}
                 onMouseEnter={() => { if (slug) openCategory(slug); else { cancelCatClose(); setOpenCat(null); } }}
-                className={({ isActive }) => `cat-bar-link${isActive ? ' active' : ''}`}>{c.label}</NavLink>
+                className={({ isActive }) => `cat-bar-link${isActive ? ' active' : ''}`}>
+                {CAT_ICONS[iconKey]}<span className="cat-bar-label">{c.label}</span>
+              </NavLink>
             );
           })}
         </nav>

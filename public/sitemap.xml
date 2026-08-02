@@ -91,50 +91,248 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://avakaayafoods.com/products/nuvvula-chikki-w</loc>
+    <lastmod>2026-07-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://avakaayafoods.com/products/nuvvula-undalu</loc>
+    <lastmod>2026-07-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://avakaayafoods.com/products/ongole-mysore-pak</loc>
+    <lastmod>2026-07-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://avakaayafoods.com/products/palli-chikki</loc>
+    <lastmod>2026-07-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://avakaayafoods.com/products/pottu-minapa-sunnundalu</loc>
+    <lastmod>2026-07-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://avakaayafoods.com/products/ragi-laddu</loc>
+    <lastmod>2026-07-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://avakaayafoods.com/products/ghee-soan-papidi</loc>
+    <lastmod>2026-07-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://avakaayafoods.com/products/sugar-gorumitlu</loc>
+    <lastmod>2026-07-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://avakaayafoods.com/products/sunnundalu-sugar</loc>
+    <lastmod>2026-07-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://avakaayafoods.com/products/ghee-ariselu</loc>
+    <lastmod>2026-07-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://avakaayafoods.com/products/dry-fruit-laddu</loc>
+    <lastmod>2026-07-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://avakaayafoods.com/products/dry-fruit-halwa</loc>
+    <lastmod>2026-07-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://avakaayafoods.com/products/bombay-halwa</loc>
+    <lastmod>2026-07-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://avakaayafoods.com/products/badhusha</loc>
+    <lastmod>2026-07-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://avakaayafoods.com/products/milk-mysore-pak</loc>
+    <lastmod>2026-07-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://avakaayafoods.com/products/tapeswaram-kaja</loc>
+    <lastmod>2026-07-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://avakaayafoods.com/products/kobbari-vundalu</loc>
+    <lastmod>2026-07-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://avakaayafoods.com/products/doodhpeda</loc>
+    <lastmod>2026-07-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://avakaayafoods.com/products/kakarakaya-karam-powder</loc>
+    <lastmod>2026-07-31</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://avakaayafoods.com/products/chicken-masala</loc>
+    <lastmod>2026-07-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://avakaayafoods.com/products/sunni-pindi</loc>
+    <lastmod>2026-07-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://avakaayafoods.com/products/vampoosa</loc>
+    <lastmod>2026-07-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://avakaayafoods.com/products/saggubiyyam-chekkalu</loc>
+    <lastmod>2026-07-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://avakaayafoods.com/products/palli-vundalu</loc>
+    <lastmod>2026-07-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://avakaayafoods.com/products/minapa-chekkalu</loc>
+    <lastmod>2026-07-28</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://avakaayafoods.com/products/kaju-mixture</loc>
+    <lastmod>2026-07-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://avakaayafoods.com/products/jonna-murukulu</loc>
+    <lastmod>2026-07-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://avakaayafoods.com/products/janthikalu</loc>
+    <lastmod>2026-07-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://avakaayafoods.com/products/gavvalu-hot</loc>
+    <lastmod>2026-07-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://avakaayafoods.com/products/dalmdi</loc>
+    <lastmod>2026-07-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://avakaayafoods.com/products/chekodi-red</loc>
+    <lastmod>2026-07-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://avakaayafoods.com/products/chekodi-white</loc>
+    <lastmod>2026-07-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://avakaayafoods.com/products/chekkalu-red</loc>
+    <lastmod>2026-07-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://avakaayafoods.com/products/bellam-kommulu</loc>
-    <lastmod>2026-07-05</lastmod>
+    <lastmod>2026-07-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://avakaayafoods.com/products/bellam-boondhi</loc>
-    <lastmod>2026-07-05</lastmod>
+    <lastmod>2026-07-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://avakaayafoods.com/products/kothimeera-pickle</loc>
-    <lastmod>2026-06-23</lastmod>
+    <lastmod>2026-07-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://avakaayafoods.com/products/lemon-pickle</loc>
-    <lastmod>2026-06-15</lastmod>
+    <lastmod>2026-07-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://avakaayafoods.com/products/magaya-pickle</loc>
-    <lastmod>2026-07-04</lastmod>
+    <lastmod>2026-07-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://avakaayafoods.com/products/mango-pickle</loc>
-    <lastmod>2026-07-04</lastmod>
+    <lastmod>2026-07-31</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://avakaayafoods.com/products/mixed-veg-pickle</loc>
-    <lastmod>2026-06-15</lastmod>
+    <lastmod>2026-07-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://avakaayafoods.com/products/tamarind-pickle</loc>
-    <lastmod>2026-06-20</lastmod>
+    <lastmod>2026-07-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -152,31 +350,31 @@
   </url>
   <url>
     <loc>https://avakaayafoods.com/products/nuvvula-avakaaya</loc>
-    <lastmod>2026-06-21</lastmod>
+    <lastmod>2026-07-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://avakaayafoods.com/products/pandu-mirchi-pickle</loc>
-    <lastmod>2026-07-04</lastmod>
+    <lastmod>2026-07-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://avakaayafoods.com/products/pulihora-paste</loc>
-    <lastmod>2026-07-04</lastmod>
+    <lastmod>2026-07-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://avakaayafoods.com/products/tomato-pickle</loc>
-    <lastmod>2026-06-30</lastmod>
+    <lastmod>2026-07-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://avakaayafoods.com/products/ulavachaaru-instant-mix</loc>
-    <lastmod>2026-07-05</lastmod>
+    <lastmod>2026-07-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -188,7 +386,7 @@
   </url>
   <url>
     <loc>https://avakaayafoods.com/products/avisaginjala-karam</loc>
-    <lastmod>2026-07-03</lastmod>
+    <lastmod>2026-07-23</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -200,25 +398,25 @@
   </url>
   <url>
     <loc>https://avakaayafoods.com/products/kandhi-powder</loc>
-    <lastmod>2026-07-04</lastmod>
+    <lastmod>2026-07-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://avakaayafoods.com/products/chicken-boneless-pickle</loc>
-    <lastmod>2026-07-02</lastmod>
+    <lastmod>2026-07-31</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://avakaayafoods.com/products/chicken-pickle</loc>
-    <lastmod>2026-07-05</lastmod>
+    <lastmod>2026-07-31</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://avakaayafoods.com/products/gongura-chicken-pickle</loc>
-    <lastmod>2026-06-16</lastmod>
+    <lastmod>2026-07-31</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -230,19 +428,19 @@
   </url>
   <url>
     <loc>https://avakaayafoods.com/products/korameenu-fish-pickle</loc>
-    <lastmod>2026-06-16</lastmod>
+    <lastmod>2026-07-19</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://avakaayafoods.com/products/mutton-boneless-pickle</loc>
-    <lastmod>2026-07-01</lastmod>
+    <lastmod>2026-07-19</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://avakaayafoods.com/products/karivepaku-karam</loc>
-    <lastmod>2026-07-02</lastmod>
+    <lastmod>2026-07-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -260,31 +458,31 @@
   </url>
   <url>
     <loc>https://avakaayafoods.com/products/natu-kodi-pickle</loc>
-    <lastmod>2026-06-16</lastmod>
+    <lastmod>2026-07-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://avakaayafoods.com/products/nethallu-pickle</loc>
-    <lastmod>2026-06-16</lastmod>
+    <lastmod>2026-07-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://avakaayafoods.com/products/prawns-pickle</loc>
-    <lastmod>2026-06-16</lastmod>
+    <lastmod>2026-07-19</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://avakaayafoods.com/products/munagaku-karam</loc>
-    <lastmod>2026-07-04</lastmod>
+    <lastmod>2026-07-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://avakaayafoods.com/products/nalla-karam</loc>
-    <lastmod>2026-07-01</lastmod>
+    <lastmod>2026-07-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -302,43 +500,43 @@
   </url>
   <url>
     <loc>https://avakaayafoods.com/products/palli-karam</loc>
-    <lastmod>2026-07-02</lastmod>
+    <lastmod>2026-07-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://avakaayafoods.com/products/pudina-karam</loc>
-    <lastmod>2026-06-16</lastmod>
+    <lastmod>2026-07-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://avakaayafoods.com/products/royyala-karam</loc>
-    <lastmod>2026-07-02</lastmod>
+    <lastmod>2026-07-19</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://avakaayafoods.com/products/vellulli-karam</loc>
-    <lastmod>2026-07-01</lastmod>
+    <lastmod>2026-07-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://avakaayafoods.com/products/bandar-halwa</loc>
-    <lastmod>2026-06-15</lastmod>
+    <lastmod>2026-07-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://avakaayafoods.com/products/bellam-kaju-pakam</loc>
-    <lastmod>2026-07-02</lastmod>
+    <lastmod>2026-07-19</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://avakaayafoods.com/products/bellam-sunnadallu</loc>
-    <lastmod>2026-06-15</lastmod>
+    <lastmod>2026-07-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -350,7 +548,7 @@
   </url>
   <url>
     <loc>https://avakaayafoods.com/products/kazu-burfi</loc>
-    <lastmod>2026-07-04</lastmod>
+    <lastmod>2026-07-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -362,97 +560,97 @@
   </url>
   <url>
     <loc>https://avakaayafoods.com/products/chekodi-nuvvulu</loc>
-    <lastmod>2026-07-02</lastmod>
+    <lastmod>2026-07-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://avakaayafoods.com/products/cornflakes-mixture</loc>
-    <lastmod>2026-07-02</lastmod>
+    <lastmod>2026-07-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://avakaayafoods.com/products/janthikalu-onion</loc>
-    <lastmod>2026-07-01</lastmod>
+    <lastmod>2026-07-28</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://avakaayafoods.com/products/jonnamurukulu-palak</loc>
-    <lastmod>2026-07-02</lastmod>
+    <lastmod>2026-07-28</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://avakaayafoods.com/products/kakarakaya-pakodi</loc>
-    <lastmod>2026-06-16</lastmod>
+    <lastmod>2026-07-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://avakaayafoods.com/products/kara-boondi</loc>
-    <lastmod>2026-07-02</lastmod>
+    <lastmod>2026-07-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://avakaayafoods.com/products/karapoosa</loc>
-    <lastmod>2026-07-02</lastmod>
+    <lastmod>2026-07-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://avakaayafoods.com/products/mixture</loc>
-    <lastmod>2026-07-02</lastmod>
+    <lastmod>2026-07-19</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://avakaayafoods.com/products/murukulu</loc>
-    <lastmod>2026-07-02</lastmod>
+    <lastmod>2026-07-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://avakaayafoods.com/products/pappu-chegodilu</loc>
-    <lastmod>2026-07-02</lastmod>
+    <lastmod>2026-07-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://avakaayafoods.com/products/plain-sakkinalu</loc>
-    <lastmod>2026-07-02</lastmod>
+    <lastmod>2026-07-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://avakaayafoods.com/products/ragi-mixture</loc>
-    <lastmod>2026-06-16</lastmod>
+    <lastmod>2026-07-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://avakaayafoods.com/products/ribbon-pakodi</loc>
-    <lastmod>2026-06-16</lastmod>
+    <lastmod>2026-07-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://avakaayafoods.com/products/sakinalu-kara</loc>
-    <lastmod>2026-06-16</lastmod>
+    <lastmod>2026-07-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://avakaayafoods.com/products/sanna-boondi</loc>
-    <lastmod>2026-06-16</lastmod>
+    <lastmod>2026-07-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://avakaayafoods.com/products/telangana-chekkalu</loc>
-    <lastmod>2026-07-02</lastmod>
+    <lastmod>2026-07-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -482,7 +680,7 @@
   </url>
   <url>
     <loc>https://avakaayafoods.com/products/amla-usiri-pickle</loc>
-    <lastmod>2026-07-04</lastmod>
+    <lastmod>2026-07-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -494,43 +692,49 @@
   </url>
   <url>
     <loc>https://avakaayafoods.com/products/brinjal-pickle</loc>
-    <lastmod>2026-06-15</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://avakaayafoods.com/products/drum-stick-pickle</loc>
-    <lastmod>2026-06-15</lastmod>
+    <lastmod>2026-07-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://avakaayafoods.com/products/cauli-flower-pickle</loc>
-    <lastmod>2026-06-20</lastmod>
+    <lastmod>2026-07-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://avakaayafoods.com/products/chikkudu-kaya-pickle</loc>
-    <lastmod>2026-06-15</lastmod>
+    <lastmod>2026-07-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://avakaayafoods.com/products/dondakaya-pickle</loc>
-    <lastmod>2026-07-04</lastmod>
+    <lastmod>2026-07-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://avakaayafoods.com/products/drum-stick-pickle</loc>
+    <lastmod>2026-07-18</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://avakaayafoods.com/products/garlic-pickle</loc>
-    <lastmod>2026-06-15</lastmod>
+    <lastmod>2026-07-25</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://avakaayafoods.com/products/gongura-pickle</loc>
+    <lastmod>2026-07-23</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://avakaayafoods.com/products/ginger-pickle</loc>
-    <lastmod>2026-06-15</lastmod>
+    <lastmod>2026-07-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -541,14 +745,8 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://avakaayafoods.com/products/gongura-pickle</loc>
-    <lastmod>2026-06-15</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
     <loc>https://avakaayafoods.com/products/kakarakaya-pickle</loc>
-    <lastmod>2026-06-15</lastmod>
+    <lastmod>2026-07-18</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
