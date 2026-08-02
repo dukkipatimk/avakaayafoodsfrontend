@@ -209,8 +209,6 @@ const Header = () => {
             <span className="brand-flourish" aria-hidden="true">&#10086;</span>
           </Link>
 
-          <span className="hdr-divider" aria-hidden="true" />
-
           {/* Nav */}
           <nav className={`nav ${menuOpen ? 'nav--open' : ''}`}>
             <div className="nav-primary">
@@ -253,8 +251,6 @@ const Header = () => {
             </a>
             </div>
           </nav>
-
-          <span className="hdr-divider hdr-divider--actions" aria-hidden="true" />
 
           {/* Actions */}
           <div className="header-actions">
