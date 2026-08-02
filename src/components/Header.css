@@ -115,7 +115,7 @@
   animation: cat-mega-in 0.15s ease;
 }
 @keyframes cat-mega-in { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
-.cat-mega-inner { max-width: 1100px; margin: 0 auto; padding: 16px 20px; display: flex; gap: 16px; flex-wrap: wrap; align-items: flex-start; }
+.cat-mega-inner { max-width: 1320px; margin: 0 auto; padding: 18px 24px; display: flex; gap: 18px; flex-wrap: wrap; align-items: flex-start; justify-content: center; max-height: 72vh; overflow-y: auto; }
 .cat-mega-item { display: flex; flex-direction: column; align-items: center; width: 92px; text-decoration: none; color: #1a1a1a; }
 .cat-mega-img { width: 72px; height: 72px; object-fit: cover; border-radius: 10px; background: #f3ecdc; transition: transform 0.15s ease; }
 .cat-mega-item:hover .cat-mega-img { transform: scale(1.05); }
@@ -154,9 +154,9 @@
 }
 
 .logo-img {
-  height: 112px;
+  height: 76px;
   width: auto;
-  max-width: 220px;
+  max-width: 200px;
   display: block;
   object-fit: contain;
 }
@@ -184,7 +184,7 @@
 }
 .brand-name {
   font-family: var(--font-display);
-  font-size: 2rem;
+  font-size: 1.75rem;
   font-weight: 600;
   line-height: 1;
   letter-spacing: 0.01em;
@@ -192,13 +192,23 @@
 }
 .brand-tagline {
   font-family: var(--font-display);
-  font-size: 0.92rem;
+  font-size: 0.82rem;
   font-weight: 500;
   letter-spacing: 0.02em;
   color: var(--green-deep);
   white-space: nowrap;
 }
 .brand-dot { color: var(--gold); font-weight: 700; padding: 0 2px; }
+.brand-tagline-sm {
+  display: none;   /* mobile only */
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--green-deep);
+  text-transform: lowercase;
+  white-space: nowrap;
+}
 .brand-flourish {
   display: flex;
   align-items: center;
@@ -226,13 +236,23 @@
 }
 
 
-/* Nav — pushed to the right of the wordmark; menu row on top, contact pills below */
-.nav {
+/* Centred middle column: wordmark on top, phone/WhatsApp pills centred below it */
+.header-center {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: 14px;
-  margin-left: auto;   /* opens the gap between the wordmark and the nav */
+  align-items: center;
+  gap: 10px;
+  margin: 0 auto;      /* centre it between the logo (left) and the actions (right) */
+  min-width: 0;
+}
+
+/* Nav — the contact pills, centred under the wordmark */
+.nav {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
 }
 .nav-primary,
 .nav-contact {
@@ -241,6 +261,11 @@
   gap: 4px;
 }
 .nav-contact { gap: 14px; }
+
+/* Preview: hide the top menu links on desktop (categories live in the bar below) */
+@media (min-width: 769px) {
+  .nav-primary { display: none; }
+}
 
 .nav-link {
   position: relative;
@@ -415,6 +440,7 @@
 }
 .action-icon svg { width: 24px; height: 24px; }
 .action-label {
+  display: none;   /* icon-only inline with the menu row */
   font-family: var(--font-ui);
   font-size: 0.66rem;
   font-weight: 700;
@@ -431,6 +457,7 @@
   top: -8px;
   right: -10px;
 }
+
 
 .icon-btn {
   display: flex;
@@ -470,11 +497,13 @@
 
 /* Search */
 .search-bar {
+  display: none;                    /* desktop: shown only when toggled open */
   border-top: 1px solid var(--ivory-deep);
   background: var(--white);
   padding: 12px 0;
   animation: fadeInUp 0.2s ease;
 }
+.search-bar.is-open { display: block; }
 
 /* Outer wrapper handles positioning context for dropdown */
 .search-form {
@@ -655,38 +684,121 @@
 .hamburger.open::after { transform: rotate(-45deg); top: 0; }
 
 @media (max-width: 768px) {
-  .header { top: 0; }
-  .header-inner { padding: 0 16px; }
-  .logo-img { height: 64px; max-width: 160px; }
-  .header-actions { gap: 12px; }
-  .action-label { display: none; }
-  .action-icon svg { width: 22px; height: 22px; }
-  .cat-bar-link { padding: 8px 12px; font-size: 0.72rem; gap: 6px; }
-  .cat-bar-ico { width: 17px; height: 17px; }
-  .header-banner { font-size: 0.65rem; }
-  .logo-tagline { display: none; }
-  .menu-toggle { display: flex; }
+  /* ===== App-style mobile header: static (scrolls with page) ===== */
+  main { padding-top: 0 !important; }
 
-  /* Mobile nav drawer — opens below the header + category bar */
+  .header {
+    position: static;
+    height: auto;
+    background: var(--ivory);
+    backdrop-filter: none;
+    border-bottom: none;
+  }
+
+  /* Top bar row: hamburger | logo + wordmark | search · account · cart */
+  .header-inner { height: auto; padding: 12px 14px; gap: 12px; flex-wrap: nowrap; }
+  .menu-toggle { display: flex; order: 0; margin: 0; flex-shrink: 0; }
+  .logo { order: 1; }
+  .logo-img { height: 50px; max-width: 110px; }
+
+  /* Wordmark next to the logo (name + short tagline, left-aligned, no flourishes) */
+  .brand-block { display: flex; order: 2; align-items: flex-start; text-align: left; padding: 0; gap: 1px; min-width: 0; }
+  .brand-flourish, .brand-tagline { display: none; }
+  .brand-tagline-sm { display: block; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+  .brand-name { font-size: 1.2rem; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+
+  /* Top-right icons: Search · Account · Cart (Offers moves to the bottom bar) */
+  .header-center { display: none; }              /* phone pills live in the bottom bar now */
+  .header-actions { order: 3; gap: 14px; margin-left: auto; flex-shrink: 0; }
+  .action-offers { display: none; }
+  .action-label { display: none; }
+  .action-icon svg { width: 24px; height: 24px; }
+  .action-btn { color: var(--green-deep); }      /* dark icons on the cream bar */
+  .cart-action .cart-badge { background: var(--red-chili, #c0392b); color: #fff; }
+
+  /* Category circles — light bar, circular icon buttons, horizontally scrollable */
+  .cat-bar {
+    position: static;
+    height: auto;
+    background: var(--ivory);
+    justify-content: flex-start;
+    gap: 2px;
+    padding: 14px 10px 8px;
+  }
+  .cat-bar-all { display: none; }                 /* no "All" circle on mobile */
+  .cat-bar-link {
+    flex-direction: column;
+    gap: 8px;
+    padding: 4px 4px;
+    width: 80px;
+    color: var(--green-deep);
+    font-size: 0.64rem;
+    letter-spacing: 0.02em;
+    white-space: normal;
+    text-align: center;
+  }
+  .cat-bar-link + .cat-bar-link::before { display: none; }   /* no separators */
+  .cat-bar-ico {
+    width: 28px; height: 28px;
+    padding: 15px;
+    border: 1.5px solid var(--ivory-deep, #e8d8c0);
+    border-radius: 50%;
+    box-sizing: content-box;
+    background: #fff;
+    color: var(--green-deep);
+  }
+  .cat-bar-link:hover { background: transparent; color: var(--green-brand); }
+  .cat-bar-link.active { background: transparent; color: var(--green-deep); font-weight: 700; }
+  .cat-bar-link.active .cat-bar-ico { border-color: var(--gold); background: #fff8ea; }
+  .cat-bar-label { line-height: 1.15; }
+
+  /* Search bar — always visible, big rounded pill with a leading magnifier */
+  .search-bar { display: block; border-top: none; background: var(--ivory); padding: 0 14px 12px; animation: none; }
+  .search-bar .search-form { max-width: none; padding: 0; }
+  .search-form-inner { position: relative; }
+  .search-input {
+    width: 100%;
+    padding: 14px 16px 14px 46px;
+    border-radius: 999px;
+    border: 1px solid var(--ivory-deep, #e8d8c0);
+    background: #fff;
+    font-size: 0.95rem;
+    box-shadow: 0 2px 8px -5px rgba(0, 0, 0, 0.2);
+  }
+  .search-form-inner .btn, .search-close { display: none; }   /* hide submit + close on mobile */
+  .search-form-inner::before {
+    content: '';
+    position: absolute;
+    left: 18px; top: 50%;
+    transform: translateY(-50%);
+    width: 18px; height: 18px;
+    opacity: 0.5;
+    pointer-events: none;
+    background: no-repeat center / contain
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23777' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");
+  }
+
+  /* Mobile nav drawer — opens just below the top bar so the hamburger stays tappable */
   .nav {
     display: none;
     position: fixed;
-    top: calc(var(--header-h) + var(--catbar-h));
+    top: 80px;
     left: 0; right: 0;
     background: var(--white);
     border-bottom: 1px solid var(--ivory-deep);
     flex-direction: column;
     align-items: stretch;
-    padding: 12px 8px 20px;
+    padding: 12px 8px 24px;
     gap: 2px;
     box-shadow: var(--shadow-md);
-    max-height: calc(100vh - var(--header-h) - var(--catbar-h));
+    max-height: calc(100vh - 80px);
     overflow-y: auto;
-    z-index: 998;
+    z-index: 1002;
   }
   .nav--open { display: flex; }
-  /* In the drawer, unwrap the two groups so links stack full-width as before. */
-  .nav-primary, .nav-contact { display: contents; }
+  /* In the drawer, unwrap the menu group so links stack full-width. The contact
+     pills now live outside the drawer (in the top bar), so only unwrap primary. */
+  .nav-primary { display: contents; }
   .nav-link { padding: 12px 16px; font-size: 0.85rem; }
 
   /* Hide the "Shop ▾" toggle — show children directly */

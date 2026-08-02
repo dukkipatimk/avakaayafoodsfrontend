@@ -160,7 +160,7 @@ const Header = () => {
     setOpenCat(slug);
     if (slug && !catProducts[slug]) {
       setCatLoading(true);
-      const params = new URLSearchParams({ ...collectionApiFilters(slug), limit: 8 });
+      const params = new URLSearchParams({ ...collectionApiFilters(slug), limit: 30 });
       api.get(`/products?${params}`)
         .then((r) => setCatProducts((p) => ({ ...p, [slug]: r.data.products || [] })))
         .catch(() => setCatProducts((p) => ({ ...p, [slug]: [] })))
@@ -194,6 +194,11 @@ const Header = () => {
 
       <header className={`header ${scrolled ? 'header--scrolled' : ''}`}>
         <div className="header-inner">
+          {/* Hamburger — far left (mobile only) */}
+          <button className="menu-toggle" onClick={() => setMenuOpen(!menuOpen)} aria-label="Open menu" aria-expanded={menuOpen}>
+            <span className={`hamburger ${menuOpen ? 'open' : ''}`} />
+          </button>
+
           {/* Logo */}
           <Link to="/" className="logo">
             <img src="/avakaaya-logo.png" alt="Avakaaya Foods" className="logo-img" />
@@ -206,9 +211,11 @@ const Header = () => {
             <span className="brand-tagline">
               Authentic Telugu Pickles <span className="brand-dot">&bull;</span> Sweets <span className="brand-dot">&bull;</span> Snacks
             </span>
+            <span className="brand-tagline-sm">pickles <span className="brand-dot">&bull;</span> sweets <span className="brand-dot">&bull;</span> snacks</span>
             <span className="brand-flourish" aria-hidden="true">&#10086;</span>
           </Link>
 
+          <div className="header-center">
           {/* Nav */}
           <nav className={`nav ${menuOpen ? 'nav--open' : ''}`}>
             <div className="nav-primary">
@@ -226,6 +233,7 @@ const Header = () => {
             <NavLink to="/about" className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>About</NavLink>
             <NavLink to="/contact" className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>Contact Us</NavLink>
             </div>
+          </nav>
             <div className="nav-contact">
             <a
               href="tel:+919105299399"
@@ -250,13 +258,13 @@ const Header = () => {
               <span>+91 91155 95959</span>
             </a>
             </div>
-          </nav>
+          </div>
 
           {/* Actions */}
           <div className="header-actions">
             {/* Offers */}
             <button
-              className="action-btn"
+              className="action-btn action-offers"
               onClick={() => setOffersOpen(true)}
               aria-label="View available offers"
               title="Offers"
@@ -321,17 +329,11 @@ const Header = () => {
               </span>
               <span className="action-label">Cart</span>
             </button>
-
-            {/* Mobile hamburger */}
-            <button className="menu-toggle" onClick={() => setMenuOpen(!menuOpen)}>
-              <span className={`hamburger ${menuOpen ? 'open' : ''}`} />
-            </button>
           </div>
         </div>
 
-        {/* Search bar */}
-        {searchOpen && (
-          <div className="search-bar">
+        {/* Search bar — always visible on mobile; toggled on desktop */}
+        <div className={`search-bar${searchOpen ? ' is-open' : ''}`}>
             <div className="search-form container" ref={searchRef}>
               <form onSubmit={handleSearch} className="search-form-inner">
                 <input
@@ -339,7 +341,6 @@ const Header = () => {
                   placeholder="Search pickles, powders, snacks..."
                   value={searchQuery}
                   onChange={e => setSearchQuery(e.target.value)}
-                  autoFocus
                   className="search-input"
                 />
                 <button type="submit" className="btn btn-primary btn-sm">Search</button>
@@ -396,14 +397,13 @@ const Header = () => {
                 </div>
               )}
             </div>
-          </div>
-        )}
+        </div>
       </header>
 
       {/* Quick category bar with a product mega-menu on hover */}
       <div className="cat-bar-wrap">
         <nav className="cat-bar" aria-label="Shop by category" onMouseLeave={scheduleCatClose} onMouseEnter={cancelCatClose}>
-          <NavLink to="/products" end onMouseEnter={() => { cancelCatClose(); setOpenCat(null); }} className={({ isActive }) => `cat-bar-link${isActive ? ' active' : ''}`}>
+          <NavLink to="/products" end onMouseEnter={() => { cancelCatClose(); setOpenCat(null); }} className={({ isActive }) => `cat-bar-link cat-bar-all${isActive ? ' active' : ''}`}>
             {CAT_ICONS['all']}<span className="cat-bar-label">All</span>
           </NavLink>
           {categories.filter((c) => c.path !== '/collections/gift-hampers').map((c) => {
@@ -425,7 +425,7 @@ const Header = () => {
                 ? <div className="cat-mega-empty">Loading…</div>
                 : (catProducts[openCat]?.length ? (
                   <>
-                    {catProducts[openCat].slice(0, 8).map((p) => (
+                    {catProducts[openCat].slice(0, 30).map((p) => (
                       <Link key={p._id} to={`/products/${p.slug}`} className="cat-mega-item" onClick={() => setOpenCat(null)}>
                         <img src={catImg(p)} alt={p.name} className="cat-mega-img" loading="lazy" />
                         <span className="cat-mega-name">{p.name}</span>
