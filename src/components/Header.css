@@ -56,6 +56,7 @@
   height: var(--catbar-h);
   display: flex;
   align-items: center;
+  justify-content: safe center;   /* centered; falls back to scrollable start when it overflows */
   gap: 2px;
   padding: 0 16px;
   background: var(--green-deep);
