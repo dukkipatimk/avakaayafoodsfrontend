@@ -57,9 +57,9 @@
   height: var(--catbar-h);
   display: flex;
   align-items: center;
-  justify-content: safe center;   /* centered; falls back to scrollable start when it overflows */
+  justify-content: space-between;   /* items span the full width, evenly distributed */
   gap: 6px;
-  padding: 0 16px;
+  padding: 0 24px;
   background: var(--ivory);
   border-bottom: 1px solid var(--ivory-deep);
   overflow-x: auto;
@@ -68,7 +68,8 @@
 .cat-bar::-webkit-scrollbar { display: none; }
 /* Circular icon buttons (icon in a ring, label below) — same look as mobile */
 .cat-bar-link {
-  flex: 0 0 auto;
+  flex: 1 1 0;                       /* each category gets an equal share of the width */
+  min-width: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -94,6 +95,18 @@
   background: #fff;
   transition: var(--transition);
 }
+/* Product photo filling the category circle (used instead of the line icon) */
+.cat-bar-img {
+  width: 56px; height: 56px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1.5px solid var(--ivory-deep);
+  background: #fff;
+  transition: var(--transition);
+}
+.cat-bar-link:hover .cat-bar-img,
+.cat-bar-link.active .cat-bar-img { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.18); }
 .cat-bar-label {
   padding-bottom: 3px;
   border-bottom: 2px solid transparent;   /* gold underline appears when active */
@@ -728,6 +741,7 @@
   }
   .cat-bar-all { display: none; }                 /* no "All" circle on mobile */
   .cat-bar-link {
+    flex: 0 0 auto;                /* fixed width + horizontal scroll on mobile */
     flex-direction: column;
     gap: 8px;
     padding: 4px 4px;
@@ -748,6 +762,7 @@
     background: #fff;
     color: var(--green-deep);
   }
+  .cat-bar-img { width: 58px; height: 58px; }
   .cat-bar-link:hover { background: transparent; color: var(--green-brand); }
   .cat-bar-link.active { background: transparent; color: var(--green-deep); font-weight: 700; }
   .cat-bar-link.active .cat-bar-ico { border-color: var(--gold); background: #fff8ea; }

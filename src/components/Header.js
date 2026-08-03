@@ -8,7 +8,7 @@ import NavCoupon from './NavCoupon';
 import api from '../utils/api';
 import toast from 'react-hot-toast';
 import { trackEvent } from '../utils/tracking';
-import { collectionApiFilters } from '../utils/seo';
+import { collectionApiFilters, productCategorySlug } from '../utils/seo';
 import './Header.css';
 
 const CAT_PLACEHOLDER = 'data:image/svg+xml;utf8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="72" height="72"><rect width="72" height="72" fill="#f3ecdc"/></svg>');
@@ -194,6 +194,29 @@ const Header = () => {
   const [openCat, setOpenCat] = useState(null);
   const [catProducts, setCatProducts] = useState({});
   const [catLoading, setCatLoading] = useState(false);
+  const [catImages, setCatImages] = useState({});   // category slug → a product photo for its circle
+
+  // Pick a representative product photo per category (random per load) for the
+  // category-bar circles, instead of line icons. Falls back to the icon.
+  useEffect(() => {
+    api.get('/products?limit=100').then((r) => {
+      const prods = r.data.products || [];
+      const bySlug = {}; const all = [];
+      for (const p of prods) {
+        const img = p.thumbnail || (p.images && p.images[0]);
+        if (!img) continue;
+        all.push(img);
+        const slug = productCategorySlug(p);
+        (bySlug[slug] = bySlug[slug] || []).push(img);
+      }
+      const pick = (arr) => (arr && arr.length ? arr[Math.floor(Math.random() * arr.length)] : null);
+      const chosen = {};
+      Object.keys(bySlug).forEach((s) => { const im = pick(bySlug[s]); if (im) chosen[s] = im; });
+      if (bySlug['gift-hampers']) chosen['gift-hamper'] = pick(bySlug['gift-hampers']);
+      const a = pick(all); if (a) chosen['all'] = a;
+      setCatImages(chosen);
+    }).catch(() => {});
+  }, []);
   const catCloseTimer = useRef(null);
   const cancelCatClose = () => clearTimeout(catCloseTimer.current);
   const scheduleCatClose = () => { clearTimeout(catCloseTimer.current); catCloseTimer.current = setTimeout(() => setOpenCat(null), 150); };
@@ -222,6 +245,11 @@ const Header = () => {
     { label: 'Gift Hampers', path: '/collections/gift-hampers' },
     { label: 'Build a Hamper', path: '/gift-hamper' },
   ];
+
+  // A category circle shows a product photo when we have one, else the line icon.
+  const catThumb = (key) => (catImages[key]
+    ? <img className="cat-bar-img" src={catImages[key]} alt="" aria-hidden="true" loading="lazy" />
+    : (CAT_ICONS[key] || null));
 
   return (
     <>
@@ -448,7 +476,7 @@ const Header = () => {
       <div className="cat-bar-wrap">
         <nav className="cat-bar" aria-label="Shop by category" onMouseLeave={scheduleCatClose} onMouseEnter={cancelCatClose}>
           <NavLink to="/products" end onMouseEnter={() => { cancelCatClose(); setOpenCat(null); }} className={({ isActive }) => `cat-bar-link cat-bar-all${isActive ? ' active' : ''}`}>
-            {CAT_ICONS['all']}<span className="cat-bar-label">All</span>
+            {catThumb('all')}<span className="cat-bar-label">All</span>
           </NavLink>
           {categories.filter((c) => c.path !== '/collections/gift-hampers').map((c) => {
             const slug = c.path.startsWith('/collections/') ? c.path.split('/').pop() : null;
@@ -457,7 +485,7 @@ const Header = () => {
               <NavLink key={c.label} to={c.path}
                 onMouseEnter={() => { if (slug) openCategory(slug); else { cancelCatClose(); setOpenCat(null); } }}
                 className={({ isActive }) => `cat-bar-link${isActive ? ' active' : ''}`}>
-                {CAT_ICONS[iconKey]}<span className="cat-bar-label">{c.label}</span>
+                {catThumb(iconKey)}<span className="cat-bar-label">{c.label}</span>
               </NavLink>
             );
           })}
