@@ -27,6 +27,11 @@ export const onLoadingChange = (fn) => {
 api.interceptors.request.use(config => {
   const token = localStorage.getItem('akf_token');
   if (token) config.headers.Authorization = `Bearer ${token}`;
+  // Cache-buster on GETs so a stale/empty catalog copy is never reused by the
+  // browser or CDN (product info is served no-store; images stay cached).
+  if ((config.method || 'get').toLowerCase() === 'get') {
+    config.params = { ...(config.params || {}), _ts: Date.now() };
+  }
   if (!isSilent(config.url)) {
     config._counted = true;
     pending += 1;

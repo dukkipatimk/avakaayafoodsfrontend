@@ -34,7 +34,6 @@
 /* ── Main header ─────────────────────────────────────────────── */
 .header {
   background: var(--ivory, #faf6ed);
-  border-bottom: 1px solid var(--ivory-deep, #e8d8c0);
 }
 /* Sticky on desktop: header + category bar stay pinned together as one unit
    (the utility bar scrolls away above them). */
@@ -173,7 +172,7 @@
 .dropdown-item--danger:hover { background: #fce4e4; }
 
 /* ── Category bar ────────────────────────────────────────────── */
-.cat-bar-wrap { position: relative; background: #fff; border-bottom: 1px solid var(--ivory-deep, #e8d8c0); box-shadow: 0 2px 6px -4px rgba(0,0,0,0.12); }
+.cat-bar-wrap { position: relative; background: #fff; }
 .cat-bar { display: flex; align-items: center; gap: 10px; min-height: var(--catbar-h); }
 .shop-by-cat {
   flex-shrink: 0; display: inline-flex; align-items: center; gap: 9px;
