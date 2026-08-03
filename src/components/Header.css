@@ -168,9 +168,9 @@
 }
 
 .logo-img {
-  height: 76px;
+  height: 128px;          /* large — spans the taller two-row header */
   width: auto;
-  max-width: 200px;
+  max-width: 300px;
   display: block;
   object-fit: contain;
 }
