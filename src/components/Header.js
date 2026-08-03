@@ -200,7 +200,9 @@ const Header = () => {
   const openCategory = (slug) => {
     cancelCatClose();
     setOpenCat(slug);
-    if (slug && !catProducts[slug]) {
+    // Refetch when we have nothing cached OR the cached result was empty, so a
+    // transient empty response never sticks for the whole session.
+    if (slug && !(catProducts[slug] && catProducts[slug].length)) {
       setCatLoading(true);
       const params = new URLSearchParams({ ...collectionApiFilters(slug), limit: 30 });
       api.get(`/products?${params}`)
