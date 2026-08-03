@@ -15,19 +15,61 @@ const CAT_PLACEHOLDER = 'data:image/svg+xml;utf8,' + encodeURIComponent('<svg xm
 const catImg = (p) => p.thumbnail || (p.images && p.images[0]) || CAT_PLACEHOLDER;
 const catLowPrice = (p) => { const ps = (p.variants || []).map((v) => Number(v.price)).filter((n) => n > 0); return ps.length ? Math.min(...ps) : null; };
 
-// Little line-icons shown next to each category in the quick category bar.
+// Two-tone (green outline + gold accent) category icons for the quick bar.
 const catIco = (children) => (
-  <svg className="cat-bar-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{children}</svg>
+  <svg className="cat-bar-ico" viewBox="0 0 48 48" fill="none" aria-hidden="true">{children}</svg>
 );
+const G = '#1c4a0e';   // brand green
+const GD = '#c9a84c';  // gold accent
 const CAT_ICONS = {
-  'all':             catIco(<><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20h14V9.5"/><path d="M10 20v-5h4v5"/></>),
-  'veg-pickles':     catIco(<><path d="M7 8h10v11a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2z"/><path d="M8 8V6h8v2"/><path d="M9 4h6"/></>),
-  'non-veg-pickles': catIco(<><path d="M5 16c7 3 13-3 14-11-3 2-4 0-7 1s-6 4-7 10z"/><path d="M12 5c1-1 2-2 4-2"/></>),
-  'powders':         catIco(<><path d="M4 11h16a8 8 0 0 1-16 0z"/><path d="M13 3l-2 8"/></>),
-  'snacks':          catIco(<><path d="M12 4 21 20H3z"/><path d="M12 4v16"/></>),
-  'sweets':          catIco(<><circle cx="12" cy="12" r="7"/><circle cx="9.5" cy="11" r="1"/><circle cx="14" cy="13" r="1"/></>),
-  'ghee':            catIco(<><path d="M6 9h12l-1 9a3 3 0 0 1-3 3h-4a3 3 0 0 1-3-3z"/><path d="M5 9h14"/><path d="M9 9V7a3 3 0 0 1 6 0v2"/></>),
-  'gift-hamper':     catIco(<><rect x="3" y="8" width="18" height="13" rx="1.5"/><path d="M3 12h18"/><path d="M12 8v13"/><path d="M12 8C10 8 8 7 8 5.5S9.5 3 12 5c2.5-2 4-1.5 4 0S14 8 12 8z"/></>),
+  'all': catIco(<>
+    <path d="M9 23 24 10l15 13" stroke={G} strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M12.5 21.5v15h23v-15" stroke={G} strokeWidth="2.6" strokeLinejoin="round"/>
+    <rect x="20.5" y="26" width="7" height="10.5" rx="1" fill={GD}/>
+  </>),
+  'veg-pickles': catIco(<>
+    <path d="M16 19h16v15a4 4 0 0 1-4 4H20a4 4 0 0 1-4-4z" stroke={G} strokeWidth="2.4" strokeLinejoin="round"/>
+    <rect x="14.5" y="12.5" width="19" height="6.5" rx="2" fill={GD}/>
+    <path d="M24 35c-4.2-1-6.7-4.2-6-8.7 4.4.4 7.1 3.4 6 8.7z" fill="#3f8a26"/>
+    <path d="M24 35c-.2-3.6 1-6.6 3.6-8.3" stroke={G} strokeWidth="1.5" strokeLinecap="round"/>
+  </>),
+  'non-veg-pickles': catIco(<>
+    <path d="M16 19h16v15a4 4 0 0 1-4 4H20a4 4 0 0 1-4-4z" stroke={G} strokeWidth="2.4" strokeLinejoin="round"/>
+    <rect x="14.5" y="12.5" width="19" height="6.5" rx="2" fill={GD}/>
+    <path d="M18.5 30c1.6 4 7 4.3 9-.6-2 .9-3.2-.1-5 .4s-3 .3-4 .2z" fill="#c0392b"/>
+    <path d="M27.5 29.4c1.4-1 1.9-2.6 3.6-2.6" stroke="#3f8a26" strokeWidth="1.8" strokeLinecap="round"/>
+  </>),
+  'powders': catIco(<>
+    <path d="M11 26h26a13 13 0 0 1-26 0z" stroke={G} strokeWidth="2.4" strokeLinejoin="round" fill="#fff"/>
+    <path d="M28 26 34 15" stroke={G} strokeWidth="2.6" strokeLinecap="round"/>
+    <circle cx="34.5" cy="13.5" r="2.7" fill={GD}/>
+    <circle cx="19" cy="21" r="1.3" fill={GD}/>
+    <circle cx="23" cy="18.5" r="1.3" fill={GD}/>
+    <circle cx="26.5" cy="21.5" r="1.3" fill={GD}/>
+  </>),
+  'snacks': catIco(<>
+    <path d="M24 11 39 37H9z" stroke={G} strokeWidth="2.6" strokeLinejoin="round" fill="#fff"/>
+    <circle cx="21" cy="30" r="1.3" fill={GD}/>
+    <circle cx="26.5" cy="28" r="1.3" fill={GD}/>
+    <circle cx="24" cy="33.5" r="1.3" fill={GD}/>
+  </>),
+  'sweets': catIco(<>
+    <circle cx="18" cy="24" r="4.4" fill={GD} stroke={G} strokeWidth="1.4"/>
+    <circle cx="30" cy="24" r="4.4" fill={GD} stroke={G} strokeWidth="1.4"/>
+    <circle cx="24" cy="20" r="4.4" fill={GD} stroke={G} strokeWidth="1.4"/>
+    <path d="M10 27h28a14 14 0 0 1-28 0z" fill="#fff" stroke={G} strokeWidth="2.4" strokeLinejoin="round"/>
+  </>),
+  'ghee': catIco(<>
+    <path d="M16 21h16l-1.5 15a3.5 3.5 0 0 1-3.5 3H21a3.5 3.5 0 0 1-3.5-3z" fill="#fff" stroke={G} strokeWidth="2.4" strokeLinejoin="round"/>
+    <ellipse cx="24" cy="21" rx="8.5" ry="2.7" fill={GD} stroke={G} strokeWidth="1.5"/>
+    <path d="M18 21c0-6 12-6 12 0" stroke={G} strokeWidth="2"/>
+  </>),
+  'gift-hamper': catIco(<>
+    <rect x="12" y="22.5" width="24" height="14.5" rx="1.5" stroke={G} strokeWidth="2.4" strokeLinejoin="round"/>
+    <rect x="10" y="17" width="28" height="6" rx="1.5" stroke={G} strokeWidth="2.4" strokeLinejoin="round"/>
+    <path d="M24 17.5v19.5" stroke={G} strokeWidth="2"/>
+    <path d="M24 17.5c-1.4-4-8-3.6-6.4.4 1 2.4 4.5 1.1 6.4-.4zM24 17.5c1.4-4 8-3.6 6.4.4-1 2.4-4.5 1.1-6.4-.4z" fill={GD} stroke={G} strokeWidth="1.2"/>
+  </>),
 };
 
 const ANNOUNCE_ITEMS = [

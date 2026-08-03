@@ -58,50 +58,51 @@
   display: flex;
   align-items: center;
   justify-content: safe center;   /* centered; falls back to scrollable start when it overflows */
-  gap: 0;
-  padding: 0 12px;
-  background: var(--green-deep);
+  gap: 6px;
+  padding: 0 16px;
+  background: var(--ivory);
+  border-bottom: 1px solid var(--ivory-deep);
   overflow-x: auto;
   scrollbar-width: none;
 }
 .cat-bar::-webkit-scrollbar { display: none; }
+/* Circular icon buttons (icon in a ring, label below) — same look as mobile */
 .cat-bar-link {
   flex: 0 0 auto;
-  display: inline-flex;
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 9px;
-  color: var(--gold-light);
+  gap: 7px;
+  color: var(--green-deep);
   text-decoration: none;
   font-family: var(--font-ui);
-  font-size: 0.82rem;
+  font-size: 0.7rem;
   font-weight: 600;
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  padding: 10px 18px;
-  border-radius: 8px;
+  padding: 6px 12px;
   white-space: nowrap;
   transition: var(--transition);
-  position: relative;
 }
-/* faint separators between categories (skip the first item) */
-.cat-bar-link + .cat-bar-link::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  height: 22px;
-  width: 1px;
-  background: rgba(255, 255, 255, 0.14);
+.cat-bar-ico {
+  width: 26px; height: 26px;
+  flex-shrink: 0;
+  padding: 15px;
+  border: 1.5px solid var(--ivory-deep);
+  border-radius: 50%;
+  box-sizing: content-box;
+  background: #fff;
+  transition: var(--transition);
 }
-.cat-bar-ico { width: 20px; height: 20px; flex-shrink: 0; }
-.cat-bar-link:hover { background: rgba(255,255,255,0.10); color: #fff; }
-.cat-bar-link.active {
-  background: var(--gold);
-  color: var(--green-deep);
-  font-weight: 700;
+.cat-bar-label {
+  padding-bottom: 3px;
+  border-bottom: 2px solid transparent;   /* gold underline appears when active */
+  transition: var(--transition);
 }
-.cat-bar-link.active::before { display: none; }
+.cat-bar-link:hover { color: var(--green-brand); }
+.cat-bar-link:hover .cat-bar-ico { border-color: var(--gold); }
+.cat-bar-link.active { color: var(--green-deep); font-weight: 700; }
+.cat-bar-link.active .cat-bar-label { border-bottom-color: var(--gold); }
 
 /* Category mega-menu (product preview under the bar) */
 .cat-mega {
