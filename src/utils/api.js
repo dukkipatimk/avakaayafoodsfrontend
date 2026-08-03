@@ -27,6 +27,13 @@ export const onLoadingChange = (fn) => {
 api.interceptors.request.use(config => {
   const token = localStorage.getItem('akf_token');
   if (token) config.headers.Authorization = `Bearer ${token}`;
+  // Cache-buster on GETs: the catalog is served no-store, but a browser/CDN may
+  // still hold a copy cached under an older header. A unique query param means a
+  // stale copy is never reused, so category pages/mega-menus always show current
+  // data. (Query params keep this a "simple" CORS request — no preflight.)
+  if ((config.method || 'get').toLowerCase() === 'get') {
+    config.params = { ...(config.params || {}), _ts: Date.now() };
+  }
   if (!isSilent(config.url)) {
     config._counted = true;
     pending += 1;
