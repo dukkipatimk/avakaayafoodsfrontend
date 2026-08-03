@@ -37,9 +37,9 @@
   --font-body: 'EB Garamond', Georgia, serif;
   --font-ui: 'Josefin Sans', sans-serif;
   --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  --header-h: 150px;
+  --header-h: 96px;
   --banner-h: 36px;
-  --catbar-h: 100px;
+  --catbar-h: 58px;
   --maroon: #8a1a1a;   /* deep red of the "Avakaaya Foods" wordmark / phone pill */
 }
 
@@ -53,14 +53,12 @@ body {
   color: var(--text-dark);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
-  /* Reserve space for the fixed scrolling announcement bar pinned to the bottom */
-  padding-bottom: var(--banner-h);
 }
 
-/* On mobile also reserve space for the bottom toolbar (which sits below the
-   announcement bar) so neither covers page content. */
+/* Reserve space at the bottom on mobile so the fixed bottom toolbar doesn't
+   cover page content. */
 @media (max-width: 1023px) {
-  body { padding-bottom: calc(64px + var(--banner-h) + env(safe-area-inset-bottom, 0px)); }
+  body { padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px)); }
 }
 
 /* Typography */
