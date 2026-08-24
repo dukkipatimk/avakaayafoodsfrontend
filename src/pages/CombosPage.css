@@ -1,0 +1,52 @@
+/* Combos listing page — a frame around the shared Combos component. */
+.combos-page { padding-bottom: 40px; }
+
+.combos-page-head {
+  background: linear-gradient(160deg, #fdf3e8 0%, var(--ivory, #faf6ed) 70%);
+  border-bottom: 1px solid var(--ivory-deep, #e8d8c0);
+  padding: 26px 0 24px;
+  margin-bottom: 8px;
+}
+.combos-page-crumbs {
+  font-family: var(--font-ui);
+  font-size: 0.74rem;
+  color: var(--text-light, #9a8f7d);
+  margin-bottom: 10px;
+}
+.combos-page-crumbs a { color: var(--green-mid, #3d8b22); text-decoration: none; }
+.combos-page-crumbs a:hover { text-decoration: underline; }
+
+.combos-page-head h1 {
+  margin: 0 0 6px;
+  font-family: var(--font-display);
+  font-size: 1.9rem;
+  color: var(--green-deep, #1c4a0e);
+}
+.combos-page-head p {
+  margin: 0;
+  max-width: 60ch;
+  font-family: var(--font-ui);
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: var(--text-mid, #5a5344);
+}
+
+/* The section already carries its own gutters on the home page; inside the
+   page container it should not add a second set. */
+.combos-page-body .combos { max-width: none; padding-left: 0; padding-right: 0; }
+.combos-page-body .combos-head { margin-left: 0; margin-right: 0; }
+/* "View all combos" is meaningless on the page it links to. */
+.combos-page-body .combos-all { display: none; }
+
+.combos-page-empty-note {
+  margin: 24px 0 0;
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
+  color: var(--text-mid, #5a5344);
+}
+.combos-page-empty-note a { color: var(--green-mid, #3d8b22); font-weight: 600; }
+
+@media (max-width: 768px) {
+  .combos-page-head { padding: 18px 0 16px; }
+  .combos-page-head h1 { font-size: 1.4rem; }
+}

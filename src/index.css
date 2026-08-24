@@ -39,7 +39,6 @@
   --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   --header-h: 96px;
   --banner-h: 36px;
-  --catbar-h: 58px;
   --maroon: #8a1a1a;   /* deep red of the "Avakaaya Foods" wordmark / phone pill */
 }
 
@@ -232,5 +231,5 @@ input, select, textarea { font-family: var(--font-body); }
 @media (max-width: 768px) {
   .container { padding: 0 16px; }
   .section { padding: 48px 0; }
-  :root { --header-h: 104px; --banner-h: 32px; --catbar-h: 52px; }
+  :root { --header-h: 104px; --banner-h: 32px; }
 }

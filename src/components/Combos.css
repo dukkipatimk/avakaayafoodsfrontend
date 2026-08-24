@@ -240,3 +240,45 @@
 .combo-card--t1 .combo-cta--build,
 .combo-card--t2 .combo-cta--build,
 .combo-card--t3 .combo-cta--build { background: #fff; }
+
+/* ══ Member product thumbnails ════════════════════════════════
+   Shows what is actually in the bundle instead of one generic combo photo. */
+.combo-thumbs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+.combo-thumb {
+  width: 52px;
+  height: 52px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+  border: 1.5px solid rgba(0, 0, 0, 0.08);
+}
+.combo-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.combo-thumb--more {
+  font-family: var(--font-ui);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-mid, #5a5344);
+}
+/* The dark card needs a light edge instead of a dark one. */
+.combo-card--t1 .combo-thumb { border-color: rgba(255, 255, 255, 0.55); }
+
+@media (min-width: 769px) {
+  /* Sits in the card's image column, wrapping 2-up. */
+  .combo-thumbs {
+    grid-area: image;
+    align-self: center;
+    width: 150px;
+    margin: 0;
+    justify-content: flex-end;
+  }
+  .combo-thumb { width: 46px; height: 46px; }
+}

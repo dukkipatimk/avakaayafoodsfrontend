@@ -38,6 +38,7 @@ import Terms from './pages/Terms';
 import RefundPolicy from './pages/RefundPolicy';
 import Wishlist from './pages/Wishlist';
 import GiftHamper from './pages/GiftHamper';
+import CombosPage from './pages/CombosPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminRoute from './components/AdminRoute';
 import ScrollToTop from './components/ScrollToTop';
@@ -95,6 +96,7 @@ function App() {
               <Route path="/my-orders" element={<ProtectedRoute><Orders /></ProtectedRoute>} />
               <Route path="/wishlist" element={<ProtectedRoute><Wishlist /></ProtectedRoute>} />
               <Route path="/gift-hamper" element={<GiftHamper />} />
+              <Route path="/combos" element={<CombosPage />} />
               <Route path="/admin" element={<AdminRoute roles={['admin', 'store_manager']}><AdminDashboard /></AdminRoute>} />
               <Route path="/admin/products" element={<AdminRoute><AdminProducts /></AdminRoute>} />
               <Route path="/admin/customers" element={<AdminRoute><AdminCustomers /></AdminRoute>} />

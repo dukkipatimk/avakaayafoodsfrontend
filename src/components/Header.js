@@ -8,63 +8,7 @@ import OffersPanel from './OffersPanel';
 import api from '../utils/api';
 import toast from 'react-hot-toast';
 import { trackEvent } from '../utils/tracking';
-import { productCategorySlug } from '../utils/seo';
 import './Header.css';
-
-
-// Small two-tone category icons for the category bar.
-const G = '#1c4a0e';    // brand green
-const GD = '#c9a84c';   // gold accent
-const M = '#8a1a1a';    // maroon
-const R = '#c0392b';    // chilli red
-const catIco = (children) => (
-  <svg className="cat-bar-ico" viewBox="0 0 48 48" fill="none" aria-hidden="true">{children}</svg>
-);
-const CAT_ICONS = {
-  'all': catIco(<>
-    <rect x="9" y="9" width="12.5" height="12.5" rx="2.5" stroke={M} strokeWidth="2.6"/>
-    <rect x="26.5" y="9" width="12.5" height="12.5" rx="2.5" stroke={M} strokeWidth="2.6"/>
-    <rect x="9" y="26.5" width="12.5" height="12.5" rx="2.5" stroke={M} strokeWidth="2.6"/>
-    <rect x="26.5" y="26.5" width="12.5" height="12.5" rx="2.5" stroke={M} strokeWidth="2.6"/>
-  </>),
-  'veg-pickles': catIco(<>
-    <path d="M16 19h16v15a4 4 0 0 1-4 4H20a4 4 0 0 1-4-4z" stroke={G} strokeWidth="2.4" strokeLinejoin="round"/>
-    <rect x="14.5" y="12.5" width="19" height="6.5" rx="2" fill={GD}/>
-    <path d="M24 35c-4.2-1-6.7-4.2-6-8.7 4.4.4 7.1 3.4 6 8.7z" fill="#3f8a26"/>
-  </>),
-  'non-veg-pickles': catIco(<>
-    <path d="M16 19h16v15a4 4 0 0 1-4 4H20a4 4 0 0 1-4-4z" stroke={G} strokeWidth="2.4" strokeLinejoin="round"/>
-    <rect x="14.5" y="12.5" width="19" height="6.5" rx="2" fill={GD}/>
-    <path d="M18.5 30c1.6 4 7 4.3 9-.6-2 .9-3.2-.1-5 .4s-3 .3-4 .2z" fill={R}/>
-  </>),
-  'powders': catIco(<>
-    <path d="M11 26h26a13 13 0 0 1-26 0z" stroke={G} strokeWidth="2.4" strokeLinejoin="round" fill="#fff"/>
-    <path d="M28 26 34 15" stroke={G} strokeWidth="2.6" strokeLinecap="round"/>
-    <circle cx="34.5" cy="13.5" r="2.7" fill={GD}/>
-    <circle cx="19" cy="21" r="1.3" fill={GD}/><circle cx="23" cy="18.5" r="1.3" fill={GD}/><circle cx="26.5" cy="21.5" r="1.3" fill={GD}/>
-  </>),
-  'snacks': catIco(<>
-    <path d="M24 11 39 37H9z" stroke={G} strokeWidth="2.6" strokeLinejoin="round" fill="#fff"/>
-    <circle cx="21" cy="30" r="1.3" fill={GD}/><circle cx="26.5" cy="28" r="1.3" fill={GD}/><circle cx="24" cy="33.5" r="1.3" fill={GD}/>
-  </>),
-  'sweets': catIco(<>
-    <circle cx="18" cy="24" r="4.4" fill={GD} stroke={G} strokeWidth="1.4"/>
-    <circle cx="30" cy="24" r="4.4" fill={GD} stroke={G} strokeWidth="1.4"/>
-    <circle cx="24" cy="20" r="4.4" fill={GD} stroke={G} strokeWidth="1.4"/>
-    <path d="M10 27h28a14 14 0 0 1-28 0z" fill="#fff" stroke={G} strokeWidth="2.4" strokeLinejoin="round"/>
-  </>),
-  'ghee': catIco(<>
-    <path d="M16 21h16l-1.5 15a3.5 3.5 0 0 1-3.5 3H21a3.5 3.5 0 0 1-3.5-3z" fill="#fff" stroke={G} strokeWidth="2.4" strokeLinejoin="round"/>
-    <ellipse cx="24" cy="21" rx="8.5" ry="2.7" fill={GD} stroke={G} strokeWidth="1.5"/>
-    <path d="M18 21c0-6 12-6 12 0" stroke={G} strokeWidth="2"/>
-  </>),
-  'gift-hamper': catIco(<>
-    <rect x="12" y="22.5" width="24" height="14.5" rx="1.5" stroke={M} strokeWidth="2.4" strokeLinejoin="round"/>
-    <rect x="10" y="17" width="28" height="6" rx="1.5" stroke={M} strokeWidth="2.4" strokeLinejoin="round"/>
-    <path d="M24 17.5v19.5" stroke={M} strokeWidth="2"/>
-    <path d="M24 17.5c-1.4-4-8-3.6-6.4.4 1 2.4 4.5 1.1 6.4-.4zM24 17.5c1.4-4 8-3.6 6.4.4-1 2.4-4.5 1.1-6.4-.4z" fill={GD} stroke={M} strokeWidth="1.2"/>
-  </>),
-};
 
 const Header = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -87,31 +31,6 @@ const Header = () => {
     const onScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener('scroll', onScroll);
     return () => window.removeEventListener('scroll', onScroll);
-  }, []);
-
-  // Representative product photo per category for the category bar.
-  const [catImages, setCatImages] = useState({});
-  useEffect(() => {
-    api.get('/products?limit=100').then((r) => {
-      const bySlug = {};
-      for (const p of (r.data.products || [])) {
-        const img = p.thumbnail || (p.images && p.images[0]);
-        if (!img) continue;
-        const slug = productCategorySlug(p);
-        (bySlug[slug] = bySlug[slug] || []).push({ name: (p.name || '').toLowerCase(), img });
-      }
-      const first = (slug) => (bySlug[slug] && bySlug[slug][0] ? bySlug[slug][0].img : null);
-      const pick = (slug, kw) => { const l = bySlug[slug] || []; return ((l.find((x) => x.name.includes(kw)) || l[0] || {}).img) || null; };
-      setCatImages({
-        'veg-pickles': pick('veg-pickles', 'mango'),
-        'non-veg-pickles': pick('non-veg-pickles', 'chicken'),
-        'powders': first('powders'),
-        'snacks': first('snacks'),
-        'sweets': first('sweets'),
-        'ghee': first('ghee'),
-        'gift-hamper': first('gift-hampers'),
-      });
-    }).catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -183,10 +102,6 @@ const Header = () => {
 
   const WA = 'https://wa.me/919115595959?text=Hi%2C%20I%20have%20a%20question%20about%20Avakaaya%20Foods';
 
-  // A category shows a product photo when we have one, else the line icon.
-  const catThumb = (key) => (catImages[key]
-    ? <img className="cat-bar-thumb" src={catImages[key]} alt="" aria-hidden="true" loading="lazy" />
-    : (CAT_ICONS[key] || null));
 
   return (
     <>
@@ -362,30 +277,6 @@ const Header = () => {
         <NavLink to="/contact" className="nav-link" onClick={() => setMenuOpen(false)}>Contact Us</NavLink>
       </nav>
 
-      {/* ── Category bar ────────────────────────────────────────────── */}
-      <div className="cat-bar-wrap">
-        <nav className="cat-bar container-wide" aria-label="Shop by category">
-          <Link to="/products" className="shop-by-cat">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-            Shop by Category
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" width="14" height="14" className="shop-by-cat-caret"><path d="M6 9l6 6 6-6"/></svg>
-          </Link>
-
-          <div className="cat-bar-list">
-            {/* Product categories only. Hampers, combos, new arrivals and offers
-                live on the home page and in the menu drawer, not here. */}
-            {categories.filter((c) => c.path !== '/gift-hamper').map((c) => {
-              const iconKey = c.path.split('/').pop();
-              return (
-                <NavLink key={c.label} to={c.path}
-                  className={({ isActive }) => `cat-bar-link${isActive ? ' active' : ''}`}>
-                  {catThumb(iconKey)}<span className="cat-bar-label">{c.label}</span>
-                </NavLink>
-              );
-            })}
-          </div>
-        </nav>
-      </div>
       </div>
 
       <MiniCart isOpen={cartOpen} onClose={() => setCartOpen(false)} />

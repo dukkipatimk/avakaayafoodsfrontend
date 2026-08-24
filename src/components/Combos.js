@@ -7,6 +7,19 @@ import ComboBuilder from './ComboBuilder';
 import toast from 'react-hot-toast';
 import './Combos.css';
 
+// One thumbnail per product in the combo, de-duplicated: a fixed combo can
+// list the same product at two weights, which should not show twice.
+const memberThumbs = (combo) => {
+  const seen = new Set();
+  return (combo.items || []).reduce((list, member) => {
+    const product = member.product;
+    const src = product?.thumbnail || product?.images?.[0];
+    if (!product || !src || seen.has(String(product.id))) return list;
+    seen.add(String(product.id));
+    return [...list, { key: String(product.id), name: product.name, src }];
+  }, []);
+};
+
 // "Save with combos" — fixed bundles add straight to the cart, "pick any N"
 // bundles open the builder.
 const Combos = () => {
@@ -54,7 +67,7 @@ const Combos = () => {
     <section className="combos" id="combos" aria-label="Save with combos">
       <div className="combos-head">
         <h2 className="combos-heading">🎁 Save more with combos</h2>
-        <Link to="/products" className="combos-all">View all combos ›</Link>
+        <Link to="/combos" className="combos-all">View all combos ›</Link>
       </div>
 
       <div className="combos-row">
@@ -62,7 +75,31 @@ const Combos = () => {
             promotional block rather than three identical tiles. */}
         {combos.map((combo, index) => (
           <article key={combo._id ?? combo.id} className={`combo-card combo-card--t${(index % 3) + 1}`}>
-            {combo.image && <img className="combo-img" src={combo.image} alt="" loading="lazy" />}
+            {(() => {
+              // Show what is actually in the combo. For a "pick any N" combo
+              // the pool can be longer than the card, so it is trimmed to N
+              // with a "+ more" chip — the customer chooses the rest anyway.
+              const shown = combo.type === 'pick'
+                ? Math.max(1, Number(combo.pickCount) || 1)
+                : 4;
+              const thumbs = memberThumbs(combo).slice(0, shown);
+              const extra = memberThumbs(combo).length - thumbs.length;
+              if (!thumbs.length) {
+                return combo.image
+                  ? <img className="combo-img" src={combo.image} alt="" loading="lazy" />
+                  : null;
+              }
+              return (
+                <div className="combo-thumbs">
+                  {thumbs.map((thumb) => (
+                    <span key={thumb.key} className="combo-thumb" title={thumb.name}>
+                      <img src={thumb.src} alt={thumb.name} loading="lazy" />
+                    </span>
+                  ))}
+                  {extra > 0 && <span className="combo-thumb combo-thumb--more">+{extra}</span>}
+                </div>
+              );
+            })()}
 
             <div className="combo-title-row">
               <h3 className="combo-name">{combo.name}</h3>
