@@ -105,3 +105,11 @@
   .buy-again-title { font-size: 0.72rem; }
   .buy-again-actions { flex: 0 0 170px; }
 }
+
+/* Flex items default to min-width:auto, so a nowrap product name refuses to
+   shrink and pushes the whole row wider than the screen. */
+.buy-again-lines li { min-width: 0; }
+.buy-again-name { flex: 1 1 auto; min-width: 0; }
+/* Title and date are both nowrap; let them drop to two lines on very narrow
+   phones instead of forcing the card wider. */
+.buy-again-head { flex-wrap: wrap; }

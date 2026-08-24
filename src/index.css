@@ -60,6 +60,14 @@ body {
   body { padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px)); }
 }
 
+/* Backstop against sideways scroll on phones. One over-wide element anywhere
+   on the page otherwise shifts every section, including ones that are fine.
+   Safe here because position:sticky is only used from 769px up, so this
+   cannot break a sticky header. */
+@media (max-width: 768px) {
+  html, body { overflow-x: hidden; }
+}
+
 /* Typography */
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-display);

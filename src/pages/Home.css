@@ -5133,3 +5133,10 @@
   .shop-band-side .offers-strip-row { flex: 1; align-items: stretch; }
   .shop-band-side .offer-ticket { height: 100%; }
 }
+
+/* The action tiles and last-order card used to get their side gutter from
+   .quick-actions' own padding, which the row layout zeroes out. Restore it
+   on phones so they don't sit flush against the screen edges. */
+@media (max-width: 768px) {
+  .shop-band-row { padding: 0 12px; }
+}
