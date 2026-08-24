@@ -42,3 +42,20 @@
   .qa-tile--combo  { background: #fdf0ef; border-color: #eebfba; }
   .qa-tile--offers { background: var(--white, #fff); }
 }
+
+/* Laptops: the action tiles sit to the right of the category circles as a
+   fixed-width 2x2 block, so the whole band reads as one row. */
+@media (min-width: 769px) {
+  .quick-actions { display: block; flex: 0 0 480px; padding: 0; }
+  .quick-actions-heading { display: none; }
+  .quick-actions-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; height: 100%; }
+  .qa-tile { padding: 14px 16px; justify-content: center; }
+  .qa-tile:hover { transform: translateY(-2px); box-shadow: 0 10px 22px -14px rgba(0, 0, 0, 0.45); }
+  .qa-tile-label { font-size: 0.95rem; }
+  .qa-tile-sub { font-size: 0.74rem; }
+}
+
+@media (max-width: 1180px) and (min-width: 769px) {
+  .quick-actions { flex: 0 0 360px; }
+  .qa-tile { padding: 12px; }
+}

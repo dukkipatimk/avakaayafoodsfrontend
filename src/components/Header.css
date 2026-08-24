@@ -338,3 +338,27 @@
 }
 .bottom-toolbar-item--fab:active .bottom-toolbar-fab { transform: scale(0.94); }
 .bottom-toolbar-item--fab > span:last-child { color: var(--red-chili, #c0392b); font-weight: 700; }
+
+/* Top utility bar — right-hand utility links + free-shipping highlight. */
+.topbar-right { display: flex; align-items: center; gap: 14px; }
+.topbar-item--highlight { color: #fff; font-weight: 700; }
+.topbar-item--highlight svg { color: var(--gold, #c9a84c); }
+
+/* Non-category shortcuts in the category bar (Combos / New Arrivals / Offers).
+   They carry no product photo, so they need their own spacing. */
+.cat-bar-link--shortcut { gap: 6px; }
+.cat-bar-badge {
+  padding: 2px 6px;
+  border-radius: 999px;
+  font-family: var(--font-ui);
+  font-size: 0.52rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  line-height: 1.4;
+}
+.cat-bar-badge--hot  { background: var(--red-chili, #c0392b); color: #fff; }
+.cat-bar-badge--gold { background: var(--gold, #c9a84c); color: var(--green-deep, #1c4a0e); }
+
+@media (max-width: 768px) {
+  .topbar-right { display: none; }
+}

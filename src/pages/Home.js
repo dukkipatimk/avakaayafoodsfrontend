@@ -70,7 +70,7 @@ const CATEGORIES = [
 // all" close out the grid. Cross-cutting intents (Quick Order, Buy Again,
 // Combos, Offers) live in the Quick Actions block below instead.
 const MOBILE_TILES = [
-  ...CATEGORIES.map(c => ({ label: c.name, to: `/collections/${c.slug}`, image: c.image })),
+  ...CATEGORIES.map(c => ({ label: c.name, to: `/collections/${c.slug}`, image: c.image, count: c.count })),
   { label: 'Hampers',  to: '/gift-hamper', glyph: '🎁', accent: 'gift' },
   { label: 'Shop All', to: '/products',    glyph: '⊞',  accent: 'all'  },
 ];
@@ -100,6 +100,7 @@ const Home = () => {
   const [subscribed, setSubscribed] = useState(false);
   const [activeCategory, setActiveCategory] = useState('all');
   const [newArrivals, setNewArrivals] = useState([]);
+  const [bestSellers, setBestSellers] = useState([]);
   const [catalog, setCatalog] = useState([]);
   const [catalogPage, setCatalogPage] = useState(1);
   const [catalogPages, setCatalogPages] = useState(1);
@@ -139,6 +140,12 @@ const Home = () => {
     api.get('/products?sort=newest&limit=4')
       .then(r => setNewArrivals(r.data.products || []))
       .catch(() => setNewArrivals([]));
+  }, []);
+
+  useEffect(() => {
+    api.get('/products?sort=popular&limit=6')
+      .then(r => setBestSellers(r.data.products || []))
+      .catch(() => setBestSellers([]));
   }, []);
 
   useEffect(() => {
@@ -263,7 +270,9 @@ const Home = () => {
         </div>
       </section>
 
-      {/* â”€â”€ Category circles (mobile only) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* â”€â”€ Shop band: categories + quick actions â”€â”€â”€â”€â”€â”€ */}
+      {/* Stacked on phones; one horizontal band on laptops. */}
+      <section className="shop-band">
       <h2 className="cat-circles-heading">What would you like?</h2>
       <nav className="cat-circles" aria-label="Shop by category">
         {MOBILE_TILES.map(tile => {
@@ -275,6 +284,7 @@ const Home = () => {
                   : <span className="cat-circle-glyph">{tile.glyph}</span>}
               </span>
               <span className="cat-circle-label">{tile.label}</span>
+              {tile.count && <span className="cat-circle-count">{tile.count}</span>}
             </>
           );
           // In-page anchors (Combos) stay plain <a> so the browser handles the
@@ -285,9 +295,24 @@ const Home = () => {
         })}
       </nav>
 
-      {/* â”€â”€ Quick actions + Buy Again (mobile only) â”€â”€â”€â”€â”€ */}
       <QuickActions onQuickOrder={openQuickOrder} />
+      </section>
+
       <BuyAgain />
+
+      {/* â”€â”€ Best sellers â€” buy without opening a product page â”€â”€ */}
+      {bestSellers.length > 0 && (
+        <section className="bestsellers-section">
+          <div className="bestsellers-head">
+            <h2>🔥 Best Sellers</h2>
+            <Link to="/products?sort=popular" className="bestsellers-all">View all ›</Link>
+          </div>
+          <div className="bestsellers-row">
+            {bestSellers.map(p => <ProductCard key={p._id} product={p} />)}
+          </div>
+        </section>
+      )}
+
       <Combos />
 
       {/* â”€â”€ USP strip â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}

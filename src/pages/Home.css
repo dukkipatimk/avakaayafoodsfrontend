@@ -4915,3 +4915,131 @@
   .cat-circle-disc--all { background: var(--ivory-dark, #f3ecdc); border-color: var(--ivory-deep, #e8d8c0); }
   .cat-circle-disc--all .cat-circle-glyph { color: var(--green-deep, #1c4a0e); font-size: 1.4rem; }
 }
+
+/* ── Shop band: category circles + quick actions ───────────────
+   Phones stack the two blocks; laptops lay them out as one band with
+   the categories filling the space and the action tiles pinned right. */
+.cat-circle-count { display: none; }
+
+@media (min-width: 769px) {
+  .shop-band {
+    display: flex;
+    align-items: stretch;
+    gap: 26px;
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 26px 24px;
+  }
+  .cat-circles {
+    display: grid;
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    gap: 10px 6px;
+    flex: 1;
+    min-width: 0;
+    padding: 0;
+    background: transparent;
+    align-content: start;
+  }
+  .cat-circle {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 7px;
+    text-decoration: none;
+    min-width: 0;
+  }
+  .cat-circle-disc {
+    width: 76px;
+    height: 76px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: var(--ivory, #faf6ed);
+    border: 1.5px solid var(--ivory-deep, #e8d8c0);
+    transition: transform 0.18s ease, border-color 0.18s ease;
+  }
+  .cat-circle:hover .cat-circle-disc { transform: translateY(-3px); border-color: var(--gold, #c9a84c); }
+  .cat-circle-disc img { width: 100%; height: 100%; object-fit: cover; }
+  .cat-circle-glyph { font-family: var(--font-ui); font-size: 1.6rem; font-weight: 700; line-height: 1; color: #fff; }
+  .cat-circle-disc--gift  { background: var(--ivory-dark, #f3ecdc); border-color: var(--gold, #c9a84c); }
+  .cat-circle-disc--all   { background: var(--ivory-dark, #f3ecdc); }
+  .cat-circle-disc--all .cat-circle-glyph { color: var(--green-deep, #1c4a0e); }
+
+  .cat-circle-label {
+    font-family: var(--font-ui);
+    font-size: 0.74rem;
+    font-weight: 600;
+    text-align: center;
+    line-height: 1.2;
+    color: var(--text-dark, #263326);
+  }
+  .cat-circle:hover .cat-circle-label { color: var(--maroon, #8a1a1a); }
+  /* Counts come from the CATEGORIES table, so they only show where we have one. */
+  .cat-circle-count {
+    display: block;
+    font-family: var(--font-ui);
+    font-size: 0.65rem;
+    color: var(--text-light, #9a8f7d);
+    text-align: center;
+  }
+}
+
+/* ── Best sellers row ──────────────────────────────────────────
+   Scrolls on phones, wraps into a grid on laptops. */
+.bestsellers-section { padding: 8px 0 6px; }
+.bestsellers-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 12px 12px;
+}
+.bestsellers-head h2 {
+  margin: 0;
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-mid, #5a5344);
+}
+.bestsellers-all {
+  font-family: var(--font-ui);
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--maroon, #8a1a1a);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.bestsellers-all:hover { text-decoration: underline; }
+
+.bestsellers-row {
+  display: flex;
+  gap: 12px;
+  padding: 2px 12px 8px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+.bestsellers-row::-webkit-scrollbar { display: none; }
+.bestsellers-row > * { flex: 0 0 168px; scroll-snap-align: start; }
+
+@media (min-width: 769px) {
+  .bestsellers-section { max-width: 1440px; margin: 0 auto; padding: 10px 24px 24px; }
+  .bestsellers-head { margin-left: 0; margin-right: 0; }
+  .bestsellers-head h2 { font-size: 0.95rem; }
+  .bestsellers-row {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    padding: 0;
+    overflow: visible;
+  }
+  .bestsellers-row > * { flex: none; }
+}
+
+@media (max-width: 1180px) and (min-width: 769px) {
+  .bestsellers-row { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .cat-circles { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}

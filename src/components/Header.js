@@ -70,6 +70,13 @@ const CAT_ICONS = {
   </>),
 };
 
+// Non-category destinations that still belong in the category bar.
+const SHORTCUT_LINKS = [
+  { label: 'Combos',       to: '/#combos',              badge: { text: 'HOT', tone: 'hot' } },
+  { label: 'New Arrivals', to: '/products?sort=newest' },
+  { label: 'Offers',       to: '/products?sort=popular', badge: { text: '%', tone: 'gold' } },
+];
+
 const Header = () => {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -223,25 +230,38 @@ const Header = () => {
       <div className="topbar">
         <div className="topbar-inner container-wide">
           <div className="topbar-left">
+            {/* ₹2,000 is the real India free-shipping rule (SHIPPING_ZONES.india.freeAbove). */}
+            <span className="topbar-item topbar-item--highlight">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" width="15" height="15"><rect x="1" y="6" width="14" height="11" rx="1.5"/><path d="M15 9h4l3 3.5V17h-7z"/><circle cx="6" cy="18.5" r="1.7"/><circle cx="17.5" cy="18.5" r="1.7"/></svg>
+              Free shipping above ₹2,000 in India
+            </span>
+            <span className="topbar-sep" />
             <span className="topbar-item">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" width="15" height="15"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.5 2.5 15 0 18M12 3c-2.5 2.5-2.5 15 0 18"/></svg>
-              Worldwide Shipping
+              Worldwide Shipping to 180+ Countries
             </span>
             <span className="topbar-sep" />
             <span className="topbar-item">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" width="15" height="15"><path d="M12 3l7 3v5c0 4.5-3 8.5-7 10-4-1.5-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg>
-              Safe &amp; Secure Packaging
+              Since 2000, Trusted by Millions
             </span>
-            <span className="topbar-sep" />
+          </div>
+
+          <div className="topbar-right">
             <Link to="/my-orders" className="topbar-item">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" width="15" height="15"><path d="M3 7l9-4 9 4-9 4-9-4z"/><path d="M3 7v10l9 4 9-4V7"/><path d="M12 11v10"/></svg>
-              Track Your Order
+              Track Order
             </Link>
+            <span className="topbar-sep" />
+            <Link to="/contact" className="topbar-item">Help &amp; Support</Link>
+            <span className="topbar-sep" />
+            <Link to="/store-locations" className="topbar-item">Store Locator</Link>
+            <span className="topbar-sep" />
+            <a href="tel:+919105299399" className="topbar-item topbar-item--accent">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" width="15" height="15"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+              +91 91052 99399
+            </a>
           </div>
-          <a href="tel:+919105299399" className="topbar-item topbar-item--accent">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" width="15" height="15"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-            Delivering Telugu Flavours Worldwide
-          </a>
         </div>
       </div>
 
@@ -358,7 +378,9 @@ const Header = () => {
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
                 {totalItems > 0 && <span className="cart-badge">{totalItems}</span>}
               </span>
-              <span className="action-label">Cart</span>
+              <span className="action-label">
+                {totalItems > 0 ? `₹${subtotal.toLocaleString('en-IN')}` : 'Cart'}
+              </span>
             </button>
           </div>
         </div>
@@ -397,6 +419,17 @@ const Header = () => {
                 </NavLink>
               );
             })}
+
+            {/* Cross-cutting entry points — no category photo, so they render as
+                text links with a badge rather than borrowing a product image. */}
+            {SHORTCUT_LINKS.map((s) => (
+              <NavLink key={s.label} to={s.to}
+                onMouseEnter={() => { cancelCatClose(); setOpenCat(null); }}
+                className={({ isActive }) => `cat-bar-link cat-bar-link--shortcut${isActive ? ' active' : ''}`}>
+                <span className="cat-bar-label">{s.label}</span>
+                {s.badge && <span className={`cat-bar-badge cat-bar-badge--${s.badge.tone}`}>{s.badge.text}</span>}
+              </NavLink>
+            ))}
           </div>
         </nav>
 

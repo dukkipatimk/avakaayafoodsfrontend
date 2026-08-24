@@ -56,3 +56,42 @@
 @media (prefers-reduced-motion: reduce) {
   .cart-bar { animation: none; }
 }
+
+/* Laptops: the cart summary becomes a floating pill in the bottom-right
+   corner (there is no bottom nav to sit above). */
+@media (min-width: 1024px) {
+  .cart-bar {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    left: auto;
+    z-index: 940;                    /* above content, below modals/sheets */
+    padding: 10px 12px 10px 20px;
+    border-radius: 999px;
+    background: var(--green-deep, #1c4a0e);
+    color: #f3ead2;
+    box-shadow: 0 14px 34px -12px rgba(0, 0, 0, 0.55);
+  }
+  .cart-bar-icon { display: inline-flex; color: var(--gold, #c9a84c); }
+  .cart-bar-text { display: flex; flex-direction: column; line-height: 1.25; font-family: var(--font-ui); }
+  .cart-bar-text strong { font-size: 0.78rem; font-weight: 600; }
+  .cart-bar-total { font-size: 1rem; font-weight: 700; color: var(--gold, #c9a84c); }
+  .cart-bar-cta {
+    background: var(--gold, #c9a84c);
+    color: var(--green-deep, #1c4a0e);
+    font-family: var(--font-ui);
+    font-size: 0.82rem;
+    font-weight: 700;
+    padding: 11px 18px;
+    border-radius: 999px;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .cart-bar-cta:hover { background: #e0bd63; }
+
+  /* The floating side-menu cart would duplicate this pill. */
+  body.has-cart-bar .side-menu-btn--cart { display: none; }
+}
