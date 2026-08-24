@@ -137,7 +137,8 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
-    api.get('/products?sort=newest&limit=4')
+    // Six, so the row fills the same six columns as Best Sellers.
+    api.get('/products?sort=newest&limit=6')
       .then(r => setNewArrivals(r.data.products || []))
       .catch(() => setNewArrivals([]));
   }, []);

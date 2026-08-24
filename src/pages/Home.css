@@ -5008,3 +5008,23 @@
 
 /* The "More Categories" ellipsis disc reads as dots, not a glyph. */
 .cat-circle-disc--all .cat-circle-glyph { font-size: 1rem; letter-spacing: 0.06em; }
+
+/* ══ Product grids match the Best Sellers row ═════════════════
+   The catalogue and new-arrivals grids use the same ProductCard, so only
+   their density differed (4 across vs 6). Scoped to the sections rather
+   than .products-grid globally, which the Products page also uses. */
+@media (min-width: 1181px) {
+  .quickbuy-section .products-grid,
+  .new-arrivals-section .products-grid {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 12px;
+  }
+}
+
+@media (max-width: 1180px) and (min-width: 769px) {
+  .quickbuy-section .products-grid,
+  .new-arrivals-section .products-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+  }
+}
