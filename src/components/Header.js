@@ -8,12 +8,9 @@ import OffersPanel from './OffersPanel';
 import api from '../utils/api';
 import toast from 'react-hot-toast';
 import { trackEvent } from '../utils/tracking';
-import { collectionApiFilters, productCategorySlug } from '../utils/seo';
+import { productCategorySlug } from '../utils/seo';
 import './Header.css';
 
-const CAT_PLACEHOLDER = 'data:image/svg+xml;utf8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="72" height="72"><rect width="72" height="72" fill="#f3ecdc"/></svg>');
-const catImg = (p) => p.thumbnail || (p.images && p.images[0]) || CAT_PLACEHOLDER;
-const catLowPrice = (p) => { const ps = (p.variants || []).map((v) => Number(v.price)).filter((n) => n > 0); return ps.length ? Math.min(...ps) : null; };
 
 // Small two-tone category icons for the category bar.
 const G = '#1c4a0e';    // brand green
@@ -172,26 +169,6 @@ const Header = () => {
     toast.success(`${product.name} (${variant.weight}) added to cart!`);
     setAddedIds(prev => ({ ...prev, [product._id]: true }));
     setTimeout(() => setAddedIds(prev => { const n = { ...prev }; delete n[product._id]; return n; }), 1500);
-  };
-
-  // Category mega-menu (hover a category → preview its products)
-  const [openCat, setOpenCat] = useState(null);
-  const [catProducts, setCatProducts] = useState({});
-  const [catLoading, setCatLoading] = useState(false);
-  const catCloseTimer = useRef(null);
-  const cancelCatClose = () => clearTimeout(catCloseTimer.current);
-  const scheduleCatClose = () => { clearTimeout(catCloseTimer.current); catCloseTimer.current = setTimeout(() => setOpenCat(null), 150); };
-  const openCategory = (slug) => {
-    cancelCatClose();
-    setOpenCat(slug);
-    if (slug && !(catProducts[slug] && catProducts[slug].length)) {
-      setCatLoading(true);
-      const params = new URLSearchParams({ ...collectionApiFilters(slug), limit: 30 });
-      api.get(`/products?${params}`)
-        .then((r) => setCatProducts((p) => ({ ...p, [slug]: r.data.products || [] })))
-        .catch(() => setCatProducts((p) => ({ ...p, [slug]: [] })))
-        .finally(() => setCatLoading(false));
-    }
   };
 
   const categories = [
@@ -387,7 +364,7 @@ const Header = () => {
 
       {/* ── Category bar ────────────────────────────────────────────── */}
       <div className="cat-bar-wrap">
-        <nav className="cat-bar container-wide" aria-label="Shop by category" onMouseLeave={scheduleCatClose} onMouseEnter={cancelCatClose}>
+        <nav className="cat-bar container-wide" aria-label="Shop by category">
           <Link to="/products" className="shop-by-cat">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
             Shop by Category
@@ -398,11 +375,9 @@ const Header = () => {
             {/* Product categories only. Hampers, combos, new arrivals and offers
                 live on the home page and in the menu drawer, not here. */}
             {categories.filter((c) => c.path !== '/gift-hamper').map((c) => {
-              const slug = c.path.startsWith('/collections/') ? c.path.split('/').pop() : null;
               const iconKey = c.path.split('/').pop();
               return (
                 <NavLink key={c.label} to={c.path}
-                  onMouseEnter={() => { if (slug) openCategory(slug); else { cancelCatClose(); setOpenCat(null); } }}
                   className={({ isActive }) => `cat-bar-link${isActive ? ' active' : ''}`}>
                   {catThumb(iconKey)}<span className="cat-bar-label">{c.label}</span>
                 </NavLink>
@@ -411,25 +386,6 @@ const Header = () => {
           </div>
         </nav>
 
-        {openCat && (
-          <div className="cat-mega" onMouseEnter={cancelCatClose} onMouseLeave={scheduleCatClose}>
-            <div className="cat-mega-inner">
-              {(!catProducts[openCat] && catLoading)
-                ? <div className="cat-mega-empty">Loading…</div>
-                : (catProducts[openCat]?.length ? (
-                  <>
-                    {catProducts[openCat].slice(0, 30).map((p) => (
-                      <Link key={p._id} to={`/products/${p.slug}`} className="cat-mega-item" onClick={() => setOpenCat(null)}>
-                        <img src={catImg(p)} alt={p.name} className="cat-mega-img" loading="lazy" />
-                        <span className="cat-mega-name">{p.name}</span>
-                        {catLowPrice(p) != null && <span className="cat-mega-price">₹{catLowPrice(p)}</span>}
-                      </Link>
-                    ))}
-                    <Link to={`/collections/${openCat}`} className="cat-mega-all" onClick={() => setOpenCat(null)}>View all ›</Link>
-                  </>
-                ) : <div className="cat-mega-empty">No products in this category yet.</div>)}
-            </div>
-          </div>
         )}
       </div>
       </div>

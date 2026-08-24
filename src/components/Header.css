@@ -200,20 +200,6 @@
 .cat-bar-link:hover { color: var(--maroon, #8a1a1a); }
 .cat-bar-link.active { color: var(--maroon, #8a1a1a); }
 
-/* Category mega-menu */
-.cat-mega { position: absolute; top: 100%; left: 0; right: 0; z-index: 190; background: var(--white, #fff); border-bottom: 1px solid var(--ivory-deep); box-shadow: var(--shadow-md); animation: cat-mega-in 0.15s ease; }
-@keyframes cat-mega-in { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
-.cat-mega-inner { max-width: 1320px; margin: 0 auto; padding: 18px 24px; display: flex; gap: 18px; flex-wrap: wrap; align-items: flex-start; justify-content: center; max-height: 72vh; overflow-y: auto; }
-.cat-mega-item { display: flex; flex-direction: column; align-items: center; width: 96px; text-decoration: none; color: #1a1a1a; }
-.cat-mega-img { width: 76px; height: 76px; object-fit: cover; border-radius: 10px; background: #f3ecdc; transition: transform 0.15s ease; }
-.cat-mega-item:hover .cat-mega-img { transform: scale(1.05); }
-.cat-mega-name { font-size: 0.72rem; text-align: center; line-height: 1.2; margin-top: 5px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-.cat-mega-price { font-size: 0.74rem; font-weight: 700; color: var(--green-brand, #3d8b22); margin-top: 2px; }
-.cat-mega-all { align-self: center; font-family: var(--font-ui); font-weight: 700; font-size: 0.82rem; color: var(--green-deep); text-decoration: none; padding: 8px 10px; white-space: nowrap; }
-.cat-mega-all:hover { text-decoration: underline; }
-.cat-mega-empty { padding: 18px; color: var(--muted, #9a8f7d); font-size: 0.85rem; }
-@media (max-width: 900px) { .cat-mega { display: none !important; } }
-
 /* ── Mobile hamburger + nav drawer ───────────────────────────── */
 .menu-toggle { display: none; width: 40px; height: 40px; align-items: center; justify-content: center; border-radius: var(--radius-sm, 8px); background: none; border: none; cursor: pointer; flex-shrink: 0; }
 .hamburger { display: block; width: 20px; height: 2px; background: var(--green-deep); position: relative; transition: var(--transition); }
