@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
+import { addOrderToCart } from '../utils/reorder';
 import toast from 'react-hot-toast';
 import './Orders.css';
 
@@ -122,19 +123,9 @@ const Orders = () => {
   };
 
   const handleReorder = (order) => {
-    order.items?.forEach(item => {
-      const productObj = {
-        ...(typeof item.product === 'object' ? item.product : {}),
-        _id: item.product?._id || item.product,
-      };
-      const variantObj = {
-        weight: item.variant?.weight,
-        price: item.variant?.price,
-        mrp: item.variant?.price,
-      };
-      addItem(productObj, variantObj);
-    });
-    toast.success('Items added to cart!');
+    const added = addOrderToCart(order, addItem);
+    if (!added) { toast.error('None of these items can be re-ordered.'); return; }
+    toast.success(`${added} ${added === 1 ? 'item' : 'items'} added to cart!`);
   };
 
   if (loading) return (
