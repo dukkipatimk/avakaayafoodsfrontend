@@ -318,3 +318,23 @@
   .nav-link { padding: 13px 16px; font-family: var(--font-ui); font-size: 0.9rem; font-weight: 600; color: var(--text-mid); text-decoration: none; border-radius: var(--radius-sm, 8px); }
   .nav-link:hover, .nav-link.active { background: var(--ivory); color: var(--green-deep); }
 }
+
+/* Centre "Quick Order" action in the bottom nav — raised disc so it reads as
+   the primary path for repeat customers. */
+.bottom-toolbar-item--fab { position: relative; }
+.bottom-toolbar-fab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  margin-top: -18px;
+  margin-bottom: 1px;
+  border-radius: 50%;
+  background: var(--red-chili, #c0392b);
+  color: #fff;
+  box-shadow: 0 6px 16px -6px rgba(192, 57, 43, 0.75);
+  border: 3px solid #fff;
+}
+.bottom-toolbar-item--fab:active .bottom-toolbar-fab { transform: scale(0.94); }
+.bottom-toolbar-item--fab > span:last-child { color: var(--red-chili, #c0392b); font-weight: 700; }

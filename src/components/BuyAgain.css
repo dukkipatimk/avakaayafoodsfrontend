@@ -1,0 +1,88 @@
+/* "Buy again" — one tap to recreate the customer's last order.
+   Only rendered for signed-in customers who actually have a past order. */
+.buy-again { padding: 0 12px; margin: 18px 0; }
+
+.buy-again-card {
+  background: linear-gradient(160deg, #f2f8ee 0%, #ffffff 70%);
+  border: 1.5px solid var(--ivory-deep, #e8d8c0);
+  border-radius: var(--radius-md, 12px);
+  padding: 16px;
+  max-width: 520px;
+  margin: 0 auto;
+}
+.buy-again-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.buy-again-title {
+  font-family: var(--font-ui);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--green-deep, #1c4a0e);
+}
+.buy-again-date { font-family: var(--font-ui); font-size: 0.72rem; color: var(--text-light, #9a8f7d); }
+
+.buy-again-lines { list-style: none; margin: 0 0 12px; padding: 0; }
+.buy-again-lines li {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
+}
+.buy-again-lines li:last-child { border-bottom: none; }
+.buy-again-name {
+  color: var(--text-dark, #263326);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.buy-again-weight { flex-shrink: 0; color: var(--text-light, #9a8f7d); font-size: 0.78rem; }
+.buy-again-more { color: var(--text-light, #9a8f7d); font-size: 0.78rem; }
+
+.buy-again-total {
+  font-family: var(--font-ui);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--green-deep, #1c4a0e);
+  margin-bottom: 12px;
+}
+
+.buy-again-cta {
+  width: 100%;
+  padding: 13px;
+  border: none;
+  border-radius: var(--radius-sm, 8px);
+  background: var(--green-deep, #1c4a0e);
+  color: #fff;
+  font-family: var(--font-ui);
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+.buy-again-cta:hover { background: #245c14; }
+.buy-again-cta:active { transform: scale(0.99); }
+
+.buy-again-modify {
+  display: block;
+  width: 100%;
+  margin-top: 8px;
+  padding: 8px;
+  background: none;
+  border: none;
+  font-family: var(--font-ui);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--green-mid, #3d8b22);
+  cursor: pointer;
+}

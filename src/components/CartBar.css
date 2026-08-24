@@ -1,0 +1,58 @@
+/* Sticky cart summary — sits directly above the mobile bottom toolbar and
+   only appears when there is something in the cart. Phones/tablets only:
+   desktop already has the floating side-menu cart. */
+.cart-bar { display: none; }
+
+@media (max-width: 1023px) {
+  .cart-bar {
+    position: fixed;
+    left: 8px;
+    right: 8px;
+    bottom: calc(66px + env(safe-area-inset-bottom, 0px));
+    z-index: 996;                      /* under the toolbar (997), over content */
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 8px 8px 14px;
+    border-radius: 999px;
+    background: var(--green-deep, #1c4a0e);
+    color: #f3ead2;
+    box-shadow: 0 10px 26px -10px rgba(0, 0, 0, 0.55);
+    animation: cart-bar-in 0.22s ease;
+  }
+  @keyframes cart-bar-in {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: none; }
+  }
+  .cart-bar-icon { display: inline-flex; flex-shrink: 0; color: var(--gold, #c9a84c); }
+  .cart-bar-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.25;
+    min-width: 0;
+    flex: 1;
+    font-family: var(--font-ui);
+  }
+  .cart-bar-text strong { font-size: 0.82rem; font-weight: 600; }
+  .cart-bar-total { font-size: 0.95rem; font-weight: 700; color: var(--gold, #c9a84c); }
+  .cart-bar-cta {
+    flex-shrink: 0;
+    background: var(--gold, #c9a84c);
+    color: var(--green-deep, #1c4a0e);
+    font-family: var(--font-ui);
+    font-size: 0.82rem;
+    font-weight: 700;
+    padding: 10px 16px;
+    border-radius: 999px;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .cart-bar-cta:active { transform: scale(0.97); }
+
+  /* Extra room under the page so the bar never hides the last element. */
+  body.has-cart-bar { padding-bottom: calc(122px + env(safe-area-inset-bottom, 0px)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cart-bar { animation: none; }
+}

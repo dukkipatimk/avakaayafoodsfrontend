@@ -184,3 +184,67 @@
 /* Stock indicators on card */
 .pc-stock-low { font-family: var(--font-ui); font-size: 0.72rem; color: #d97706; font-weight: 600; }
 .pc-stock-out { font-family: var(--font-ui); font-size: 0.72rem; color: var(--red-chili); font-weight: 600; }
+
+/* ── Quantity stepper (replaces "Add to cart" once the item is in the cart) ──
+   Same footprint as .add-to-cart-btn so the card height never jumps when a
+   shopper adds an item. */
+.pc-stepper {
+  width: 100%;
+  margin-top: 8px;
+  display: grid;
+  grid-template-columns: 40px 1fr 40px;
+  align-items: center;
+  border: 1.5px solid var(--green-deep, #1c4a0e);
+  border-radius: var(--radius-sm, 8px);
+  overflow: hidden;
+  background: var(--green-deep, #1c4a0e);
+}
+.pc-stepper-btn {
+  height: 38px;
+  border: none;
+  background: transparent;
+  color: #fff;
+  font-family: var(--font-ui);
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+.pc-stepper-btn:hover, .pc-stepper-btn:active { background: rgba(255,255,255,0.16); }
+.pc-stepper-qty {
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  color: var(--green-deep, #1c4a0e);
+  font-family: var(--font-ui);
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+/* Size chip — phones only. Replaces the desktop variant button row with a
+   single tap target that opens the size bottom sheet. */
+.variant-chip { display: none; }
+
+@media (max-width: 768px) {
+  .variant-selector { display: none; }
+  .variant-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    align-self: flex-start;
+    margin: 6px 0 2px;
+    padding: 7px 12px;
+    border: 1.5px solid var(--ivory-deep, #e8d8c0);
+    border-radius: 999px;
+    background: var(--white, #fff);
+    font-family: var(--font-ui);
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-dark, #263326);
+    cursor: pointer;
+  }
+  .variant-chip:active { transform: scale(0.97); }
+}

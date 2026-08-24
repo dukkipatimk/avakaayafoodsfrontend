@@ -1,0 +1,174 @@
+/* Quick Order — full-screen, text-only ordering sheet.
+   Image-free by design: the list stays dense so a regular customer can fill a
+   basket without scrolling past photos. */
+.qo {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  background: var(--white, #fff);
+  display: flex;
+  flex-direction: column;
+}
+
+.qo-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--ivory-deep, #e8d8c0);
+  background: var(--ivory, #faf6ed);
+  flex-shrink: 0;
+}
+.qo-head h2 {
+  margin: 0;
+  font-family: var(--font-ui);
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--green-deep, #1c4a0e);
+}
+.qo-back {
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: none;
+  font-size: 1.4rem;
+  line-height: 1;
+  color: var(--green-deep, #1c4a0e);
+  cursor: pointer;
+}
+
+.qo-search-wrap { padding: 12px 14px; flex-shrink: 0; }
+.qo-search {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid var(--green-mid, #3d8b22);
+  border-radius: 999px;
+  outline: none;
+  font-family: var(--font-body);
+  font-size: 1rem;             /* 16px keeps iOS from zooming on focus */
+  color: var(--text-dark);
+}
+
+.qo-list { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 0 14px 16px; }
+.qo-empty { padding: 28px 4px; text-align: center; font-family: var(--font-ui); font-size: 0.85rem; color: var(--text-light, #9a8f7d); }
+.qo-group {
+  margin: 14px 0 6px;
+  font-family: var(--font-ui);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-light, #9a8f7d);
+}
+
+.qo-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--ivory, #faf6ed);
+}
+.qo-row-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+.qo-name {
+  font-family: var(--font-ui);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-dark, #263326);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.qo-row-meta { display: flex; align-items: center; gap: 10px; }
+.qo-weight {
+  font-family: var(--font-ui);
+  font-size: 0.78rem;
+  color: var(--text-mid, #5a5344);
+  padding: 3px 6px;
+  border: 1px solid var(--ivory-deep, #e8d8c0);
+  border-radius: 6px;
+  background: var(--white, #fff);
+}
+.qo-weight--static { border-color: transparent; padding-left: 0; }
+.qo-price { font-family: var(--font-ui); font-size: 0.88rem; font-weight: 700; color: var(--green-deep, #1c4a0e); }
+.qo-oos { font-family: var(--font-ui); font-size: 0.72rem; color: var(--red-chili, #c0392b); flex-shrink: 0; }
+
+.qo-add {
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  border: none;
+  background: var(--red-chili, #c0392b);
+  color: #fff;
+  font-size: 1.3rem;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+}
+.qo-add:active { transform: scale(0.94); }
+
+.qo-stepper {
+  flex-shrink: 0;
+  display: grid;
+  grid-template-columns: 32px 30px 32px;
+  align-items: center;
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--green-deep, #1c4a0e);
+}
+.qo-stepper button {
+  height: 38px;
+  border: none;
+  background: transparent;
+  color: #fff;
+  font-size: 1.2rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.qo-stepper span {
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  color: var(--green-deep, #1c4a0e);
+  font-family: var(--font-ui);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.qo-foot {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px calc(12px + env(safe-area-inset-bottom, 0px));
+  border-top: 1px solid var(--ivory-deep, #e8d8c0);
+  background: var(--ivory, #faf6ed);
+}
+.qo-foot-summary {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font-ui);
+  font-size: 0.75rem;
+  color: var(--text-mid, #5a5344);
+}
+.qo-foot-summary strong { font-size: 1.05rem; color: var(--green-deep, #1c4a0e); }
+.qo-continue {
+  flex-shrink: 0;
+  padding: 13px 22px;
+  border: none;
+  border-radius: 999px;
+  background: var(--green-deep, #1c4a0e);
+  color: #fff;
+  font-family: var(--font-ui);
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.qo-continue:disabled { opacity: 0.45; cursor: not-allowed; }
+.qo-continue:not(:disabled):active { transform: scale(0.98); }

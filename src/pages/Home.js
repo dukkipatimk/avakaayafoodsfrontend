@@ -2,6 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../utils/api';
 import ProductCard from '../components/ProductCard';
+import QuickActions from '../components/QuickActions';
+import BuyAgain from '../components/BuyAgain';
+import Combos from '../components/Combos';
+import { useUI } from '../context/UIContext';
 import { collectionApiFilters } from '../utils/seo';
 import './Home.css';
 
@@ -61,6 +65,16 @@ const CATEGORIES = [
   { name: 'Ghee',     slug: 'ghee',     image: '/images/products/2024/10/COW-GHEE-600x600.jpg',        count: '4 varieties'  },
 ];
 
+// Thumb-sized category shortcuts shown only on phones, directly under the hero.
+// The six product categories reuse the CATEGORIES photos; hampers and "shop
+// all" close out the grid. Cross-cutting intents (Quick Order, Buy Again,
+// Combos, Offers) live in the Quick Actions block below instead.
+const MOBILE_TILES = [
+  ...CATEGORIES.map(c => ({ label: c.name, to: `/collections/${c.slug}`, image: c.image })),
+  { label: 'Hampers',  to: '/gift-hamper', glyph: '🎁', accent: 'gift' },
+  { label: 'Shop All', to: '/products',    glyph: '⊞',  accent: 'all'  },
+];
+
 const FESTIVALS = [
   { name: 'Diwali',             tag: 'Festival of Lights',  image: '/images/festivals/diwali.jpg',     emoji: 'Gift' },
   { name: 'Sankranthi',         tag: 'Harvest Festival',     image: '/images/festivals/sankranthi.jpg', emoji: 'Harvest' },
@@ -78,6 +92,7 @@ const TESTIMONIALS = [
 const WHATSAPP_NUMBER = '919115595959';
 
 const Home = () => {
+  const { openQuickOrder } = useUI();
   const [igPosts, setIgPosts] = useState([]);
   const [igLoading, setIgLoading] = useState(true);
   const [bannerIdx, setBannerIdx] = useState(0);
@@ -247,6 +262,33 @@ const Home = () => {
           </div>
         </div>
       </section>
+
+      {/* â”€â”€ Category circles (mobile only) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      <h2 className="cat-circles-heading">What would you like?</h2>
+      <nav className="cat-circles" aria-label="Shop by category">
+        {MOBILE_TILES.map(tile => {
+          const body = (
+            <>
+              <span className={`cat-circle-disc${tile.accent ? ` cat-circle-disc--${tile.accent}` : ''}`}>
+                {tile.image
+                  ? <img src={tile.image} alt="" loading="lazy" />
+                  : <span className="cat-circle-glyph">{tile.glyph}</span>}
+              </span>
+              <span className="cat-circle-label">{tile.label}</span>
+            </>
+          );
+          // In-page anchors (Combos) stay plain <a> so the browser handles the
+          // scroll — <Link> would treat "#combos" as a route change.
+          return tile.to.startsWith('#')
+            ? <a key={tile.label} href={tile.to} className="cat-circle">{body}</a>
+            : <Link key={tile.label} to={tile.to} className="cat-circle">{body}</Link>;
+        })}
+      </nav>
+
+      {/* â”€â”€ Quick actions + Buy Again (mobile only) â”€â”€â”€â”€â”€ */}
+      <QuickActions onQuickOrder={openQuickOrder} />
+      <BuyAgain />
+      <Combos />
 
       {/* â”€â”€ USP strip â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <div className="usp-strip">

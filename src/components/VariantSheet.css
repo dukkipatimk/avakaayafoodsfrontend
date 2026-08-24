@@ -1,0 +1,108 @@
+/* Size picker bottom sheet — opened from the size chip on a product card. */
+.vs-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1250;
+  background: rgba(20, 20, 20, 0.5);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.vs-sheet {
+  width: 100%;
+  max-width: 520px;
+  background: var(--white, #fff);
+  border-radius: 18px 18px 0 0;
+  padding: 10px 18px calc(18px + env(safe-area-inset-bottom, 0px));
+  animation: vs-up 0.2s ease;
+  max-height: 82vh;
+  overflow-y: auto;
+}
+@keyframes vs-up { from { transform: translateY(100%); } to { transform: none; } }
+@media (prefers-reduced-motion: reduce) { .vs-sheet { animation: none; } }
+
+.vs-grip {
+  width: 40px; height: 4px;
+  margin: 0 auto 12px;
+  border-radius: 999px;
+  background: var(--ivory-deep, #e8d8c0);
+}
+.vs-title {
+  margin: 0;
+  font-family: var(--font-ui);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--text-mid, #5a5344);
+}
+.vs-product {
+  margin: 3px 0 14px;
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  color: var(--green-deep, #1c4a0e);
+}
+
+.vs-list { list-style: none; margin: 0 0 14px; padding: 0; }
+.vs-option {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 12px;
+  margin-bottom: 8px;
+  border: 1.5px solid var(--ivory-deep, #e8d8c0);
+  border-radius: var(--radius-sm, 8px);
+  background: var(--white, #fff);
+  font-family: var(--font-ui);
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+.vs-option--on { border-color: var(--green-mid, #3d8b22); background: #f2f8ee; }
+.vs-option:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.vs-radio {
+  width: 20px; height: 20px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  border: 1.5px solid var(--ivory-deep, #e8d8c0);
+  border-radius: 50%;
+  font-size: 0.7rem;
+  color: var(--green-mid, #3d8b22);
+}
+.vs-option--on .vs-radio { border-color: var(--green-mid, #3d8b22); }
+
+.vs-weight { font-size: 0.92rem; font-weight: 600; color: var(--text-dark, #263326); }
+.vs-badge {
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: var(--gold, #c9a84c);
+  color: var(--green-deep, #1c4a0e);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.vs-price {
+  margin-left: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--green-deep, #1c4a0e);
+}
+.vs-price small { font-size: 0.62rem; font-weight: 600; color: var(--red-chili, #c0392b); }
+
+.vs-done {
+  width: 100%;
+  padding: 13px;
+  border: none;
+  border-radius: var(--radius-sm, 8px);
+  background: var(--green-deep, #1c4a0e);
+  color: #fff;
+  font-family: var(--font-ui);
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+}

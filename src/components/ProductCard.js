@@ -5,16 +5,18 @@ import { useAuth } from '../context/AuthContext';
 import api from '../utils/api';
 import toast from 'react-hot-toast';
 import { trackEvent } from '../utils/tracking';
+import VariantSheet from './VariantSheet';
 import './ProductCard.css';
 
 const ProductCard = ({ product }) => {
-  const { addItem, subtotal } = useCart();
+  const { addItem, updateQuantity, items, subtotal } = useCart();
   const { user } = useAuth();
   const navigate = useNavigate();
   const [selectedVariant, setSelectedVariant] = useState(product.variants[0]);
   const [adding, setAdding] = useState(false);
   const [wishlisted, setWishlisted] = useState(false);
   const [wishlistLoading, setWishlistLoading] = useState(false);
+  const [sheetOpen, setSheetOpen] = useState(false);
 
   // Image fallback chain: thumbnail → THIS product's own gallery images → …
   // → neutral placeholder. Covers both a missing thumbnail field and a thumbnail
@@ -34,6 +36,30 @@ const ProductCard = ({ product }) => {
   const [imgIdx, setImgIdx] = useState(0);
 
   const discount = Math.round((1 - selectedVariant.price / selectedVariant.mrp) * 100);
+
+  // Quantity of THIS product/weight already in the cart (loose items only —
+  // hamper/combo lines are priced as a bundle and are not stepped from here).
+  const productId = product._id ?? product.id;
+  const cartLine = items.find(
+    (i) => !i.bundleId && String(i.productId) === String(productId) && i.weight === selectedVariant.weight
+  );
+  const cartQty = cartLine ? cartLine.quantity : 0;
+
+  const stepQuantity = (nextQty) => {
+    if (nextQty > cartQty && selectedVariant.stock !== undefined && nextQty > selectedVariant.stock) {
+      toast.error(`Only ${selectedVariant.stock} in stock`);
+      return;
+    }
+    updateQuantity(productId, selectedVariant.weight, nextQty);
+    if (nextQty > cartQty) {
+      trackEvent('add_to_cart', {
+        productId,
+        cartValue: subtotal + Number(selectedVariant.price || 0),
+        cartItems: [{ productId, name: product.name, weight: selectedVariant.weight, quantity: nextQty, price: selectedVariant.price }],
+        metadata: { source: 'product_card_stepper', addedValue: Number(selectedVariant.price) || 0 },
+      });
+    }
+  };
 
   const handleAddToCart = async (e) => {
     e.preventDefault();
@@ -109,7 +135,8 @@ const ProductCard = ({ product }) => {
           </div>
         )}
 
-        {/* Variant selector */}
+        {/* Variant selector — a button row on desktop, a single chip that opens
+            a bottom sheet on phones (easier to hit, and it scales past 3 sizes). */}
         <div className="variant-selector">
           {product.variants.map(v => (
             <button
@@ -121,6 +148,20 @@ const ProductCard = ({ product }) => {
             </button>
           ))}
         </div>
+        {product.variants.length > 1 && (
+          <button className="variant-chip" onClick={() => setSheetOpen(true)} aria-haspopup="dialog">
+            {selectedVariant.weight}
+            <span aria-hidden="true">▾</span>
+          </button>
+        )}
+        {sheetOpen && (
+          <VariantSheet
+            product={product}
+            selected={selectedVariant}
+            onSelect={setSelectedVariant}
+            onClose={() => setSheetOpen(false)}
+          />
+        )}
 
         {/* Stock indicators */}
         {selectedVariant.stock !== undefined && selectedVariant.stock <= 10 && selectedVariant.stock > 0 && (
@@ -138,13 +179,21 @@ const ProductCard = ({ product }) => {
           )}
         </div>
 
-        <button
-          className={`btn btn-gold btn-sm add-to-cart-btn ${adding ? 'adding' : ''}`}
-          onClick={handleAddToCart}
-          disabled={selectedVariant.stock === 0}
-        >
-          {adding ? '✓ Added!' : selectedVariant.stock === 0 ? 'Out of Stock' : '+ Add to Cart'}
-        </button>
+        {cartQty > 0 && selectedVariant.stock !== 0 ? (
+          <div className="pc-stepper" role="group" aria-label={`Quantity of ${product.name} ${selectedVariant.weight}`}>
+            <button className="pc-stepper-btn" onClick={() => stepQuantity(cartQty - 1)} aria-label="Decrease quantity">−</button>
+            <span className="pc-stepper-qty" aria-live="polite">{cartQty}</span>
+            <button className="pc-stepper-btn" onClick={() => stepQuantity(cartQty + 1)} aria-label="Increase quantity">+</button>
+          </div>
+        ) : (
+          <button
+            className={`btn btn-gold btn-sm add-to-cart-btn ${adding ? 'adding' : ''}`}
+            onClick={handleAddToCart}
+            disabled={selectedVariant.stock === 0}
+          >
+            {adding ? '✓ Added!' : selectedVariant.stock === 0 ? 'Out of Stock' : '+ Add to Cart'}
+          </button>
+        )}
       </div>
     </div>
   );

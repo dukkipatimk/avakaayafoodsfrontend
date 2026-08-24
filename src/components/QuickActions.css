@@ -1,0 +1,44 @@
+/* Quick actions — phones only; desktop has the full nav and side menu. */
+.quick-actions { display: none; }
+
+@media (max-width: 768px) {
+  .quick-actions { display: block; padding: 4px 12px 18px; }
+  .quick-actions-heading {
+    font-family: var(--font-ui);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-mid, #5a5344);
+    margin: 0 0 10px;
+  }
+  .quick-actions-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .qa-tile {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    padding: 12px;
+    border-radius: var(--radius-md, 12px);
+    border: 1.5px solid var(--ivory-deep, #e8d8c0);
+    background: var(--white, #fff);
+    text-align: left;
+    text-decoration: none;
+    cursor: pointer;
+    font-family: var(--font-ui);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .qa-tile:active { transform: scale(0.98); }
+  .qa-tile-icon { font-size: 1.15rem; line-height: 1; margin-bottom: 4px; }
+  .qa-tile-label { font-size: 0.88rem; font-weight: 700; color: var(--green-deep, #1c4a0e); }
+  .qa-tile-sub { font-size: 0.68rem; color: var(--text-light, #9a8f7d); line-height: 1.25; }
+
+  .qa-tile--order  { background: #fdf7e6; border-color: var(--gold, #c9a84c); }
+  .qa-tile--again  { background: #f2f8ee; border-color: #bcd9ac; }
+  .qa-tile--combo  { background: #fdf0ef; border-color: #eebfba; }
+  .qa-tile--offers { background: var(--white, #fff); }
+}
