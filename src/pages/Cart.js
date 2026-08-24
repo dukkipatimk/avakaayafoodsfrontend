@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { trackEvent } from '../utils/tracking';
 import './Cart.css';
@@ -32,17 +32,10 @@ const Cart = () => {
     }
   }, [items, subtotal]);
 
-  if (items.length === 0) {
-    return (
-      <div className="cart-empty">
-        <div className="cart-empty-inner">
-          <h2>Your cart is empty</h2>
-          <p>Browse our authentic Telugu foods or create a custom hamper.</p>
-          <Link to="/products" className="btn btn-primary btn-lg">Start Shopping</Link>
-        </div>
-      </div>
-    );
-  }
+  // The cart page is only reachable with products in it — an empty cart sends
+  // the shopper back to the catalogue instead of showing a dead-end page.
+  // `replace` keeps /cart out of history so Back doesn't bounce them here again.
+  if (items.length === 0) return <Navigate to="/products" replace />;
 
   const FREE_SHIP_THRESHOLD = 2000; // matches checkout free-shipping rule (India)
   const remainingForFree = Math.max(0, FREE_SHIP_THRESHOLD - subtotal);

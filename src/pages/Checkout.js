@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import api from '../utils/api';
@@ -639,10 +639,8 @@ const Checkout = () => {
     toast.success(`${label} copied`);
   };
 
-  if (items.length === 0) {
-    navigate('/cart');
-    return null;
-  }
+  // /cart itself rejects empty carts now, so send them straight to the catalogue.
+  if (items.length === 0) return <Navigate to="/products" replace />;
 
   return (
     <div className="checkout-page">
