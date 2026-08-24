@@ -269,7 +269,7 @@ const Header = () => {
             <input
               type="text"
               className="header-search-input"
-              placeholder="Search for pickles, sweets, snacks..."
+              placeholder="Search pickles, sweets, snacks…"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onFocus={() => { if (searchResults.length) setShowDropdown(true); }}
