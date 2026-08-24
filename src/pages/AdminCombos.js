@@ -7,8 +7,21 @@ import './AdminCombos.css';
 
 const money = (n) => '₹' + Number(n || 0).toLocaleString('en-IN', { maximumFractionDigits: 2 });
 
+// Must match COMBO_CATEGORIES in routes/combos.js — the API rejects anything
+// else and falls back to "mixed". Each one has its own card colour.
+const CATEGORIES = [
+  { value: 'veg-pickles', label: 'Veg Pickles' },
+  { value: 'non-veg-pickles', label: 'Non-Veg Pickles' },
+  { value: 'powders', label: 'Podis & Powders' },
+  { value: 'snacks', label: 'Snacks' },
+  { value: 'sweets', label: 'Sweets' },
+  { value: 'ghee', label: 'Ghee' },
+  { value: 'hampers', label: 'Hampers' },
+  { value: 'mixed', label: 'Mixed / Other' },
+];
+
 const emptyCombo = {
-  name: '', subtitle: '', image: '', type: 'fixed', pickCount: 3, price: '',
+  name: '', subtitle: '', image: '', category: 'mixed', type: 'fixed', pickCount: 3, price: '',
   isActive: true, sortOrder: 0, items: [],
 };
 
@@ -18,6 +31,7 @@ const ComboModal = ({ combo, products, onClose, onSaved }) => {
     name: combo.name || '',
     subtitle: combo.subtitle || '',
     image: combo.image || '',
+    category: combo.category || 'mixed',
     type: combo.type || 'fixed',
     pickCount: combo.pickCount || 3,
     price: String(combo.price ?? ''),
@@ -106,6 +120,13 @@ const ComboModal = ({ combo, products, onClose, onSaved }) => {
           </div>
 
           <div className="combo-form-row">
+            <div className="combo-form-group combo-form-group--narrow">
+              <label>Category</label>
+              <select value={form.category} onChange={(e) => set('category', e.target.value)}>
+                {CATEGORIES.map((c) => <option key={c.value} value={c.value}>{c.label}</option>)}
+              </select>
+              <small className="combo-form-hint">Sets the card colour on the storefront.</small>
+            </div>
             <div className="combo-form-group">
               <label>Type</label>
               <select value={form.type} onChange={(e) => set('type', e.target.value)}>
@@ -269,7 +290,8 @@ const AdminCombos = () => {
               <div className="combo-row-main">
                 <strong>{combo.name}</strong>
                 <span className="combo-row-meta">
-                  {combo.type === 'pick' ? `Pick any ${combo.pickCount}` : 'Fixed set'}
+                  {CATEGORIES.find((c) => c.value === (combo.category || 'mixed'))?.label}
+                  {' · '}{combo.type === 'pick' ? `Pick any ${combo.pickCount}` : 'Fixed set'}
                   {' · '}{(combo.items || []).length} products
                   {!combo.isActive && ' · hidden'}
                 </span>

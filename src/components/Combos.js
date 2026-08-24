@@ -71,10 +71,11 @@ const Combos = () => {
       </div>
 
       <div className="combos-row">
-        {/* Cards cycle through three colour treatments so the row reads as a
-            promotional block rather than three identical tiles. */}
-        {combos.map((combo, index) => (
-          <article key={combo._id ?? combo.id} className={`combo-card combo-card--t${(index % 3) + 1}`}>
+        {/* Card colour comes from the combo's category, so a veg-pickle bundle
+            reads the same wherever it appears — not from its position in the
+            row, which changes as combos are added or reordered. */}
+        {combos.map((combo) => (
+          <article key={combo._id ?? combo.id} className={`combo-card combo-card--${combo.category || 'mixed'}`}>
             {(() => {
               // Show what is actually in the combo. For a "pick any N" combo
               // the pool can be longer than the card, so it is trimmed to N

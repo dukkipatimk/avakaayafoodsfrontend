@@ -111,3 +111,5 @@
   .combo-row { flex-wrap: wrap; }
   .combo-row-actions { width: 100%; }
 }
+
+.combo-form-hint { font-size: 0.68rem; color: var(--text-light, #9a8f7d); }

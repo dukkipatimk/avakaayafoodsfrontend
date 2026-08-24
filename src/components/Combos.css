@@ -193,53 +193,74 @@
   text-transform: uppercase;
   white-space: nowrap;
 }
-
-/* 1 — deep red block, light type. */
-.combo-card--t1 {
+/* Palette is keyed to the combo's category, so the same kind of bundle always
+   looks the same regardless of where it lands in the row. Each theme sets a
+   background, a border and a CTA; only the dark theme flips the type colour. */
+.combo-card--non-veg-pickles {
   background: linear-gradient(135deg, #a3161b 0%, #c0392b 100%);
   border-color: #8d1216;
 }
-.combo-card--t1 .combo-name,
-.combo-card--t1 .combo-price strong { color: #fff; }
-.combo-card--t1 .combo-sub { color: rgba(255, 255, 255, 0.82); }
-.combo-card--t1 .combo-mrp { color: rgba(255, 255, 255, 0.7); }
-.combo-card--t1 .combo-save { background: #fff; color: #a3161b; }
-.combo-card--t1 .combo-cta {
-  background: #fff;
-  border-color: #fff;
-  color: #a3161b;
-}
-.combo-card--t1 .combo-cta:hover { background: #ffeceb; border-color: #ffeceb; }
+.combo-card--non-veg-pickles .combo-name,
+.combo-card--non-veg-pickles .combo-price strong { color: #fff; }
+.combo-card--non-veg-pickles .combo-sub { color: rgba(255, 255, 255, 0.82); }
+.combo-card--non-veg-pickles .combo-mrp { color: rgba(255, 255, 255, 0.7); }
+.combo-card--non-veg-pickles .combo-save { background: #fff; color: #a3161b; }
+.combo-card--non-veg-pickles .combo-thumb { border-color: rgba(255, 255, 255, 0.55); }
+.combo-card--non-veg-pickles .combo-cta { background: #fff; border-color: #fff; color: #a3161b; }
+.combo-card--non-veg-pickles .combo-cta:hover { background: #ffeceb; border-color: #ffeceb; }
 
-/* 2 — warm cream block. */
-.combo-card--t2 {
+.combo-card--veg-pickles {
+  background: linear-gradient(135deg, #e6f2df 0%, #f5fbf1 100%);
+  border-color: #bcd9ac;
+}
+.combo-card--veg-pickles .combo-cta { background: #fff; border-color: var(--green-mid, #3d8b22); color: #2f7a17; }
+.combo-card--veg-pickles .combo-cta:hover { background: #f5fbf1; border-color: #1c4a0e; }
+
+.combo-card--powders {
+  background: linear-gradient(135deg, #fbe4d2 0%, #fdf3ea 100%);
+  border-color: #efc7a5;
+}
+.combo-card--powders .combo-cta { background: #fff; border-color: #c26a1e; color: #b05f18; }
+.combo-card--powders .combo-cta:hover { background: #fdf3ea; border-color: #944c12; }
+
+.combo-card--snacks {
   background: linear-gradient(135deg, #fbeecb 0%, #fdf6e4 100%);
   border-color: #edd9a6;
 }
-.combo-card--t2 .combo-cta {
-  background: #fff;
-  border-color: var(--gold, #c9a84c);
-  color: #9a7a1c;
-}
-.combo-card--t2 .combo-cta:hover { background: #fdf6e4; border-color: #b8942f; }
+.combo-card--snacks .combo-cta { background: #fff; border-color: var(--gold, #c9a84c); color: #9a7a1c; }
+.combo-card--snacks .combo-cta:hover { background: #fdf6e4; border-color: #b8942f; }
 
-/* 3 — soft pink block. */
-.combo-card--t3 {
+.combo-card--sweets {
   background: linear-gradient(135deg, #fbdfdc 0%, #fdefee 100%);
   border-color: #f2c3bd;
 }
-.combo-card--t3 .combo-cta {
-  background: #fff;
-  border-color: var(--red-chili, #c0392b);
-  color: var(--red-chili, #c0392b);
-}
-.combo-card--t3 .combo-cta:hover { background: #fdefee; border-color: #a3161b; }
+.combo-card--sweets .combo-cta { background: #fff; border-color: var(--red-chili, #c0392b); color: var(--red-chili, #c0392b); }
+.combo-card--sweets .combo-cta:hover { background: #fdefee; border-color: #a3161b; }
 
-/* Themed cards carry their own button colours, so the default green fill
-   and the transparent "build" variant must not override them. */
-.combo-card--t1 .combo-cta--build,
-.combo-card--t2 .combo-cta--build,
-.combo-card--t3 .combo-cta--build { background: #fff; }
+.combo-card--ghee {
+  background: linear-gradient(135deg, #fdf1cf 0%, #fefaeb 100%);
+  border-color: #ecd894;
+}
+.combo-card--ghee .combo-cta { background: #fff; border-color: #c9a020; color: #96770f; }
+.combo-card--ghee .combo-cta:hover { background: #fefaeb; border-color: #7a600a; }
+
+.combo-card--hampers {
+  background: linear-gradient(135deg, #ece3fa 0%, #f7f3fe 100%);
+  border-color: #cfbdf0;
+}
+.combo-card--hampers .combo-cta { background: #fff; border-color: #5b34a3; color: #4a2b86; }
+.combo-card--hampers .combo-cta:hover { background: #f7f3fe; border-color: #3a2069; }
+
+/* Default for combos that span categories, or that predate the field. */
+.combo-card--mixed {
+  background: linear-gradient(165deg, #fdf7ee 0%, #ffffff 65%);
+  border-color: var(--ivory-deep, #e8d8c0);
+}
+
+/* Themed cards carry their own button colours, so the transparent "build"
+   variant must not override them. */
+.combo-card .combo-cta--build { background: #fff; }
+
 
 /* ══ Member product thumbnails ════════════════════════════════
    Shows what is actually in the bundle instead of one generic combo photo. */
@@ -268,8 +289,6 @@
   font-weight: 700;
   color: var(--text-mid, #5a5344);
 }
-/* The dark card needs a light edge instead of a dark one. */
-.combo-card--t1 .combo-thumb { border-color: rgba(255, 255, 255, 0.55); }
 
 @media (min-width: 769px) {
   /* Sits in the card's image column, wrapping 2-up. */
