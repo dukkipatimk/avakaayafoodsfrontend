@@ -435,6 +435,8 @@ const Checkout = () => {
           bundleId: i.bundleId,
           bundleType: i.bundleType,
           bundleLabel: i.bundleLabel,
+          // Lets the server re-derive the combo price instead of trusting ours.
+          comboId: i.comboId,
           customization: i.customization,
         })),
         shippingAddress: address,
@@ -925,14 +927,14 @@ const Checkout = () => {
                     <React.Fragment key={`${item.productId}_${item.weight}_${item.bundleId || 'regular'}`}>
                       {isFirstBundleItem(item, index) && (
                         <div className="checkout-hamper-note">
-                          <strong>Custom Gift Hamper</strong>
+                          <strong>{item.bundleLabel || 'Custom Gift Hamper'}</strong>
                           {item.customization?.styleInstructions && <span>Style: {item.customization.styleInstructions}</span>}
                           {item.customization?.personalMessage && <span>Message card: {item.customization.personalMessage}</span>}
                         </div>
                       )}
                       <div className={`checkout-item-row ${item.bundleId ? 'checkout-item-row--hamper' : ''}`}>
                         <img src={item.thumbnail} alt={item.name} className="checkout-item-img" />
-                        <span className="checkout-item-name">{item.name}{item.bundleId && <small>Inside custom hamper</small>}</span>
+                        <span className="checkout-item-name">{item.name}{item.bundleId && <small>Inside {item.bundleLabel || 'custom hamper'}</small>}</span>
                         <span className="checkout-item-weight">{item.weight}</span>
                         <span className="checkout-item-qty">x{item.quantity}</span>
                         <span className="checkout-item-price">INR {(Number(item.price) * item.quantity).toLocaleString()}</span>
@@ -969,7 +971,7 @@ const Checkout = () => {
                 <img src={item.thumbnail} alt={item.name} className="summary-item-img" />
                 <div className="summary-item-info">
                   <span className="summary-item-name">{item.name}</span>
-                  <span className="summary-item-meta">{item.bundleId ? 'Custom hamper | ' : ''}{item.weight} x {item.quantity}</span>
+                  <span className="summary-item-meta">{item.bundleId ? `${item.bundleLabel || 'Custom hamper'} | ` : ''}{item.weight} x {item.quantity}</span>
                 </div>
                 <span className="summary-item-price">INR {(Number(item.price) * item.quantity).toLocaleString()}</span>
               </div>

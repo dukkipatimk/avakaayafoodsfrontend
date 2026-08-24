@@ -43,11 +43,15 @@ const Cart = () => {
 
   const totalWeightGrams = items.reduce((sum, item) => sum + parseWeightGrams(item.weight) * item.quantity, 0);
   const regularItems = items.filter(item => !item.bundleId);
-  const hamperGroups = items.filter(item => item.bundleType === 'hamper').reduce((groups, item) => {
+  // Bundles (hampers and combos alike) are grouped by bundleId so each renders
+  // as one priced set rather than as loose lines.
+  const groupByBundle = (type) => items.filter(item => item.bundleType === type).reduce((groups, item) => {
     if (!groups[item.bundleId]) groups[item.bundleId] = [];
     groups[item.bundleId].push(item);
     return groups;
   }, {});
+  const hamperGroups = groupByBundle('hamper');
+  const comboGroups = groupByBundle('combo');
 
   const renderItem = (item, isHamperItem = false) => (
     <div key={`${item.productId}_${item.weight}_${item.bundleId || 'regular'}`} className={`cart-item ${isHamperItem ? 'cart-item--hamper' : ''}`}>
@@ -65,7 +69,7 @@ const Cart = () => {
       </div>
       <div className="cart-item-controls">
         {isHamperItem ? (
-          <span className="hamper-included-label">Inside hamper</span>
+          <span className="hamper-included-label">{item.bundleType === 'combo' ? 'In combo' : 'Inside hamper'}</span>
         ) : (
           <div className="quantity-control">
             <button className="qty-btn" onClick={() => updateQuantity(item.productId, item.weight, item.quantity - 1)}>-</button>
@@ -125,7 +129,31 @@ const Cart = () => {
                 </section>
               );
             })}
-            {regularItems.length > 0 && Object.keys(hamperGroups).length > 0 && <h2 className="cart-regular-title">Other Products</h2>}
+            {Object.entries(comboGroups).map(([bundleId, comboItems]) => {
+              const groupTotal = comboItems.reduce((sum, item) => sum + Number(item.price) * item.quantity, 0);
+              const looseTotal = comboItems.reduce((sum, item) => sum + Number(item.mrp || 0) * item.quantity, 0);
+              return (
+                <section key={bundleId} className="cart-hamper-group">
+                  <div className="cart-hamper-header">
+                    <div>
+                      <span className="cart-hamper-tag">{comboItems[0].bundleLabel || 'Combo'}</span>
+                      <p>{comboItems.length} products bundled together</p>
+                    </div>
+                    <div className="cart-hamper-actions">
+                      <strong>INR {groupTotal.toLocaleString()}</strong>
+                      {looseTotal > groupTotal && (
+                        <span className="cart-combo-saving">
+                          You save INR {Math.round(looseTotal - groupTotal).toLocaleString()}
+                        </span>
+                      )}
+                      <button onClick={() => removeBundle(bundleId)}>Remove combo</button>
+                    </div>
+                  </div>
+                  {comboItems.map(item => renderItem(item, true))}
+                </section>
+              );
+            })}
+            {regularItems.length > 0 && (Object.keys(hamperGroups).length > 0 || Object.keys(comboGroups).length > 0) && <h2 className="cart-regular-title">Other Products</h2>}
             {regularItems.map(item => renderItem(item))}
           </div>
 

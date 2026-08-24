@@ -259,3 +259,11 @@
   .cart-summary { padding: 20px 16px; }
   .payment-methods { flex-wrap: wrap; gap: 8px; }
 }
+
+/* Saving shown on a combo bundle in the cart. */
+.cart-combo-saving {
+  font-family: var(--font-ui);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--red-chili, #c0392b);
+}

@@ -3,8 +3,11 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
+import { UIProvider } from './context/UIContext';
 import Header from './components/Header';
 import Footer from './components/Footer';
+import CartBar from './components/CartBar';
+import QuickOrderHost from './components/QuickOrderHost';
 import Home from './pages/Home';
 import Products from './pages/Products';
 import ProductDetail from './pages/ProductDetail';
@@ -23,6 +26,7 @@ import AdminProducts from './pages/AdminProducts';
 import AdminCustomers from './pages/AdminCustomers';
 import AdminUsers from './pages/AdminUsers';
 import AdminCoupons from './pages/AdminCoupons';
+import AdminCombos from './pages/AdminCombos';
 import AdminStores from './pages/AdminStores';
 import AdminLeads from './pages/AdminLeads';
 import AdminReports from './pages/AdminReports';
@@ -46,6 +50,7 @@ function App() {
   return (
     <AuthProvider>
       <CartProvider>
+        <UIProvider>
         <Router>
           <Toaster
             position="top-center"
@@ -95,13 +100,17 @@ function App() {
               <Route path="/admin/customers" element={<AdminRoute><AdminCustomers /></AdminRoute>} />
               <Route path="/admin/users" element={<AdminRoute><AdminUsers /></AdminRoute>} />
               <Route path="/admin/coupons" element={<AdminRoute><AdminCoupons /></AdminRoute>} />
+              <Route path="/admin/combos" element={<AdminRoute><AdminCombos /></AdminRoute>} />
               <Route path="/admin/stores" element={<AdminRoute><AdminStores /></AdminRoute>} />
               <Route path="/admin/leads" element={<AdminRoute roles={['admin', 'store_manager']}><AdminLeads /></AdminRoute>} />
               <Route path="/admin/reports" element={<AdminRoute roles={['super_admin']}><AdminReports /></AdminRoute>} />
             </Routes>
           </main>
           <Footer />
+          <CartBar />
+          <QuickOrderHost />
         </Router>
+        </UIProvider>
       </CartProvider>
     </AuthProvider>
   );

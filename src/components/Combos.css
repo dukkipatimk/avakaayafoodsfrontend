@@ -1,0 +1,103 @@
+/* "Save with combos" — horizontally scrolling bundle cards.
+   Shown on every breakpoint; the row simply stops scrolling on desktop. */
+.combos { padding: 22px 0; scroll-margin-top: 80px; }
+
+.combos-heading {
+  margin: 0 12px 12px;
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-mid, #5a5344);
+}
+
+.combos-row {
+  display: flex;
+  gap: 12px;
+  padding: 4px 12px 6px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+.combos-row::-webkit-scrollbar { display: none; }
+
+.combo-card {
+  position: relative;
+  flex: 0 0 220px;
+  scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
+  padding: 14px;
+  border: 1.5px solid var(--ivory-deep, #e8d8c0);
+  border-radius: var(--radius-md, 12px);
+  background: linear-gradient(165deg, #fdf7ee 0%, #ffffff 65%);
+}
+.combo-save {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 4px 9px;
+  border-radius: 999px;
+  background: var(--red-chili, #c0392b);
+  color: #fff;
+  font-family: var(--font-ui);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+.combo-img {
+  width: 100%;
+  height: 96px;
+  object-fit: cover;
+  border-radius: var(--radius-sm, 8px);
+  margin-bottom: 10px;
+  background: var(--ivory-dark, #f3ecdc);
+}
+.combo-name {
+  margin: 0 0 3px;
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--green-deep, #1c4a0e);
+}
+.combo-sub {
+  margin: 0 0 10px;
+  font-family: var(--font-ui);
+  font-size: 0.72rem;
+  color: var(--text-light, #9a8f7d);
+  line-height: 1.3;
+}
+.combo-price {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin: auto 0 12px;
+  font-family: var(--font-ui);
+}
+.combo-price strong { font-size: 1.15rem; color: var(--green-deep, #1c4a0e); }
+.combo-mrp { font-size: 0.82rem; color: var(--text-light, #9a8f7d); text-decoration: line-through; }
+
+.combo-cta {
+  padding: 11px;
+  border: 1.5px solid var(--green-deep, #1c4a0e);
+  border-radius: var(--radius-sm, 8px);
+  background: var(--green-deep, #1c4a0e);
+  color: #fff;
+  font-family: var(--font-ui);
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+.combo-cta:hover { background: #245c14; }
+.combo-cta:active { transform: scale(0.98); }
+.combo-cta--build { background: transparent; color: var(--green-deep, #1c4a0e); }
+.combo-cta--build:hover { background: var(--ivory, #faf6ed); }
+
+@media (min-width: 769px) {
+  .combos { max-width: 1440px; margin: 0 auto; padding: 40px 24px; }
+  .combos-heading { margin-left: 0; font-size: 0.95rem; }
+  .combos-row { padding-left: 0; padding-right: 0; flex-wrap: wrap; }
+  .combo-card { flex: 0 0 260px; }
+}

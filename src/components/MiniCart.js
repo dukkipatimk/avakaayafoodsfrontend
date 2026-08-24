@@ -43,7 +43,7 @@ const MiniCart = ({ isOpen, onClose }) => {
                     >
                       {item.name}
                     </Link>
-                    {item.bundleId && <span className="mini-cart-hamper-badge">Custom Hamper</span>}
+                    {item.bundleId && <span className="mini-cart-hamper-badge">{item.bundleLabel || "Custom Hamper"}</span>}
                     <span className="mini-cart-item-meta">
                       {item.weight}
                       {item.mrp > item.price && (

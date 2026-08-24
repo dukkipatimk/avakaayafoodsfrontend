@@ -75,6 +75,43 @@ export const CartProvider = ({ children }) => {
     return bundleId;
   };
 
+  // Adds a combo as one bundle: its members share a bundleId and carry the
+  // comboId so the server can re-derive the bundle price at checkout. Prices
+  // stored here are the catalogue prices scaled to the combo total, purely so
+  // the cart displays the right figure — the server never trusts them.
+  const addCombo = (combo, selections) => {
+    const bundleId = `combo_${combo._id ?? combo.id}_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
+    const catalogueTotal = selections.reduce((sum, s) => sum + (Number(s.variant.price) || 0), 0);
+    const comboPrice = Number(combo.price) || 0;
+
+    let allocated = 0;
+    const comboItems = selections.map(({ product, variant }, index) => {
+      const isLast = index === selections.length - 1;
+      const share = isLast || catalogueTotal <= 0
+        ? comboPrice - allocated
+        : Math.round((Number(variant.price) || 0) / catalogueTotal * comboPrice * 100) / 100;
+      allocated += share;
+      return {
+        productId: product._id ?? product.id,
+        name: product.name,
+        thumbnail: product.thumbnail,
+        slug: product.slug,
+        weight: variant.weight,
+        price: Number(share.toFixed(2)),
+        mrp: Number(variant.price) || 0,       // strikethrough = what it costs loose
+        quantity: 1,
+        isVeg: product.isVeg,
+        bundleId,
+        bundleType: 'combo',
+        bundleLabel: combo.name,
+        comboId: combo._id ?? combo.id,
+      };
+    }).filter(item => item.productId != null);
+
+    setItems(prev => [...prev, ...comboItems]);
+    return bundleId;
+  };
+
   const updateQuantity = (productId, weight, quantity, bundleId = '') => {
     if (quantity < 1) return removeItem(productId, weight, bundleId);
     const key = getKey(productId, weight, bundleId);
@@ -95,7 +132,7 @@ export const CartProvider = ({ children }) => {
 
   return (
     <CartContext.Provider value={{
-      items, addItem, addHamper, updateQuantity, removeItem, removeBundle, clearCart,
+      items, addItem, addHamper, addCombo, updateQuantity, removeItem, removeBundle, clearCart,
       subtotal, totalItems, savings
     }}>
       {children}
