@@ -313,6 +313,8 @@ const Home = () => {
       </div>
       </section>
 
+      <Combos />
+
       {/* â”€â”€ Best sellers â€” buy without opening a product page â”€â”€ */}
       {bestSellers.length > 0 && (
         <section className="bestsellers-section">
@@ -325,8 +327,6 @@ const Home = () => {
           </div>
         </section>
       )}
-
-      <Combos />
 
       {/* â”€â”€ USP strip â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <div className="usp-strip">
