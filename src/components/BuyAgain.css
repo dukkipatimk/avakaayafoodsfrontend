@@ -86,3 +86,20 @@
   color: var(--green-mid, #3d8b22);
   cursor: pointer;
 }
+
+/* Heading outside the card, matching the Combos heading so the two line up
+   when they share a row. */
+.buy-again-heading {
+  margin: 0 0 12px;
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-mid, #5a5344);
+}
+.buy-again-card .buy-again-date { display: block; margin-bottom: 10px; }
+
+@media (min-width: 769px) {
+  .buy-again-heading { font-size: 0.95rem; }
+}

@@ -63,11 +63,11 @@ const BuyAgain = () => {
 
   return (
     <section className="buy-again" aria-label="Buy again">
+      {/* Heading sits outside the card so it lines up with the Combos heading
+          when the two share a row on laptops. */}
+      <h2 className="buy-again-heading">🔄 Your last order</h2>
       <div className="buy-again-card">
-        <header className="buy-again-head">
-          <span className="buy-again-title">🔄 Your last order</span>
-          {date && <span className="buy-again-date">Ordered {date}</span>}
-        </header>
+        {date && <span className="buy-again-date">Ordered {date}</span>}
 
         <ul className="buy-again-lines">
           {lines.map((item) => (

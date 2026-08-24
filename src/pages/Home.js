@@ -72,7 +72,7 @@ const CATEGORIES = [
 const MOBILE_TILES = [
   ...CATEGORIES.map(c => ({ label: c.name, to: `/collections/${c.slug}`, image: c.image, count: c.count })),
   { label: 'Hampers',  to: '/gift-hamper', glyph: '🎁', accent: 'gift' },
-  { label: 'Shop All', to: '/products',    glyph: '⊞',  accent: 'all'  },
+  { label: 'More Categories', to: '/products', glyph: '•••', accent: 'all' },
 ];
 
 const FESTIVALS = [

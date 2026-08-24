@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import api from '../utils/api';
 import { useCart } from '../context/CartContext';
 import { trackEvent } from '../utils/tracking';
@@ -51,7 +52,10 @@ const Combos = () => {
 
   return (
     <section className="combos" id="combos" aria-label="Save with combos">
-      <h2 className="combos-heading">🎁 Save with combos</h2>
+      <div className="combos-head">
+        <h2 className="combos-heading">🎁 Save more with combos</h2>
+        <Link to="/products" className="combos-all">View all combos ›</Link>
+      </div>
 
       <div className="combos-row">
         {combos.map((combo) => (

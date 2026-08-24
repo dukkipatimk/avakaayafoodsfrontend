@@ -95,9 +95,68 @@
 .combo-cta--build { background: transparent; color: var(--green-deep, #1c4a0e); }
 .combo-cta--build:hover { background: var(--ivory, #faf6ed); }
 
+/* Section heading row, with the "view all" link pushed right. */
+.combos-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 12px 12px;
+}
+.combos-heading { margin: 0; }
+.combos-all {
+  font-family: var(--font-ui);
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--maroon, #8a1a1a);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.combos-all:hover { text-decoration: underline; }
+
+/* Laptops: three wide cards across the full width, image beside the copy
+   rather than stacked above it. */
 @media (min-width: 769px) {
-  .combos { max-width: 1440px; margin: 0 auto; padding: 40px 24px; }
-  .combos-heading { margin-left: 0; font-size: 0.95rem; }
-  .combos-row { padding-left: 0; padding-right: 0; flex-wrap: wrap; }
-  .combo-card { flex: 0 0 260px; }
+  .combos { max-width: 1440px; margin: 0 auto; padding: 10px 24px 34px; }
+  .combos-head { margin-left: 0; margin-right: 0; }
+  .combos-heading { font-size: 0.95rem; }
+  .combos-row {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+    padding: 0;
+    overflow: visible;
+  }
+  .combo-card {
+    flex: none;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      "name  image"
+      "sub   image"
+      "price image"
+      "cta   image";
+    align-items: start;
+    column-gap: 12px;
+    padding: 18px 20px;
+    min-height: 168px;
+  }
+  .combo-name  { grid-area: name; font-size: 1.15rem; }
+  .combo-sub   { grid-area: sub; }
+  .combo-price { grid-area: price; margin: 8px 0 12px; }
+  .combo-cta   { grid-area: cta; justify-self: start; padding: 10px 20px; }
+  .combo-img {
+    grid-area: image;
+    align-self: end;
+    width: 150px;
+    height: 100%;
+    min-height: 120px;
+    margin: 0;
+    border-radius: var(--radius-sm, 8px);
+  }
+  .combo-save { top: 18px; right: 20px; }
+}
+
+@media (max-width: 1180px) and (min-width: 769px) {
+  .combos-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }

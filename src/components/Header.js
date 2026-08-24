@@ -70,13 +70,6 @@ const CAT_ICONS = {
   </>),
 };
 
-// Non-category destinations that still belong in the category bar.
-const SHORTCUT_LINKS = [
-  { label: 'Combos',       to: '/#combos',              badge: { text: 'HOT', tone: 'hot' } },
-  { label: 'New Arrivals', to: '/products?sort=newest' },
-  { label: 'Offers',       to: '/products?sort=popular', badge: { text: '%', tone: 'gold' } },
-];
-
 const Header = () => {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -408,7 +401,9 @@ const Header = () => {
           </Link>
 
           <div className="cat-bar-list">
-            {categories.filter((c) => c.path !== '/collections/gift-hampers').map((c) => {
+            {/* Product categories only. Hampers, combos, new arrivals and offers
+                live on the home page and in the menu drawer, not here. */}
+            {categories.filter((c) => c.path !== '/gift-hamper').map((c) => {
               const slug = c.path.startsWith('/collections/') ? c.path.split('/').pop() : null;
               const iconKey = c.path.split('/').pop();
               return (
@@ -419,17 +414,6 @@ const Header = () => {
                 </NavLink>
               );
             })}
-
-            {/* Cross-cutting entry points — no category photo, so they render as
-                text links with a badge rather than borrowing a product image. */}
-            {SHORTCUT_LINKS.map((s) => (
-              <NavLink key={s.label} to={s.to}
-                onMouseEnter={() => { cancelCatClose(); setOpenCat(null); }}
-                className={({ isActive }) => `cat-bar-link cat-bar-link--shortcut${isActive ? ' active' : ''}`}>
-                <span className="cat-bar-label">{s.label}</span>
-                {s.badge && <span className={`cat-bar-badge cat-bar-badge--${s.badge.tone}`}>{s.badge.text}</span>}
-              </NavLink>
-            ))}
           </div>
         </nav>
 

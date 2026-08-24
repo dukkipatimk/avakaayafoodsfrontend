@@ -16,6 +16,7 @@ const QuickActions = ({ onQuickOrder }) => {
           <span className="qa-tile-icon" aria-hidden="true">⚡</span>
           <span className="qa-tile-label">Quick Order</span>
           <span className="qa-tile-sub">Order favourites in seconds</span>
+          <span className="qa-tile-cta">Order now &rarr;</span>
         </button>
 
         {/* Buy Again needs an account — send signed-out visitors to log in
@@ -24,18 +25,21 @@ const QuickActions = ({ onQuickOrder }) => {
           <span className="qa-tile-icon" aria-hidden="true">🔄</span>
           <span className="qa-tile-label">Buy Again</span>
           <span className="qa-tile-sub">{user ? 'Reorder past favourites' : 'Sign in to reorder'}</span>
+          <span className="qa-tile-cta">Buy again &rarr;</span>
         </Link>
 
         <a className="qa-tile qa-tile--combo" href="#combos">
           <span className="qa-tile-icon" aria-hidden="true">🎁</span>
           <span className="qa-tile-label">Combos</span>
           <span className="qa-tile-sub">Save on bundles</span>
+          <span className="qa-tile-cta">Build now &rarr;</span>
         </a>
 
         <Link className="qa-tile qa-tile--offers" to="/products?sort=popular">
           <span className="qa-tile-icon" aria-hidden="true">%</span>
           <span className="qa-tile-label">Offers</span>
           <span className="qa-tile-sub">Best sellers &amp; deals</span>
+          <span className="qa-tile-cta">Explore &rarr;</span>
         </Link>
       </div>
     </section>

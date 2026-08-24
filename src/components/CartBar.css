@@ -1,96 +1,80 @@
-/* Sticky cart summary — sits directly above the mobile bottom toolbar and
-   only appears when there is something in the cart. Phones/tablets only:
-   desktop already has the floating side-menu cart. */
-.cart-bar { display: none; }
+/* Sticky cart summary — only rendered when the cart has something in it.
+   Base look is unconditional; the media queries only decide where it sits:
+   a full-width bar above the mobile toolbar, a floating pill on laptops. */
+.cart-bar {
+  position: fixed;
+  z-index: 996;                      /* under the mobile toolbar (997) */
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 8px 8px 14px;
+  border-radius: 999px;
+  background: var(--green-deep, #1c4a0e);
+  color: #f3ead2;
+  box-shadow: 0 10px 26px -10px rgba(0, 0, 0, 0.55);
+  animation: cart-bar-in 0.22s ease;
+}
+@keyframes cart-bar-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) { .cart-bar { animation: none; } }
 
+.cart-bar-icon { display: inline-flex; flex-shrink: 0; color: var(--gold, #c9a84c); }
+
+.cart-bar-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.25;
+  min-width: 0;
+  flex: 1;
+  font-family: var(--font-ui);
+}
+.cart-bar-text strong { font-size: 0.82rem; font-weight: 600; }
+.cart-bar-total { font-size: 0.95rem; font-weight: 700; color: var(--gold, #c9a84c); }
+
+.cart-bar-cta {
+  flex-shrink: 0;
+  background: var(--gold, #c9a84c);
+  color: var(--green-deep, #1c4a0e);
+  font-family: var(--font-ui);
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 10px 16px;
+  border-radius: 999px;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.cart-bar-cta:hover { background: #e0bd63; }
+.cart-bar-cta:active { transform: scale(0.97); }
+
+/* Phones/tablets: full-width bar sitting above the bottom toolbar. */
 @media (max-width: 1023px) {
   .cart-bar {
-    position: fixed;
     left: 8px;
     right: 8px;
     bottom: calc(66px + env(safe-area-inset-bottom, 0px));
-    z-index: 996;                      /* under the toolbar (997), over content */
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 8px 8px 8px 14px;
-    border-radius: 999px;
-    background: var(--green-deep, #1c4a0e);
-    color: #f3ead2;
-    box-shadow: 0 10px 26px -10px rgba(0, 0, 0, 0.55);
-    animation: cart-bar-in 0.22s ease;
   }
-  @keyframes cart-bar-in {
-    from { opacity: 0; transform: translateY(10px); }
-    to   { opacity: 1; transform: none; }
-  }
-  .cart-bar-icon { display: inline-flex; flex-shrink: 0; color: var(--gold, #c9a84c); }
-  .cart-bar-text {
-    display: flex;
-    flex-direction: column;
-    line-height: 1.25;
-    min-width: 0;
-    flex: 1;
-    font-family: var(--font-ui);
-  }
-  .cart-bar-text strong { font-size: 0.82rem; font-weight: 600; }
-  .cart-bar-total { font-size: 0.95rem; font-weight: 700; color: var(--gold, #c9a84c); }
-  .cart-bar-cta {
-    flex-shrink: 0;
-    background: var(--gold, #c9a84c);
-    color: var(--green-deep, #1c4a0e);
-    font-family: var(--font-ui);
-    font-size: 0.82rem;
-    font-weight: 700;
-    padding: 10px 16px;
-    border-radius: 999px;
-    text-decoration: none;
-    white-space: nowrap;
-  }
-  .cart-bar-cta:active { transform: scale(0.97); }
-
   /* Extra room under the page so the bar never hides the last element. */
   body.has-cart-bar { padding-bottom: calc(122px + env(safe-area-inset-bottom, 0px)); }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .cart-bar { animation: none; }
-}
-
-/* Laptops: the cart summary becomes a floating pill in the bottom-right
-   corner (there is no bottom nav to sit above). */
+/* Laptops: floating pill in the bottom-right corner — there is no bottom nav
+   to sit above, and the page shouldn't lose a full-width strip to it. */
 @media (min-width: 1024px) {
   .cart-bar {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    position: fixed;
     right: 24px;
     bottom: 24px;
     left: auto;
     z-index: 940;                    /* above content, below modals/sheets */
+    gap: 14px;
     padding: 10px 12px 10px 20px;
-    border-radius: 999px;
-    background: var(--green-deep, #1c4a0e);
-    color: #f3ead2;
     box-shadow: 0 14px 34px -12px rgba(0, 0, 0, 0.55);
   }
-  .cart-bar-icon { display: inline-flex; color: var(--gold, #c9a84c); }
-  .cart-bar-text { display: flex; flex-direction: column; line-height: 1.25; font-family: var(--font-ui); }
-  .cart-bar-text strong { font-size: 0.78rem; font-weight: 600; }
-  .cart-bar-total { font-size: 1rem; font-weight: 700; color: var(--gold, #c9a84c); }
-  .cart-bar-cta {
-    background: var(--gold, #c9a84c);
-    color: var(--green-deep, #1c4a0e);
-    font-family: var(--font-ui);
-    font-size: 0.82rem;
-    font-weight: 700;
-    padding: 11px 18px;
-    border-radius: 999px;
-    text-decoration: none;
-    white-space: nowrap;
-  }
-  .cart-bar-cta:hover { background: #e0bd63; }
+  .cart-bar-text { flex: 0 1 auto; }
+  .cart-bar-text strong { font-size: 0.78rem; }
+  .cart-bar-total { font-size: 1rem; }
+  .cart-bar-cta { padding: 11px 18px; }
 
   /* The floating side-menu cart would duplicate this pill. */
   body.has-cart-bar .side-menu-btn--cart { display: none; }
