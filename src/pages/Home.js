@@ -296,10 +296,13 @@ const Home = () => {
         })}
       </nav>
 
-      <QuickActions onQuickOrder={openQuickOrder} />
+      {/* Actions column: shortcut tiles with the last-order card folded in
+          underneath, rather than as a separate page section. */}
+      <div className="shop-band-actions">
+        <QuickActions onQuickOrder={openQuickOrder} />
+        <BuyAgain />
+      </div>
       </section>
-
-      <BuyAgain />
 
       {/* â”€â”€ Best sellers â€” buy without opening a product page â”€â”€ */}
       {bestSellers.length > 0 && (

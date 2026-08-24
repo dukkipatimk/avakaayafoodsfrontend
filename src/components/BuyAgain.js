@@ -1,17 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import api from '../utils/api';
-import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
+import useLastOrder from '../hooks/useLastOrder';
 import { addOrderToCart, reorderableItems } from '../utils/reorder';
 import { trackEvent } from '../utils/tracking';
 import toast from 'react-hot-toast';
 import './BuyAgain.css';
-
-// Orders that never completed payment aren't something to "buy again".
-const REORDERABLE_STATUS = new Set([
-  'placed', 'confirmed', 'processing', 'packed', 'shipped', 'out-for-delivery', 'delivered',
-]);
 
 const orderedOn = (value) => {
   const date = new Date(value);
@@ -20,32 +14,17 @@ const orderedOn = (value) => {
     : date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
 };
 
+// One tap to recreate the customer's last order. Lives inside the shop band's
+// action column, so it is laid out as a wide card rather than a page section.
 const BuyAgain = () => {
-  const { user } = useAuth();
   const { addItem, subtotal } = useCart();
   const navigate = useNavigate();
-  const [order, setOrder] = useState(null);
-
-  useEffect(() => {
-    if (!user) { setOrder(null); return; }
-    let cancelled = false;
-    api.get('/orders/my')
-      .then((r) => {
-        if (cancelled) return;
-        // /orders/my is already sorted newest-first.
-        const last = (r.data.orders || []).find(
-          (o) => REORDERABLE_STATUS.has(o.orderStatus) && reorderableItems(o).length > 0
-        );
-        setOrder(last || null);
-      })
-      .catch(() => { if (!cancelled) setOrder(null); });
-    return () => { cancelled = true; };
-  }, [user]);
+  const order = useLastOrder();
 
   if (!order) return null;
 
   const items = reorderableItems(order);
-  const lines = items.slice(0, 4);
+  const lines = items.slice(0, 3);
   const date = orderedOn(order.createdAt);
 
   const addAll = () => {
@@ -63,30 +42,33 @@ const BuyAgain = () => {
 
   return (
     <section className="buy-again" aria-label="Buy again">
-      {/* Heading sits outside the card so it lines up with the Combos heading
-          when the two share a row on laptops. */}
-      <h2 className="buy-again-heading">🔄 Your last order</h2>
       <div className="buy-again-card">
-        {date && <span className="buy-again-date">Ordered {date}</span>}
+        <div className="buy-again-info">
+          <header className="buy-again-head">
+            <span className="buy-again-title">🔄 Your last order</span>
+            {date && <span className="buy-again-date">Ordered {date}</span>}
+          </header>
 
-        <ul className="buy-again-lines">
-          {lines.map((item) => (
-            <li key={`${item.productId}_${item.variantWeight}`}>
-              <span className="buy-again-name">{item.product?.name || item.name}</span>
-              <span className="buy-again-weight">{item.variantWeight}</span>
-            </li>
-          ))}
-          {items.length > lines.length && (
-            <li className="buy-again-more">+{items.length - lines.length} more</li>
-          )}
-        </ul>
+          <ul className="buy-again-lines">
+            {lines.map((item) => (
+              <li key={`${item.productId}_${item.variantWeight}`}>
+                <span className="buy-again-name">{item.product?.name || item.name}</span>
+                <span className="buy-again-weight">{item.variantWeight}</span>
+              </li>
+            ))}
+            {items.length > lines.length && (
+              <li className="buy-again-more">+{items.length - lines.length} more</li>
+            )}
+          </ul>
+        </div>
 
-        <div className="buy-again-total">₹{Number(order.subtotal || 0).toLocaleString('en-IN')}</div>
-
-        <button className="buy-again-cta" onClick={addAll}>Add all to cart</button>
-        <button className="buy-again-modify" onClick={() => navigate('/my-orders')}>
-          Modify order →
-        </button>
+        <div className="buy-again-actions">
+          <span className="buy-again-total">₹{Number(order.subtotal || 0).toLocaleString('en-IN')}</span>
+          <button className="buy-again-cta" onClick={addAll}>Add all to cart</button>
+          <button className="buy-again-modify" onClick={() => navigate('/my-orders')}>
+            Modify order →
+          </button>
+        </div>
       </div>
     </section>
   );

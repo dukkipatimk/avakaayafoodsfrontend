@@ -1,42 +1,46 @@
 /* "Buy again" — one tap to recreate the customer's last order.
-   Only rendered for signed-in customers who actually have a past order. */
-.buy-again { padding: 0 12px; margin: 14px 0; }
+   Rendered inside the shop band's action column, under the shortcut tiles. */
+.buy-again { padding: 0; margin: 0; }
 
 .buy-again-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
   background: linear-gradient(160deg, #f2f8ee 0%, #ffffff 70%);
-  border: 1.5px solid var(--ivory-deep, #e8d8c0);
+  border: 1.5px solid #bcd9ac;
   border-radius: var(--radius-md, 12px);
-  padding: 16px;
-  max-width: 520px;
-  margin: 0 auto;
+  padding: 14px;
 }
+
+.buy-again-info { flex: 1; min-width: 0; }
+
 .buy-again-head {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
   gap: 10px;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
 }
 .buy-again-title {
   font-family: var(--font-ui);
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--green-deep, #1c4a0e);
+  color: var(--green-mid, #3d8b22);
 }
-.buy-again-date { font-family: var(--font-ui); font-size: 0.72rem; color: var(--text-light, #9a8f7d); }
+.buy-again-date { font-family: var(--font-ui); font-size: 0.7rem; color: var(--text-light, #9a8f7d); }
 
-.buy-again-lines { list-style: none; margin: 0 0 12px; padding: 0; }
+.buy-again-lines { list-style: none; margin: 0; padding: 0; }
 .buy-again-lines li {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
   gap: 12px;
-  padding: 6px 0;
+  padding: 4px 0;
   border-bottom: 1px solid rgba(0, 0, 0, 0.05);
   font-family: var(--font-ui);
-  font-size: 0.85rem;
+  font-size: 0.8rem;
 }
 .buy-again-lines li:last-child { border-bottom: none; }
 .buy-again-name {
@@ -45,26 +49,25 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.buy-again-weight { flex-shrink: 0; color: var(--text-light, #9a8f7d); font-size: 0.78rem; }
-.buy-again-more { color: var(--text-light, #9a8f7d); font-size: 0.78rem; }
+.buy-again-weight { flex-shrink: 0; color: var(--text-light, #9a8f7d); font-size: 0.74rem; }
+.buy-again-more { color: var(--text-light, #9a8f7d); font-size: 0.74rem; }
 
+.buy-again-actions { display: flex; flex-direction: column; gap: 6px; }
 .buy-again-total {
   font-family: var(--font-ui);
-  font-size: 1.25rem;
+  font-size: 1.05rem;
   font-weight: 700;
   color: var(--green-deep, #1c4a0e);
-  margin-bottom: 12px;
 }
 
 .buy-again-cta {
-  width: 100%;
-  padding: 13px;
+  padding: 11px;
   border: none;
   border-radius: var(--radius-sm, 8px);
   background: var(--green-deep, #1c4a0e);
   color: #fff;
   font-family: var(--font-ui);
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   font-weight: 700;
   letter-spacing: 0.02em;
   cursor: pointer;
@@ -74,39 +77,22 @@
 .buy-again-cta:active { transform: scale(0.99); }
 
 .buy-again-modify {
-  display: block;
-  width: 100%;
-  margin-top: 8px;
-  padding: 8px;
+  padding: 2px;
   background: none;
   border: none;
   font-family: var(--font-ui);
-  font-size: 0.8rem;
+  font-size: 0.76rem;
   font-weight: 600;
   color: var(--green-mid, #3d8b22);
   cursor: pointer;
 }
 
-/* Heading outside the card, matching the Combos heading so the two line up
-   when they share a row. */
-.buy-again-heading {
-  margin: 0 0 12px;
-  font-family: var(--font-ui);
-  font-size: 0.85rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--text-mid, #5a5344);
-}
-.buy-again-card .buy-again-date { display: block; margin-bottom: 10px; }
-
+/* Laptops: the card goes horizontal — order summary left, money and the
+   add-all button right — so it stays one compact strip under the tiles. */
 @media (min-width: 769px) {
-  /* Sits in the page container and hugs the left, rather than floating in the
-     middle of a full-width band with empty gutters either side. */
-  .buy-again { max-width: 1440px; margin: 0 auto; padding: 0 24px 18px; }
-  .buy-again-heading { font-size: 0.95rem; margin-bottom: 10px; }
-  .buy-again-card { max-width: 430px; margin: 0; padding: 14px 16px; }
-  .buy-again-total { font-size: 1.1rem; margin-bottom: 10px; }
-  .buy-again-cta { padding: 11px; font-size: 0.85rem; }
-  .buy-again-modify { margin-top: 4px; padding: 6px; }
+  .buy-again-card { flex-direction: row; align-items: center; gap: 18px; padding: 12px 16px; }
+  .buy-again-actions { flex: 0 0 190px; align-items: stretch; text-align: center; }
+  .buy-again-total { font-size: 1rem; }
+  .buy-again-cta { padding: 9px; font-size: 0.8rem; }
+  .buy-again-modify { font-size: 0.72rem; }
 }

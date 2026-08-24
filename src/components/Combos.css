@@ -160,3 +160,15 @@
 @media (max-width: 1180px) and (min-width: 769px) {
   .combos-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
+
+/* Phones: combo cards stack full width rather than scrolling sideways. */
+@media (max-width: 768px) {
+  .combos-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    overflow: visible;
+    scroll-snap-type: none;
+  }
+  .combo-card { flex: none; }
+}

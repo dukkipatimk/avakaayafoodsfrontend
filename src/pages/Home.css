@@ -5028,3 +5028,29 @@
     gap: 14px;
   }
 }
+
+/* Actions column: shortcut tiles with the last-order card beneath them. */
+.shop-band-actions { display: flex; flex-direction: column; gap: 10px; }
+
+@media (max-width: 768px) {
+  .shop-band-actions { padding: 4px 12px 18px; gap: 12px; }
+  .shop-band-actions .quick-actions { padding: 0; }
+}
+
+@media (min-width: 769px) {
+  .shop-band-actions { flex: 1 1 560px; min-width: 0; }
+  .shop-band-actions .quick-actions { flex: none; }
+}
+
+/* Phones: best sellers wrap into a two-column grid instead of scrolling
+   sideways — a swipe row hides most of the products off-screen. */
+@media (max-width: 768px) {
+  .bestsellers-row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    overflow: visible;
+    scroll-snap-type: none;
+  }
+  .bestsellers-row > * { flex: none; }
+}

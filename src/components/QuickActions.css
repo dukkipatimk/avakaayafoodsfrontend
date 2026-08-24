@@ -92,3 +92,9 @@
   .qa-tile { justify-content: flex-start; }
   .qa-tile-cta { margin-top: auto; padding-top: 8px; font-size: 0.62rem; }
 }
+
+/* With the last-order card present the Buy Again tile is dropped, leaving
+   three tiles to share the row. */
+@media (min-width: 769px) {
+  .quick-actions-grid--three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
