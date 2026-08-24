@@ -58,14 +58,18 @@ const Combos = () => {
       </div>
 
       <div className="combos-row">
-        {combos.map((combo) => (
-          <article key={combo._id ?? combo.id} className="combo-card">
-            {combo.savings > 0 && (
-              <span className="combo-save">Save &#8377;{combo.savings.toLocaleString('en-IN')}</span>
-            )}
+        {/* Cards cycle through three colour treatments so the row reads as a
+            promotional block rather than three identical tiles. */}
+        {combos.map((combo, index) => (
+          <article key={combo._id ?? combo.id} className={`combo-card combo-card--t${(index % 3) + 1}`}>
             {combo.image && <img className="combo-img" src={combo.image} alt="" loading="lazy" />}
 
-            <h3 className="combo-name">{combo.name}</h3>
+            <div className="combo-title-row">
+              <h3 className="combo-name">{combo.name}</h3>
+              {combo.savings > 0 && (
+                <span className="combo-save">Save &#8377;{combo.savings.toLocaleString('en-IN')}</span>
+              )}
+            </div>
             {combo.subtitle && <p className="combo-sub">{combo.subtitle}</p>}
 
             <div className="combo-price">

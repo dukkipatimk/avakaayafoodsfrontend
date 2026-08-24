@@ -172,3 +172,71 @@
   }
   .combo-card { flex: none; }
 }
+
+/* ══ Card colour treatments ═══════════════════════════════════
+   Three rotating themes so the row reads as a promotional block rather
+   than three identical tiles. */
+.combo-title-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 3px;
+}
+.combo-title-row .combo-name { margin: 0; }
+
+/* Badge sits inline beside the title now, not pinned to the corner. */
+.combo-save {
+  position: static;
+  flex-shrink: 0;
+  padding: 4px 10px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* 1 — deep red block, light type. */
+.combo-card--t1 {
+  background: linear-gradient(135deg, #a3161b 0%, #c0392b 100%);
+  border-color: #8d1216;
+}
+.combo-card--t1 .combo-name,
+.combo-card--t1 .combo-price strong { color: #fff; }
+.combo-card--t1 .combo-sub { color: rgba(255, 255, 255, 0.82); }
+.combo-card--t1 .combo-mrp { color: rgba(255, 255, 255, 0.7); }
+.combo-card--t1 .combo-save { background: #fff; color: #a3161b; }
+.combo-card--t1 .combo-cta {
+  background: #fff;
+  border-color: #fff;
+  color: #a3161b;
+}
+.combo-card--t1 .combo-cta:hover { background: #ffeceb; border-color: #ffeceb; }
+
+/* 2 — warm cream block. */
+.combo-card--t2 {
+  background: linear-gradient(135deg, #fbeecb 0%, #fdf6e4 100%);
+  border-color: #edd9a6;
+}
+.combo-card--t2 .combo-cta {
+  background: #fff;
+  border-color: var(--gold, #c9a84c);
+  color: #9a7a1c;
+}
+.combo-card--t2 .combo-cta:hover { background: #fdf6e4; border-color: #b8942f; }
+
+/* 3 — soft pink block. */
+.combo-card--t3 {
+  background: linear-gradient(135deg, #fbdfdc 0%, #fdefee 100%);
+  border-color: #f2c3bd;
+}
+.combo-card--t3 .combo-cta {
+  background: #fff;
+  border-color: var(--red-chili, #c0392b);
+  color: var(--red-chili, #c0392b);
+}
+.combo-card--t3 .combo-cta:hover { background: #fdefee; border-color: #a3161b; }
+
+/* Themed cards carry their own button colours, so the default green fill
+   and the transparent "build" variant must not override them. */
+.combo-card--t1 .combo-cta--build,
+.combo-card--t2 .combo-cta--build,
+.combo-card--t3 .combo-cta--build { background: #fff; }

@@ -242,3 +242,29 @@
 @media (max-width: 640px) {
   .order-summary-row { grid-template-columns: 1fr; }
 }
+
+/* Phones: the header was a single non-wrapping row holding the order number,
+   date, status badge, Pay Now, Reorder and the chevron — far wider than a
+   phone, so the buttons ran off the right edge of the card. Stack it. */
+@media (max-width: 768px) {
+  .order-card-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+    padding: 1rem;
+  }
+  .order-meta { min-width: 0; }
+  .order-number { margin-right: 0.5rem; font-size: 1rem; }
+  /* Without this the date breaks between the day and the month. */
+  .order-date { white-space: nowrap; }
+
+  .order-header-right {
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .order-status-badge { flex: 0 0 auto; }
+  /* Buttons share the width rather than pushing each other off-screen. */
+  .order-header-right .btn { flex: 1 1 8rem; min-width: 0; }
+  .expand-icon { margin-left: auto; }
+}
