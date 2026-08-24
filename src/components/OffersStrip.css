@@ -1,0 +1,119 @@
+/* "Best offers for you" — live coupon codes as tear-off tickets. */
+.offers-strip {
+  border: 1.5px solid var(--red-chili, #c0392b);
+  border-radius: var(--radius-md, 12px);
+  padding: 12px;
+  background: var(--white, #fff);
+}
+
+.offers-strip-heading {
+  margin: 0 0 10px;
+  font-family: var(--font-ui);
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-align: center;
+  color: var(--text-mid, #5a5344);
+}
+
+.offers-strip-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+.offer-ticket {
+  display: flex;
+  align-items: stretch;
+  border-radius: 10px;
+  overflow: hidden;
+  min-height: 96px;
+}
+.offer-ticket-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 10px 8px;
+  text-align: center;
+  font-family: var(--font-ui);
+}
+.offer-ticket-value { font-size: 1.3rem; font-weight: 700; line-height: 1.1; }
+.offer-ticket-cond { font-size: 0.66rem; color: var(--text-mid, #5a5344); }
+
+.offer-ticket-copy {
+  margin-top: 4px;
+  padding: 7px 14px;
+  border: none;
+  border-radius: 6px;
+  color: #fff;
+  font-family: var(--font-ui);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.offer-ticket-copy:active { transform: scale(0.97); }
+
+/* The stub: vertical code down the right edge, separated by a dashed tear. */
+.offer-ticket-stub {
+  flex: 0 0 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-left: 2px dashed rgba(255, 255, 255, 0.55);
+  color: #fff;
+}
+.offer-ticket-stub span {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  font-family: var(--font-ui);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  white-space: nowrap;
+}
+
+/* Three rotating colourways, matching the combo row's treatment. */
+.offer-ticket--t1 { background: #fdecea; }
+.offer-ticket--t1 .offer-ticket-value { color: #a3161b; }
+.offer-ticket--t1 .offer-ticket-copy,
+.offer-ticket--t1 .offer-ticket-stub { background: #c0392b; }
+
+.offer-ticket--t2 { background: #edf7e8; }
+.offer-ticket--t2 .offer-ticket-value { color: #1c4a0e; }
+.offer-ticket--t2 .offer-ticket-copy,
+.offer-ticket--t2 .offer-ticket-stub { background: #2f7a17; }
+
+.offer-ticket--t3 { background: #f2ecfb; }
+.offer-ticket--t3 .offer-ticket-value { color: #4a2b86; }
+.offer-ticket--t3 .offer-ticket-copy,
+.offer-ticket--t3 .offer-ticket-stub { background: #5b34a3; }
+
+.offers-strip-notes {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px 18px;
+  margin: 10px 0 0;
+  padding: 0;
+  font-family: var(--font-ui);
+  font-size: 0.66rem;
+  color: var(--text-light, #9a8f7d);
+}
+.offers-strip-notes li::before { content: '✓ '; color: var(--green-mid, #3d8b22); font-weight: 700; }
+
+@media (min-width: 560px) {
+  .offers-strip-row { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+@media (min-width: 769px) {
+  .offers-strip { padding: 14px; }
+  .offer-ticket-value { font-size: 1.45rem; }
+}

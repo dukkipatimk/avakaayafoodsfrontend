@@ -5069,3 +5069,32 @@
      "Non-Veg Pickles" wraps while its neighbours don't. */
   .cat-circle-label { min-height: 2.3em; }
 }
+
+/* ══ Band columns: browse left, offers/reorder right ══════════ */
+.shop-band-main,
+.shop-band-side { display: flex; flex-direction: column; }
+
+.shop-band-side { gap: 10px; padding: 0 12px 18px; }
+
+@media (min-width: 769px) {
+  /* Browse column keeps the 8-across circles with the shortcut tiles under
+     them; the offers panel takes the opposite column. */
+  .shop-band-main { flex: 1 1 640px; min-width: 0; gap: 14px; }
+  .shop-band-side { flex: 0 1 430px; min-width: 0; padding: 0; }
+
+  /* The circles no longer need to reflow to fill the band: the shortcut
+     tiles sit under them in the same column now. */
+  .shop-band--with-order .cat-circles {
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    align-content: start;
+    row-gap: 4px;
+  }
+  .shop-band--with-order .cat-circle-disc { width: 62px; height: 62px; }
+
+  /* Tiles span the browse column, so they can be slimmer and wider. */
+  .shop-band-main .quick-actions { flex: none; }
+  .shop-band-main .quick-actions-grid,
+  .shop-band-main .quick-actions-grid--three {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}

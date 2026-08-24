@@ -5,6 +5,7 @@ import ProductCard from '../components/ProductCard';
 import QuickActions from '../components/QuickActions';
 import BuyAgain from '../components/BuyAgain';
 import Combos from '../components/Combos';
+import OffersStrip from '../components/OffersStrip';
 import { useUI } from '../context/UIContext';
 import useLastOrder from '../hooks/useLastOrder';
 import { collectionApiFilters } from '../utils/seo';
@@ -275,10 +276,10 @@ const Home = () => {
 
       {/* â”€â”€ Shop band: categories + quick actions â”€â”€â”€â”€â”€â”€ */}
       {/* Stacked on phones; one horizontal band on laptops. */}
-      {/* With the last-order card present the action column runs to two rows, so
-          the circles reflow to two rows as well instead of leaving the left
-          half of the band empty below them. */}
+      {/* Shop band: categories and shortcuts on the left, live offers and the
+          last-order card on the right. */}
       <section className={`shop-band${hasLastOrder ? ' shop-band--with-order' : ''}`}>
+      <div className="shop-band-main">
       <h2 className="cat-circles-heading">What would you like?</h2>
       <nav className="cat-circles" aria-label="Shop by category">
         {MOBILE_TILES.map(tile => {
@@ -301,10 +302,13 @@ const Home = () => {
         })}
       </nav>
 
-      {/* Actions column: shortcut tiles with the last-order card folded in
-          underneath, rather than as a separate page section. */}
-      <div className="shop-band-actions">
         <QuickActions onQuickOrder={openQuickOrder} />
+      </div>
+
+      {/* Offers and the last-order card — both are "what can I get right now"
+          prompts, so they sit together opposite the browse column. */}
+      <div className="shop-band-side">
+        <OffersStrip />
         <BuyAgain />
       </div>
       </section>
