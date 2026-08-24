@@ -56,18 +56,16 @@
 /* Laptops: the tiles sit to the right of the category circles as a fixed-width
    2x2 block, so the whole band reads as one row. */
 @media (min-width: 769px) {
-  .quick-actions { flex: 0 0 480px; padding: 0; }
+  /* One row of four, the same height as the category circles beside them —
+     a 2x2 block here made the whole band twice as tall as it needs to be. */
+  .quick-actions { flex: 1 1 560px; padding: 0; }
   .quick-actions-heading { display: none; }
-  .quick-actions-grid { gap: 12px; height: 100%; }
-  .qa-tile { padding: 14px 16px; justify-content: center; }
+  .quick-actions-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+  .qa-tile { padding: 11px 12px; gap: 1px; }
   .qa-tile:hover { transform: translateY(-2px); box-shadow: 0 10px 22px -14px rgba(0, 0, 0, 0.45); }
-  .qa-tile-label { font-size: 0.95rem; }
-  .qa-tile-sub { font-size: 0.74rem; }
-}
-
-@media (max-width: 1180px) and (min-width: 769px) {
-  .quick-actions { flex: 0 0 360px; }
-  .qa-tile { padding: 12px; }
+  .qa-tile-icon { font-size: 1rem; margin-bottom: 2px; }
+  .qa-tile-label { font-size: 0.82rem; }
+  .qa-tile-sub { font-size: 0.66rem; }
 }
 
 /* CTA line at the foot of each tile, tinted to match the tile. */
@@ -92,5 +90,5 @@
 
 @media (min-width: 769px) {
   .qa-tile { justify-content: flex-start; }
-  .qa-tile-cta { margin-top: auto; padding-top: 10px; font-size: 0.7rem; }
+  .qa-tile-cta { margin-top: auto; padding-top: 8px; font-size: 0.62rem; }
 }

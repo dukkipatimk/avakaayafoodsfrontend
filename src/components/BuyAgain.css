@@ -1,6 +1,6 @@
 /* "Buy again" — one tap to recreate the customer's last order.
    Only rendered for signed-in customers who actually have a past order. */
-.buy-again { padding: 0 12px; margin: 18px 0; }
+.buy-again { padding: 0 12px; margin: 14px 0; }
 
 .buy-again-card {
   background: linear-gradient(160deg, #f2f8ee 0%, #ffffff 70%);
@@ -101,5 +101,12 @@
 .buy-again-card .buy-again-date { display: block; margin-bottom: 10px; }
 
 @media (min-width: 769px) {
-  .buy-again-heading { font-size: 0.95rem; }
+  /* Sits in the page container and hugs the left, rather than floating in the
+     middle of a full-width band with empty gutters either side. */
+  .buy-again { max-width: 1440px; margin: 0 auto; padding: 0 24px 18px; }
+  .buy-again-heading { font-size: 0.95rem; margin-bottom: 10px; }
+  .buy-again-card { max-width: 430px; margin: 0; padding: 14px 16px; }
+  .buy-again-total { font-size: 1.1rem; margin-bottom: 10px; }
+  .buy-again-cta { padding: 11px; font-size: 0.85rem; }
+  .buy-again-modify { margin-top: 4px; padding: 6px; }
 }

@@ -4912,32 +4912,36 @@
 @media (min-width: 769px) {
   .shop-band {
     display: flex;
-    align-items: stretch;
-    gap: 26px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 18px 22px;
     max-width: 1440px;
     margin: 0 auto;
-    padding: 26px 24px;
+    /* Extra right padding clears the fixed WhatsApp / cart buttons, which
+       would otherwise sit on top of the last action tile. */
+    padding: 16px 96px 18px 24px;
   }
   .cat-circles-heading { display: none; }
   .cat-circles {
     grid-template-columns: repeat(8, minmax(0, 1fr));
-    gap: 10px 6px;
-    flex: 1;
+    gap: 4px;
+    flex: 1 1 520px;
     min-width: 0;
     padding: 0;
     background: transparent;
     align-content: start;
   }
-  .cat-circle { gap: 7px; }
+  .cat-circle { gap: 5px; }
   .cat-circle:hover .cat-circle-disc { transform: translateY(-3px); border-color: var(--gold, #c9a84c); }
-  .cat-circle-disc { width: 76px; height: 76px; }
-  .cat-circle-glyph { font-size: 1.6rem; }
-  .cat-circle-label { font-size: 0.74rem; color: var(--text-dark, #263326); }
+  .cat-circle-disc { width: 62px; height: 62px; }
+  .cat-circle-glyph { font-size: 1.35rem; }
+  .cat-circle-label { font-size: 0.7rem; color: var(--text-dark, #263326); }
   .cat-circle:hover .cat-circle-label { color: var(--maroon, #8a1a1a); }
   .cat-circle-count {
     display: block;
     font-family: var(--font-ui);
-    font-size: 0.65rem;
+    font-size: 0.6rem;
+    line-height: 1.2;
     color: var(--text-light, #9a8f7d);
     text-align: center;
   }
