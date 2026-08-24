@@ -96,3 +96,12 @@
   .buy-again-cta { padding: 9px; font-size: 0.8rem; }
   .buy-again-modify { font-size: 0.72rem; }
 }
+
+/* Keep the label and date on one line each — at this width they were
+   wrapping into "YOUR LAST / ORDER" and "Ordered 31 / Jul". */
+.buy-again-title, .buy-again-date { white-space: nowrap; }
+@media (min-width: 769px) {
+  .buy-again-card { padding: 10px 14px; gap: 14px; }
+  .buy-again-title { font-size: 0.72rem; }
+  .buy-again-actions { flex: 0 0 170px; }
+}

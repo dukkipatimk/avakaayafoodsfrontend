@@ -117,3 +117,30 @@
   .offers-strip { padding: 14px; }
   .offer-ticket-value { font-size: 1.45rem; }
 }
+
+/* ══ Compact form ═════════════════════════════════════════════
+   The panel was roughly twice the height of the browse column beside it,
+   mostly because "5% OFF" wrapped onto two lines inside a narrow ticket. */
+.offers-strip { padding: 10px; }
+.offers-strip-heading { margin-bottom: 8px; font-size: 0.7rem; }
+
+.offer-ticket { min-height: 0; }
+.offer-ticket-main { padding: 9px 6px; gap: 2px; }
+
+/* One line, always — the wrap was what made these tall. */
+.offer-ticket-value { font-size: 1.05rem; white-space: nowrap; }
+.offer-ticket-cond { font-size: 0.6rem; line-height: 1.25; }
+.offer-ticket-copy {
+  margin-top: 5px;
+  padding: 6px 10px;
+  font-size: 0.6rem;
+  letter-spacing: 0.03em;
+}
+.offer-ticket-stub { flex-basis: 24px; }
+.offer-ticket-stub span { font-size: 0.62rem; letter-spacing: 0.1em; }
+
+.offers-strip-notes { margin-top: 8px; gap: 4px 14px; font-size: 0.62rem; }
+
+@media (min-width: 769px) {
+  .offer-ticket-value { font-size: 1.15rem; }
+}
