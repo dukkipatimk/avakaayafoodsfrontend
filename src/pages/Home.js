@@ -6,6 +6,7 @@ import QuickActions from '../components/QuickActions';
 import BuyAgain from '../components/BuyAgain';
 import Combos from '../components/Combos';
 import { useUI } from '../context/UIContext';
+import useLastOrder from '../hooks/useLastOrder';
 import { collectionApiFilters } from '../utils/seo';
 import './Home.css';
 
@@ -93,6 +94,7 @@ const WHATSAPP_NUMBER = '919115595959';
 
 const Home = () => {
   const { openQuickOrder } = useUI();
+  const hasLastOrder = Boolean(useLastOrder());
   const [igPosts, setIgPosts] = useState([]);
   const [igLoading, setIgLoading] = useState(true);
   const [bannerIdx, setBannerIdx] = useState(0);
@@ -273,7 +275,10 @@ const Home = () => {
 
       {/* â”€â”€ Shop band: categories + quick actions â”€â”€â”€â”€â”€â”€ */}
       {/* Stacked on phones; one horizontal band on laptops. */}
-      <section className="shop-band">
+      {/* With the last-order card present the action column runs to two rows, so
+          the circles reflow to two rows as well instead of leaving the left
+          half of the band empty below them. */}
+      <section className={`shop-band${hasLastOrder ? ' shop-band--with-order' : ''}`}>
       <h2 className="cat-circles-heading">What would you like?</h2>
       <nav className="cat-circles" aria-label="Shop by category">
         {MOBILE_TILES.map(tile => {

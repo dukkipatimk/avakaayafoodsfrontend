@@ -5054,3 +5054,18 @@
   }
   .bestsellers-row > * { flex: none; }
 }
+
+/* Two rows of four circles when the action column also runs to two rows,
+   so neither half of the band is left with dead space below it. */
+@media (min-width: 769px) {
+  .shop-band--with-order .cat-circles {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    align-content: space-between;
+    row-gap: 14px;
+  }
+  .shop-band--with-order .cat-circle-disc { width: 72px; height: 72px; }
+
+  /* Reserve two label lines everywhere so the counts share one baseline —
+     "Non-Veg Pickles" wraps while its neighbours don't. */
+  .cat-circle-label { min-height: 2.3em; }
+}
