@@ -5082,6 +5082,11 @@
   .shop-band-main { flex: 1 1 640px; min-width: 0; gap: 14px; }
   .shop-band-side { flex: 0 1 430px; min-width: 0; padding: 0; }
 
+  /* The circles carry flex:1 from when they were a direct child of the
+     horizontal band. Inside this column that grows them VERTICALLY, which
+     pushed the shortcut tiles to the bottom of the band. */
+  .shop-band-main .cat-circles { flex: 0 0 auto; }
+
   /* The circles no longer need to reflow to fill the band: the shortcut
      tiles sit under them in the same column now. */
   .shop-band--with-order .cat-circles {
