@@ -5103,3 +5103,33 @@
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
+
+/* ══ Actions + last order share a row; offers fills the band ══ */
+.shop-band-row { display: flex; flex-direction: column; gap: 12px; }
+.shop-band-row .quick-actions,
+.shop-band-row .buy-again { padding: 0; margin: 0; }
+
+@media (min-width: 769px) {
+  /* Stretch so the offers column can match the full height of the
+     categories + actions column beside it. */
+  .shop-band { align-items: stretch; }
+  .shop-band-main { justify-content: flex-start; }
+
+  .shop-band-row { flex-direction: row; align-items: stretch; gap: 12px; }
+  /* Two tiles when the last-order card is present, three when it isn't —
+     auto-fit rather than a fixed column count. */
+  .shop-band-row .quick-actions { flex: 1 1 300px; min-width: 0; }
+  .shop-band-main .quick-actions-grid,
+  .shop-band-main .quick-actions-grid--three {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    height: 100%;
+  }
+  .shop-band-row .buy-again { flex: 1 1 340px; min-width: 0; display: flex; }
+  .shop-band-row .buy-again-card { flex: 1; }
+
+  .shop-band-side { display: flex; }
+  .shop-band-side .offers-strip { flex: 1; display: flex; flex-direction: column; }
+  /* Tickets absorb the extra height rather than leaving a gap under them. */
+  .shop-band-side .offers-strip-row { flex: 1; align-items: stretch; }
+  .shop-band-side .offer-ticket { height: 100%; }
+}

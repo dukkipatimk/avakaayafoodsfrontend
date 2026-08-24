@@ -40,12 +40,6 @@ const QuickActions = ({ onQuickOrder }) => {
           <span className="qa-tile-cta">Build now &rarr;</span>
         </a>
 
-        <Link className="qa-tile qa-tile--offers" to="/products?sort=popular">
-          <span className="qa-tile-icon" aria-hidden="true">%</span>
-          <span className="qa-tile-label">Offers</span>
-          <span className="qa-tile-sub">Best sellers &amp; deals</span>
-          <span className="qa-tile-cta">Explore &rarr;</span>
-        </Link>
       </div>
     </section>
   );

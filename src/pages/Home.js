@@ -302,14 +302,16 @@ const Home = () => {
         })}
       </nav>
 
-        <QuickActions onQuickOrder={openQuickOrder} />
+        {/* Shortcuts and the last order share one row under the circles. */}
+        <div className="shop-band-row">
+          <QuickActions onQuickOrder={openQuickOrder} />
+          <BuyAgain />
+        </div>
       </div>
 
-      {/* Offers and the last-order card — both are "what can I get right now"
-          prompts, so they sit together opposite the browse column. */}
+      {/* Offers run the full height of the categories + actions column. */}
       <div className="shop-band-side">
         <OffersStrip />
-        <BuyAgain />
       </div>
       </section>
 

@@ -51,7 +51,6 @@
 .qa-tile--order  { background: #fdf7e6; border-color: var(--gold, #c9a84c); }
 .qa-tile--again  { background: #f2f8ee; border-color: #bcd9ac; }
 .qa-tile--combo  { background: #fdf0ef; border-color: #eebfba; }
-.qa-tile--offers { background: var(--white, #fff); }
 
 /* Laptops: the tiles sit to the right of the category circles as a fixed-width
    2x2 block, so the whole band reads as one row. */
@@ -81,7 +80,6 @@
 .qa-tile--order  .qa-tile-cta { color: #b07d14; }
 .qa-tile--again  .qa-tile-cta { color: var(--green-mid, #3d8b22); }
 .qa-tile--combo  .qa-tile-cta { color: var(--red-chili, #c0392b); }
-.qa-tile--offers .qa-tile-cta { color: var(--green-deep, #1c4a0e); }
 
 /* Tile headings pick up the tile's own accent, as in the reference design. */
 .qa-tile--order  .qa-tile-label { color: #b07d14; }
