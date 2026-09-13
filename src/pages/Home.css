@@ -5132,6 +5132,14 @@
   /* Tickets absorb the extra height rather than leaving a gap under them. */
   .shop-band-side .offers-strip-row { flex: 1; align-items: stretch; }
   .shop-band-side .offer-ticket { height: 100%; }
+
+  /* No live coupons: the offers column is not rendered at all, so the browse
+     column has the whole band. The discs go back to the size they were before
+     they were shrunk to share the row — at this width 62px circles under a
+     1300px band read as a rail of dots with a lot of air around them. */
+  .shop-band--no-offers.shop-band--with-order .cat-circle-disc,
+  .shop-band--no-offers .cat-circle-disc { width: 74px; height: 74px; }
+  .shop-band--no-offers .cat-circles { gap: 6px 10px; }
 }
 
 /* The action tiles and last-order card used to get their side gutter from

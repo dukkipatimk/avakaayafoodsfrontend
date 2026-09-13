@@ -109,6 +109,9 @@ const Home = () => {
   const [catalogPages, setCatalogPages] = useState(1);
   const [catalogLoading, setCatalogLoading] = useState(false);
   const [stores, setStores] = useState([]);
+  // null until the offers strip has heard back. Keeping the column while we do
+  // not know beats widening the band and then snapping it narrow again.
+  const [hasOffers, setHasOffers] = useState(null);
 
   // Full paginated catalog â€” sorted by popularity so bestsellers surface first
   useEffect(() => {
@@ -278,7 +281,7 @@ const Home = () => {
       {/* Stacked on phones; one horizontal band on laptops. */}
       {/* Shop band: categories and shortcuts on the left, live offers and the
           last-order card on the right. */}
-      <section className={`shop-band${hasLastOrder ? ' shop-band--with-order' : ''}`}>
+      <section className={`shop-band${hasLastOrder ? ' shop-band--with-order' : ''}${hasOffers === false ? ' shop-band--no-offers' : ''}`}>
       <div className="shop-band-main">
       <h2 className="cat-circles-heading">What would you like?</h2>
       <nav className="cat-circles" aria-label="Shop by category">
@@ -309,10 +312,14 @@ const Home = () => {
         </div>
       </div>
 
-      {/* Offers run the full height of the categories + actions column. */}
-      <div className="shop-band-side">
-        <OffersStrip />
-      </div>
+      {/* Offers run the full height of the categories + actions column — and
+          when there are none live, the column goes rather than standing empty
+          with the band ending two-thirds of the way across the screen. */}
+      {hasOffers !== false && (
+        <div className="shop-band-side">
+          <OffersStrip onLoaded={setHasOffers} />
+        </div>
+      )}
       </section>
 
       <Combos />

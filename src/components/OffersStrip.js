@@ -22,14 +22,28 @@ const condition = (coupon) => {
 // "Best offers for you" — live coupons as tear-off tickets with a copy button.
 // Codes come from /api/coupons/active, which already hides expired coupons and
 // ones that have hit their usage limit.
-const OffersStrip = () => {
+//
+// `onLoaded` reports whether there is anything to show, once the server has
+// answered. The homepage keeps a column for this strip and needs to know
+// whether to give that space back — it cannot tell that from a component that
+// renders nothing both while it is asking and when the answer is "none".
+const OffersStrip = ({ onLoaded }) => {
   const [coupons, setCoupons] = useState([]);
   const [copied, setCopied] = useState(null);
 
   useEffect(() => {
+    let cancelled = false;
+    const report = (list) => {
+      if (cancelled) return;
+      setCoupons(list);
+      if (onLoaded) onLoaded(list.length > 0);
+    };
     api.get('/coupons/active')
-      .then((r) => setCoupons((r.data.coupons || []).slice(0, 3)))
-      .catch(() => setCoupons([]));
+      .then((r) => report((r.data.coupons || []).slice(0, 3)))
+      .catch(() => report([]));
+    return () => { cancelled = true; };
+    // Asked once per mount — a callback that changes identity must not refetch.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (!coupons.length) return null;
