@@ -9,6 +9,7 @@ import Footer from './components/Footer';
 import CartBar from './components/CartBar';
 import QuickOrderHost from './components/QuickOrderHost';
 import Home from './pages/Home';
+import HomeV2 from './pages/HomeV2';   // the 2026 design, parked at /home-v2
 import Products from './pages/Products';
 import ProductDetail from './pages/ProductDetail';
 import Cart from './pages/Cart';
@@ -74,6 +75,7 @@ function App() {
           <main style={{ minHeight: '60vh' }}>
             <Routes>
               <Route path="/" element={<Home />} />
+              <Route path="/home-v2" element={<HomeV2 />} />
               <Route path="/products" element={<Products />} />
               <Route path="/collections/:category" element={<Products collectionPage />} />
               <Route path="/products/:slug" element={<ProductDetail />} />

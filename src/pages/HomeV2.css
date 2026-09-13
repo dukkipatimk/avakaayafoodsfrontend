@@ -1,0 +1,164 @@
+/* ── The 2026 homepage ───────────────────────────────────────────────────────
+   Maroon and gold on cream, the storefront's own palette, laid out as the
+   design does it: a festival hero, then a row of ways in, then three offers,
+   then what people actually buy. Everything below the hero sits on cream so
+   the white product cards lift off it.
+
+   Scoped under .home-v2 so none of it can reach the old homepage while both
+   exist. */
+
+.home-v2 {
+  --hv-maroon: #7b1113;
+  --hv-maroon-deep: #5e0d10;
+  --hv-maroon-soft: #8f1a1c;
+  --hv-gold: #f5c518;
+  --hv-gold-deep: #e0a92b;
+  --hv-cream: #fdf6ea;
+  --hv-cream-2: #f8ecd8;
+  --hv-ink: #2a1a10;
+  --hv-muted: #7a6a58;
+  --hv-line: #eadcc4;
+  background: var(--hv-cream);
+  color: var(--hv-ink);
+}
+.home-v2 .hv-wrap { max-width: 1400px; margin: 0 auto; padding: 0 1.25rem; }
+.home-v2 h2 { font-family: Georgia, 'Times New Roman', serif; color: var(--hv-maroon); margin: 0; }
+
+/* ── Hero ────────────────────────────────────────────────────────────────── */
+.hv-hero {
+  position: relative;
+  background: linear-gradient(100deg, var(--hv-maroon-deep) 0%, var(--hv-maroon) 42%, var(--hv-maroon-soft) 100%);
+  color: #fff;
+  overflow: hidden;
+}
+.hv-hero-inner {
+  max-width: 1400px; margin: 0 auto; padding: 3.2rem 1.25rem 3.4rem;
+  display: grid; grid-template-columns: minmax(0, 46%) minmax(0, 54%); align-items: center; gap: 1rem;
+  min-height: 380px;
+}
+/* The photograph bleeds off the right edge, as a festival spread should. */
+.hv-hero-art { position: relative; min-height: 300px; }
+.hv-hero-art img { width: 100%; height: 100%; max-height: 420px; object-fit: contain; object-position: center right; display: block; }
+.hv-eyebrow { font-size: .78rem; letter-spacing: .28em; text-transform: uppercase; color: #f3d9a8; margin: 0 0 .6rem; }
+.hv-hero h1 {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(2.4rem, 4.6vw, 4rem); line-height: 1.02; margin: 0 0 .9rem; color: #fff; font-weight: 400;
+}
+.hv-hero h1 em { font-style: normal; color: var(--hv-gold); }
+.hv-hero p { max-width: 30rem; margin: 0 0 1.4rem; color: rgba(255,255,255,.88); font-size: 1.02rem; line-height: 1.55; }
+.hv-cta {
+  display: inline-flex; align-items: center; gap: .55rem;
+  background: var(--hv-gold); color: #4a2b06; font-weight: 700; font-size: 1rem;
+  padding: .72rem 1.5rem; border-radius: 999px; border: none; cursor: pointer;
+  box-shadow: 0 6px 16px rgba(0,0,0,.18);
+}
+.hv-cta:hover { background: #ffd647; }
+.hv-hero-trust { display: flex; flex-wrap: wrap; gap: 1.6rem; margin-top: 1.8rem; font-size: .84rem; color: rgba(255,255,255,.9); }
+.hv-hero-trust span { display: inline-flex; align-items: center; gap: .45rem; }
+.hv-hero-dots { position: absolute; bottom: 1rem; left: 50%; transform: translateX(-50%); display: flex; gap: .4rem; }
+.hv-hero-dots button { width: 8px; height: 8px; padding: 0; border-radius: 50%; border: none; background: rgba(255,255,255,.45); cursor: pointer; }
+.hv-hero-dots button.on { background: var(--hv-gold); width: 20px; border-radius: 999px; }
+
+/* ── Category circles ────────────────────────────────────────────────────── */
+.hv-cats { padding: 1.6rem 0 .4rem; }
+.hv-cats-row { display: grid; grid-template-columns: repeat(9, minmax(0, 1fr)); gap: .8rem; }
+.hv-cat { display: flex; flex-direction: column; align-items: center; gap: .5rem; color: var(--hv-ink); text-align: center; }
+.hv-cat-img {
+  width: 84px; height: 84px; border-radius: 50%; overflow: hidden;
+  background: var(--hv-cream-2); border: 1px solid var(--hv-line);
+  display: grid; place-items: center; font-size: 2rem;
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.hv-cat img { width: 100%; height: 100%; object-fit: cover; }
+.hv-cat:hover .hv-cat-img { transform: translateY(-3px); box-shadow: 0 8px 18px rgba(123,17,19,.14); }
+.hv-cat-label { font-size: .84rem; font-weight: 600; }
+
+/* ── Three offers ────────────────────────────────────────────────────────── */
+.hv-promos { display: grid; grid-template-columns: 1fr 1.2fr 1.1fr; gap: 1rem; padding: 1.2rem 0 1.6rem; }
+.hv-promo { border-radius: 10px; padding: 1.15rem 1.35rem; display: flex; align-items: center; gap: 1rem; min-height: 116px; }
+.hv-promo--off { background: var(--hv-maroon); color: #fff; }
+.hv-promo--off .hv-off-big { font-family: Georgia, serif; font-size: 2rem; line-height: 1; }
+.hv-promo--off .hv-off-flat { font-size: .8rem; letter-spacing: .18em; text-transform: uppercase; }
+.hv-promo-divider { width: 1px; align-self: stretch; background: rgba(255,255,255,.28); }
+.hv-promo--ship { background: var(--hv-cream-2); color: var(--hv-maroon); }
+.hv-promo--gift { background: linear-gradient(100deg, #f6c445, #efb02a); color: #5c3a06; }
+.hv-promo h3 { font-family: Georgia, serif; font-size: 1.32rem; margin: 0 0 .3rem; font-weight: 400; }
+.hv-promo p { margin: 0; font-size: .84rem; opacity: .92; }
+.hv-promo-btn {
+  display: inline-flex; align-items: center; gap: .4rem; margin-top: .55rem;
+  padding: .42rem 1rem; border-radius: 999px; font-size: .82rem; font-weight: 700;
+  background: var(--hv-gold); color: #4a2b06; border: none; cursor: pointer;
+}
+.hv-promo--gift .hv-promo-btn { background: #fff; color: var(--hv-maroon); }
+.hv-promo-media { margin-left: auto; height: 84px; border-radius: 8px; object-fit: contain; }
+
+/* ── Bestsellers ─────────────────────────────────────────────────────────── */
+.hv-sec-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: .9rem; }
+.hv-sec-head h2 { font-size: 1.6rem; }
+.hv-all { color: var(--hv-maroon); font-weight: 600; font-size: .88rem; }
+.hv-cards { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: .8rem; }
+.hv-card { background: #fff; border: 1px solid var(--hv-line); border-radius: 10px; overflow: hidden; display: flex; flex-direction: column; }
+.hv-card-img { position: relative; aspect-ratio: 1 / .82; background: var(--hv-cream-2); }
+.hv-card-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.hv-wish {
+  position: absolute; top: .45rem; right: .45rem; width: 26px; height: 26px; border-radius: 50%;
+  background: rgba(255,255,255,.92); border: none; cursor: pointer; display: grid; place-items: center;
+  color: var(--hv-maroon); font-size: .8rem;
+}
+.hv-card-body { padding: .6rem .7rem .75rem; text-align: center; }
+.hv-card-name { font-size: .84rem; font-weight: 600; margin: 0 0 .35rem; min-height: 2.2em; display: flex; align-items: center; justify-content: center; }
+.hv-card-foot { display: flex; align-items: center; justify-content: space-between; gap: .4rem; }
+.hv-price { font-weight: 700; font-size: .92rem; }
+.hv-add {
+  background: var(--hv-maroon); color: #fff; border: none; border-radius: 999px;
+  padding: .34rem .8rem; font-size: .76rem; font-weight: 600; cursor: pointer; white-space: nowrap;
+}
+.hv-add:hover { background: var(--hv-maroon-soft); }
+
+/* ── Story · values · quote ──────────────────────────────────────────────── */
+.hv-band { display: grid; grid-template-columns: 1.1fr 1fr .85fr; margin: 1.8rem 0 0; }
+.hv-story { position: relative; color: #fff; padding: 1.6rem 1.8rem; background: var(--hv-maroon-deep); }
+.hv-story-bg { position: absolute; inset: 0; object-fit: cover; width: 100%; height: 100%; opacity: .35; }
+.hv-story-in { position: relative; }
+.hv-story h2 { color: #fff; font-size: 1.5rem; margin-bottom: .5rem; }
+.hv-story p { font-size: .88rem; line-height: 1.6; color: rgba(255,255,255,.9); max-width: 30rem; }
+.hv-values { background: var(--hv-cream-2); display: grid; grid-template-columns: repeat(4, 1fr); align-items: center; }
+.hv-value { text-align: center; padding: 1.2rem .5rem; }
+.hv-value span { display: block; font-size: 1.5rem; color: var(--hv-maroon); }
+.hv-value strong { display: block; margin-top: .5rem; font-size: .8rem; font-weight: 600; color: var(--hv-maroon); }
+.hv-quote { background: var(--hv-maroon); color: #fff; padding: 1.6rem 1.8rem; display: flex; align-items: center; }
+.hv-quote p { font-family: Georgia, serif; font-size: 1.12rem; line-height: 1.5; margin: 0; }
+.hv-quote-mark { font-family: Georgia, serif; font-size: 2.4rem; color: var(--hv-gold); line-height: 0; margin-right: .5rem; }
+
+/* ── Testimonials + newsletter ───────────────────────────────────────────── */
+.hv-foot { display: grid; grid-template-columns: 2fr 1fr; gap: 1.6rem; padding: 1.6rem 0 2.2rem; }
+.hv-says h2 { font-size: 1.3rem; margin-bottom: .8rem; }
+.hv-quotes { display: grid; grid-template-columns: repeat(3, 1fr); gap: .8rem; }
+.hv-testimonial { background: #fff; border: 1px solid var(--hv-line); border-radius: 8px; padding: .9rem 1rem; }
+.hv-testimonial p { margin: 0 0 .6rem; font-size: .84rem; line-height: 1.5; }
+.hv-stars { color: var(--hv-gold-deep); font-size: .8rem; }
+.hv-by { color: var(--hv-muted); font-size: .78rem; }
+.hv-sub h2 { font-size: 1.3rem; margin-bottom: .4rem; }
+.hv-sub p { font-size: .84rem; color: var(--hv-muted); margin: 0 0 .7rem; }
+.hv-sub-form { display: flex; gap: .5rem; }
+.hv-sub-form input { flex: 1; padding: .55rem .75rem; border: 1px solid var(--hv-line); border-radius: 6px; background: #fff; }
+.hv-sub-form button { background: var(--hv-gold); color: #4a2b06; font-weight: 700; border: none; border-radius: 6px; padding: .55rem 1.1rem; cursor: pointer; }
+.hv-social { display: flex; gap: .6rem; margin-top: 1rem; font-size: 1.3rem; }
+
+/* ── Narrower screens ────────────────────────────────────────────────────── */
+@media (max-width: 1200px) {
+  .hv-cats-row { grid-template-columns: repeat(5, 1fr); row-gap: 1.2rem; }
+  .hv-cards { grid-template-columns: repeat(4, 1fr); }
+  .hv-promos { grid-template-columns: 1fr 1fr; }
+  .hv-band { grid-template-columns: 1fr 1fr; }
+  .hv-quote { grid-column: 1 / -1; }
+}
+@media (max-width: 860px) {
+  .hv-hero-inner { grid-template-columns: 1fr; padding-bottom: 2.4rem; }
+  .hv-hero-art { display: none; }
+  .hv-cats-row { grid-template-columns: repeat(3, 1fr); }
+  .hv-cards { grid-template-columns: repeat(2, 1fr); }
+  .hv-promos, .hv-band, .hv-foot, .hv-quotes { grid-template-columns: 1fr; }
+  .hv-values { grid-template-columns: repeat(2, 1fr); }
+}
+.hv-pack { font-weight: 500; font-size: .74rem; color: var(--hv-muted); }
