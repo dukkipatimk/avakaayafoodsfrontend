@@ -696,3 +696,35 @@
   .order-modal-body { padding: 1rem; }
   .order-modal-header { padding: 1rem; }
 }
+
+/* ── Revenue by date, and orders running late ─────────────────────────────── */
+.rev-panel { background: #fff; border: 1px solid #eadcc4; border-radius: 10px; padding: 1rem 1.1rem; margin-bottom: 1.2rem; }
+.rev-head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-bottom: .8rem; }
+.rev-head h3 { margin: 0; font-size: 1.05rem; }
+.rev-head-right { display: flex; align-items: center; gap: .7rem; }
+.rev-sla { font-size: .74rem; color: #7a6a58; }
+
+.rev-totals { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .7rem; margin-bottom: .9rem; }
+.rev-stat { background: #fdf6ea; border: 1px solid #eadcc4; border-radius: 8px; padding: .6rem .75rem; display: flex; flex-direction: column; gap: .15rem; }
+.rev-stat span { font-size: .68rem; letter-spacing: .1em; text-transform: uppercase; color: #7a6a58; }
+.rev-stat strong { font-size: 1.15rem; }
+.rev-stat em { font-style: normal; font-size: .74rem; color: #7a6a58; }
+/* Only when something IS late — a permanently red tile stops being a signal. */
+.rev-stat--late { background: #fdecea; border-color: #f0b9b0; }
+.rev-stat--late strong { color: #c0392b; }
+
+.rev-days table { font-size: .84rem; }
+.rev-days .num { text-align: right; }
+.rev-empty { text-align: center; color: #7a6a58; padding: 1rem; }
+.rev-days .row-late td { background: #fdf1ef; }
+
+/* A late order is red where it is read, in the list and in the day it came in. */
+.late-pill {
+  display: inline-block; margin-left: .4rem; padding: .05rem .4rem; border-radius: 999px;
+  background: #c0392b; color: #fff; font-size: .68rem; font-weight: 700; white-space: nowrap;
+}
+.order-row-late > td { background: #fdf1ef; }
+.order-row-late:hover > td { background: #fbe5e2; }
+.order-row-late > td:first-child { box-shadow: inset 3px 0 0 #c0392b; }
+
+.rev-partial { margin: 0 0 .7rem; font-size: .76rem; color: #7a6a58; background: #fdf6ea; border: 1px dashed #eadcc4; border-radius: 6px; padding: .45rem .6rem; }

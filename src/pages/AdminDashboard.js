@@ -11,6 +11,9 @@ const ORDER_TABS = [
   { key: 'fulfilled', label: 'Shipped & Delivered', statuses: ['out-for-delivery', 'shipped', 'delivered'] },
   { key: 'cancelled', label: 'Cancelled',           statuses: ['cancelled', 'returned'] },
   { key: 'all',       label: 'All',                 statuses: [] },
+  // Not a filter over orders but a view of its own; it loads nothing from the
+  // orders endpoint, so it carries no status list.
+  { key: 'revenue',   label: 'Revenue by date',     statuses: [], view: 'summary' },
 ];
 
 /* ── helpers ── */
@@ -25,6 +28,67 @@ const orderAddr = (order) => {
 };
 
 const money = n => '₹' + Number(n || 0).toLocaleString('en-IN', { maximumFractionDigits: 2 });
+const SLA_DAYS = { india: 2, default: 7 };
+const DAY_MS = 24 * 60 * 60 * 1000;
+const DEAD_STATUSES = ['cancelled', 'returned'];
+const dueByOf = (o) => new Date(new Date(o.createdAt).getTime()
+  + (SLA_DAYS[String(o.shippingZone || '').toLowerCase()] ?? SLA_DAYS.default) * DAY_MS);
+
+// Prefers the server's verdict; works it out here when the server has not sent
+// one. A delivered order needs its status history to judge, and without history
+// it is left alone rather than painted red on a guess.
+const latenessOf = (o, now = new Date()) => {
+  if (o.late !== undefined) return { late: o.late, daysLate: o.daysLate || 0, dueBy: o.dueBy };
+  if (DEAD_STATUSES.includes(o.orderStatus)) return { late: false, daysLate: 0 };
+  const due = dueByOf(o);
+  if (o.orderStatus === 'delivered') {
+    const hit = (o.statusHistory || []).find(h => h.status === 'delivered');
+    if (!hit) return { late: false, daysLate: 0, dueBy: due };
+    const over = new Date(hit.timestamp) - due;
+    return { late: over > 0, daysLate: over > 0 ? Math.ceil(over / DAY_MS) : 0, dueBy: due };
+  }
+  const over = now - due;
+  return { late: over > 0, daysLate: over > 0 ? Math.ceil(over / DAY_MS) : 0, dueBy: due };
+};
+
+// The day a sale belongs to, in IST — the business day the shop keeps.
+const istDay = (d) => new Date(new Date(d).getTime() + 5.5 * 3600 * 1000).toISOString().slice(0, 10);
+
+// Everything the summary panel shows, worked out from the orders already on
+// screen. Only as complete as the list is — which is why it says so.
+const summarise = (orders, days) => {
+  // The window has to be applied here too. The server honours ?days=; this
+  // fallback was summarising every order it had loaded, so picking 7 days still
+  // showed last month.
+  const cutoff = istDay(new Date(Date.now() - (Math.max(1, days) - 1) * DAY_MS));
+  orders = orders.filter(o => istDay(o.createdAt) >= cutoff);
+  const byDay = new Map();
+  const totals = { orders: 0, revenue: 0, delivered: 0, deliveredRevenue: 0, late: 0, cancelled: 0 };
+  for (const o of orders) {
+    const key = istDay(o.createdAt);
+    if (!byDay.has(key)) byDay.set(key, { date: key, orders: 0, revenue: 0, delivered: 0, deliveredRevenue: 0, late: 0, cancelled: 0 });
+    const row = byDay.get(key);
+    const value = Number(o.total || 0);
+    const dead = DEAD_STATUSES.includes(o.orderStatus);
+    row.orders += 1; totals.orders += 1;
+    if (dead) { row.cancelled += 1; totals.cancelled += 1; }
+    else { row.revenue += value; totals.revenue += value; }
+    if (o.orderStatus === 'delivered') {
+      row.delivered += 1; row.deliveredRevenue += value;
+      totals.delivered += 1; totals.deliveredRevenue += value;
+    }
+    if (latenessOf(o).late) { row.late += 1; totals.late += 1; }
+  }
+  return {
+    partial: true,
+    days_window: days,
+    sla: { india: SLA_DAYS.india, international: SLA_DAYS.default },
+    totals,
+    days: Array.from(byDay.values()).sort((a, b) => (a.date < b.date ? 1 : -1)),
+  };
+};
+
+const dayLabel = (ymd) => new Date(`${ymd}T00:00:00`).toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short' });
 
 const ordersToCSV = orders => {
   const header = ['Order #', 'Date', 'Customer', 'Email', 'Items', 'Total', 'Payment', 'Status', 'Zone'];
@@ -559,6 +623,8 @@ const AdminDashboard = () => {
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [statusFilter, setStatusFilter] = useState('active');
   const [payMethods, setPayMethods] = useState(null);
+  const [summary, setSummary] = useState(null);
+  const [summaryDays, setSummaryDays] = useState(14);
 
   const togglePayMethod = async (key) => {
     if (!payMethods) return;
@@ -601,8 +667,29 @@ const AdminDashboard = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAdmin, isSuperAdmin]);
 
+  // The period picker gets an effect of its own. It was sharing the one above,
+  // so changing it re-ran everything — including a fetch of the ACTIVE orders,
+  // which quietly threw away whichever tab you were looking at and left the
+  // fallback summarising the wrong set.
+  //
+  // Revenue is an owner's question; a store manager never asks for it and the
+  // endpoint refuses them anyway.
+  useEffect(() => {
+    if (!isAdmin) return;
+    let cancelled = false;
+    api.get(`/orders/summary?days=${summaryDays}`)
+      .then(res => { if (!cancelled) setSummary(res.data); })
+      // No endpoint yet: the panel falls back to the orders already loaded.
+      .catch(() => { if (!cancelled) setSummary(null); });
+    // A slow answer for 90 days must not land after a later click on 7.
+    return () => { cancelled = true; };
+  }, [isAdmin, summaryDays]);
+
   const handleFilterChange = async filter => {
     setStatusFilter(filter);
+    // The revenue view reads its own endpoint; the orders already loaded stay
+    // as they are, so coming back to them costs nothing.
+    if ((ORDER_TABS.find(t => t.key === filter) || {}).view === 'summary') return;
     try {
       const orders = await fetchOrders(filter);
       setRecentOrders(orders);
@@ -612,6 +699,10 @@ const AdminDashboard = () => {
   const handleStatusUpdated = (orderId, updatedOrder) => {
     setRecentOrders(prev => prev.map(o => o._id === orderId ? { ...o, ...updatedOrder } : o));
   };
+
+  // The server's figures cover every order in the window; the fallback covers
+  // only what is loaded. Either way the panel has something to show.
+  const view = !isAdmin ? null : (summary || (recentOrders.length ? summarise(recentOrders, summaryDays) : null));
 
   const handleExportCSV = () => {
     const csv = ordersToCSV(recentOrders);
@@ -697,7 +788,7 @@ const AdminDashboard = () => {
 
           {/* Status tabs */}
           <div className="order-tabs">
-            {ORDER_TABS.map(tab => (
+            {ORDER_TABS.filter(tab => tab.view !== 'summary' || isAdmin).map(tab => (
               <button
                 key={tab.key}
                 className={`order-tab${statusFilter === tab.key ? ' active' : ''}`}
@@ -708,6 +799,76 @@ const AdminDashboard = () => {
             ))}
           </div>
 
+          {statusFilter === 'revenue' && isAdmin && view && (
+            <section className="rev-panel">
+              <div className="rev-head">
+                <h3>Revenue by date</h3>
+                <div className="rev-head-right">
+                  <select value={summaryDays} onChange={e => setSummaryDays(Number(e.target.value))}>
+                    <option value={7}>Last 7 days</option>
+                    <option value={14}>Last 14 days</option>
+                    <option value={30}>Last 30 days</option>
+                    <option value={90}>Last 90 days</option>
+                  </select>
+                  <span className="rev-sla">
+                    Late = past {view.sla?.india}d in India, {view.sla?.international}d international
+                  </span>
+                </div>
+              </div>
+
+              {view.partial && (
+                <p className="rev-partial">
+                  Counted from the orders currently loaded that fall in the last {summaryDays} days, not
+                  every order in that window —
+                  the server's own figures will appear once the API is updated.
+                </p>
+              )}
+              <div className="rev-totals">
+                <div className="rev-stat"><span>Revenue</span><strong>{money(view.totals.revenue)}</strong>
+                  <em>{view.totals.orders} orders</em></div>
+                <div className="rev-stat"><span>Delivered</span><strong>{money(view.totals.deliveredRevenue)}</strong>
+                  <em>{view.totals.delivered} of {view.totals.orders} orders</em></div>
+                <div className="rev-stat"><span>Yet to arrive</span>
+                  <strong>{money(view.totals.revenue - view.totals.deliveredRevenue)}</strong>
+                  <em>{Math.max(0, view.totals.orders - view.totals.delivered - view.totals.cancelled)} orders</em></div>
+                <div className={`rev-stat${view.totals.late ? ' rev-stat--late' : ''}`}><span>Running late</span>
+                  <strong>{view.totals.late}</strong>
+                  <em>{view.totals.late ? 'past the promised window' : 'nothing overdue'}</em></div>
+              </div>
+
+              <div className="admin-table-wrap rev-days">
+                <table className="admin-table">
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th className="num">Orders</th>
+                      <th className="num">Revenue</th>
+                      <th className="num">Delivered</th>
+                      <th className="num">Delivered value</th>
+                      <th className="num">Late</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {view.days.map(d => (
+                      <tr key={d.date} className={d.late ? 'row-late' : ''}>
+                        <td>{dayLabel(d.date)}</td>
+                        <td className="num">{d.orders}{d.cancelled ? <span className="cell-sub"> · {d.cancelled} cancelled</span> : null}</td>
+                        <td className="num"><strong>{money(d.revenue)}</strong></td>
+                        <td className="num">{d.delivered}</td>
+                        <td className="num">{money(d.deliveredRevenue)}</td>
+                        <td className="num">{d.late ? <span className="late-pill">{d.late}</span> : '—'}</td>
+                      </tr>
+                    ))}
+                    {!view.days.length && (
+                      <tr><td colSpan={6} className="rev-empty">No orders in this period.</td></tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </section>
+          )}
+
+          {(statusFilter !== 'revenue' || !isAdmin) && (
           <div className="admin-table-wrap">
             <table className="admin-table">
               <thead>
@@ -723,14 +884,22 @@ const AdminDashboard = () => {
                 </tr>
               </thead>
               <tbody>
-                {recentOrders.map(order => (
+                {recentOrders.map(order => {
+                  const late = latenessOf(order);
+                  return (
                   <tr
                     key={order._id}
-                    className="order-row-clickable"
+                    className={`order-row-clickable${late.late ? ' order-row-late' : ''}`}
                     onClick={() => setSelectedOrder(order)}
-                    title="Click to view details"
+                    title={late.late
+                      ? `${late.daysLate} day${late.daysLate === 1 ? '' : 's'} past the promised delivery window`
+                      : 'Click to view details'}
                   >
-                    <td><strong>#{order.orderNumber}</strong></td>
+                    <td><strong>#{order.orderNumber}</strong>
+                      {late.late && <span className="late-pill" title={late.dueBy ? `Due by ${fmtDate(late.dueBy)}` : ''}>
+                        {late.daysLate}d late
+                      </span>}
+                    </td>
                     <td>
                       <div className="customer-cell">
                         <span>{order.user?.name || orderAddr(order).fullName || orderAddr(order).name || '—'}</span>
@@ -772,13 +941,15 @@ const AdminDashboard = () => {
                       <span className="cell-sub">{new Date(order.createdAt).toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit', hour12: true })}</span>
                     </td>
                   </tr>
-                ))}
+                  );
+                })}
               </tbody>
             </table>
             {recentOrders.length === 0 && (
               <div className="table-empty">No orders found.</div>
             )}
           </div>
+          )}
         </div>
       </div>
 
