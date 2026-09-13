@@ -179,7 +179,7 @@ const AdminCoupons = () => {
         <AdminTabs />
 
         <div className="section-header-row">
-          <h2 className="section-title">Coupons ({coupons.length})</h2>
+          <span className="section-count" title="coupons listed">{coupons.length}</span>
           <button className="btn btn-primary" onClick={() => setShowCreate(true)}>
             + Create Coupon
           </button>

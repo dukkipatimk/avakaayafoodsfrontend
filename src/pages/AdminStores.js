@@ -201,7 +201,7 @@ const AdminStores = () => {
         <AdminTabs />
 
         <div className="section-header-row">
-          <h2 className="section-title">Stores ({stores.length})</h2>
+          <span className="section-count" title="stores listed">{stores.length}</span>
           <button className="btn btn-primary" onClick={() => setModalStore(null)}>
             + Add Store
           </button>

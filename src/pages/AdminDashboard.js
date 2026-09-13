@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import api from '../utils/api';
 import { useAuth } from '../context/AuthContext';
 import AdminTabs from '../components/AdminTabs';
+import useAdminStats from '../hooks/useAdminStats';
 import './AdminDashboard.css';
 
 const STATUS_OPTIONS = ['placed', 'confirmed', 'processing', 'packed', 'shipped', 'out-for-delivery', 'delivered', 'cancelled', 'returned'];
@@ -617,12 +618,13 @@ const AdminDashboard = () => {
   const isAdmin = user?.role === 'admin' || user?.role === 'super_admin';
   const isSuperAdmin = user?.role === 'super_admin';   // financials + payment settings
 
-  const [stats, setStats] = useState(null);
+
   const [recentOrders, setRecentOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [statusFilter, setStatusFilter] = useState('active');
   const [payMethods, setPayMethods] = useState(null);
+  const { stats } = useAdminStats(isAdmin);   // shared with the menu badges
   const [summary, setSummary] = useState(null);
   const [summaryDays, setSummaryDays] = useState(14);
 
@@ -653,11 +655,6 @@ const AdminDashboard = () => {
       .catch(console.error)
       .finally(() => setLoading(false));
 
-    if (isAdmin) {
-      api.get('/admin/dashboard')
-        .then(res => setStats(res.data.stats || res.data))
-        .catch(console.error);
-    }
     // Payment settings are super-admin only.
     if (isSuperAdmin) {
       api.get('/settings/payment-methods')
@@ -727,27 +724,14 @@ const AdminDashboard = () => {
 
         <AdminTabs />
 
-        {/* Stats — admin only */}
-        {isAdmin && (
-        <div className="stats-grid">
-          {[
-            { label: 'Total Orders', value: stats?.totalOrders || 0, icon: '📦', color: '#3b82f6' },
-            // Revenue is financial data — super admin only.
-            ...(isSuperAdmin ? [{ label: 'Revenue', value: `₹${(stats?.totalRevenue || 0).toLocaleString()}`, icon: '💰', color: '#10b981' }] : []),
-            { label: 'Products', value: stats?.totalProducts || 0, icon: '🥫', color: '#8b5cf6' },
-            { label: 'Customers', value: stats?.totalUsers || 0, icon: '👥', color: '#f59e0b' },
-          ].map(stat => (
-            <div key={stat.label} className="stat-card">
-              <div className="stat-icon" style={{ background: stat.color + '18', color: stat.color }}>
-                {stat.icon}
-              </div>
-              <div>
-                <p className="stat-value">{stat.value}</p>
-                <p className="stat-label">{stat.label}</p>
-              </div>
-            </div>
-          ))}
-        </div>
+        {/* Orders, products and customers are counted on the menu items they
+            belong to now. Revenue is not a count of anything and has no menu
+            item to sit on, so it stays here — as one line rather than a grid of
+            tiles pushing the day's work below the fold. Super admin only. */}
+        {isSuperAdmin && (
+          <p className="admin-revenue-line">
+            Revenue to date <strong>₹{(stats?.totalRevenue || 0).toLocaleString('en-IN')}</strong>
+          </p>
         )}
 
         {/* Payment Methods — super admin only */}
@@ -780,7 +764,7 @@ const AdminDashboard = () => {
         {/* Recent Orders */}
         <div className="admin-section">
           <div className="section-header-row">
-            <h2 className="section-title">Orders</h2>
+            <span className="section-count-spacer" />
             <button className="btn-export-csv" onClick={handleExportCSV}>
               Export CSV
             </button>

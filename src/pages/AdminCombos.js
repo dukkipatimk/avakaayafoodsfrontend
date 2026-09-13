@@ -275,7 +275,7 @@ const AdminCombos = () => {
         <AdminTabs />
 
         <div className="section-header-row">
-          <h2 className="section-title">Combos ({combos.length})</h2>
+          <span className="section-count" title="combos listed">{combos.length}</span>
           <button className="btn btn-primary" onClick={() => setEditing(null)}>+ New Combo</button>
         </div>
 

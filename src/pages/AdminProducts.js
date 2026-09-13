@@ -362,7 +362,7 @@ const AdminProducts = () => {
         <AdminTabs />
 
         <div className="section-header-row">
-          <h2 className="section-title">Products</h2>
+          <span className="section-count-spacer" />
           <button className="btn btn-primary" onClick={openNew}>+ Add Product</button>
         </div>
 

@@ -393,7 +393,7 @@ const AdminReports = () => {
         <AdminTabs />
 
         <div className="section-header-row">
-          <h2 className="section-title">Reports</h2>
+          <span className="section-count-spacer" />
         </div>
 
         <div className="report-section-nav">

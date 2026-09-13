@@ -1,36 +1,107 @@
+/* ── The admin menu ──────────────────────────────────────────────────────────
+   A row of pills on an ivory rail rather than underlined text: the admin sits
+   on this menu all day, and the tab you are standing on should be obvious from
+   across the desk. Colours come from the brand palette in index.css so this
+   reads as the same shop as the storefront. */
+
 .admin-tabs {
   display: flex;
+  flex-wrap: wrap;
   gap: 0.25rem;
-  border-bottom: 1.5px solid #e5e1d6;
-  margin-bottom: 2rem;
+  padding: 0.3rem 0;
+  margin-bottom: 1.6rem;
 }
 
 .admin-tab {
-  padding: 0.6rem 1.4rem;
+  display: inline-flex;
+  align-items: center;
+  padding: 0.52rem 1.05rem;
+  border-radius: 9px;
   font-family: 'Josefin Sans', sans-serif;
-  font-size: 0.78rem;
-  letter-spacing: 0.1em;
+  font-size: 0.76rem;
+  letter-spacing: 0.09em;
   text-transform: uppercase;
-  color: var(--color-text-muted, #6b6b6b);
+  font-weight: 600;
+  color: var(--text-light, #6b6b50);
   text-decoration: none;
-  border-bottom: 2.5px solid transparent;
-  margin-bottom: -1.5px;
-  transition: all 0.15s;
+  white-space: nowrap;
+  border: 1px solid transparent;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .admin-tab:hover {
-  color: var(--color-forest, #1a2e1a);
+  color: var(--green-deep, #1c4a0e);
+  background: var(--white, #fff);
+  border-color: var(--ivory-deep, #e8d8c0);
 }
 
+/* The active pill lifts off the rail — a white card with a green edge along the
+   bottom, so it reads as the page you are on rather than one more option. */
 .admin-tab.active {
-  color: var(--color-forest, #1a2e1a);
-  border-bottom-color: var(--color-forest, #1a2e1a);
-  font-weight: 600;
+  color: var(--green-deep, #1c4a0e);
+  background: var(--white, #fff);
+  border-color: var(--ivory-deep, #e8d8c0);
+  box-shadow: 0 1px 3px rgba(29, 74, 14, 0.1), inset 0 -2.5px 0 var(--green-mid, #3d8b22);
+  font-weight: 700;
 }
 
-@media (max-width: 560px) {
-  .admin-tab {
-    padding: 0.6rem 0.9rem;
-    font-size: 0.7rem;
-  }
+/* ── The counts ──────────────────────────────────────────────────────────────
+   Each keeps the colour its stat tile used to have — blue for orders, violet
+   for products, amber for customers — so the numbers stay recognisable after
+   the move and the three read apart at a glance. A soft chip of that hue, not
+   a solid badge: these are totals, not alerts. */
+.admin-tab-count {
+  display: inline-block;
+  margin-left: 0.5rem;
+  padding: 0.1rem 0.46rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
+  line-height: 1.45;
+  color: var(--tint, #6b6b50);
+  background: color-mix(in srgb, var(--tint, #6b6b50) 13%, #fff);
+  border: 1px solid color-mix(in srgb, var(--tint, #6b6b50) 24%, transparent);
+  transition: background 0.15s ease, box-shadow 0.15s ease;
+  vertical-align: middle;
 }
+
+.admin-tab:hover .admin-tab-count {
+  background: color-mix(in srgb, var(--tint, #6b6b50) 20%, #fff);
+}
+
+/* On the tab you are standing on the chip fills in and carries its colour. */
+.admin-tab.active .admin-tab-count {
+  color: #fff;
+  background: var(--tint, #6b6b50);
+  border-color: color-mix(in srgb, var(--tint, #6b6b50) 80%, #000);
+  box-shadow: 0 1px 5px color-mix(in srgb, var(--tint, #6b6b50) 45%, transparent);
+}
+
+@media (max-width: 720px) {
+  /* On a phone the rail scrolls sideways rather than wrapping into three rows
+     and pushing the work off the screen. */
+  .admin-tabs {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .admin-tabs::-webkit-scrollbar { display: none; }
+  .admin-tab { padding: 0.5rem 0.8rem; font-size: 0.7rem; }
+  .admin-tab-count { font-size: 0.66rem; padding: 0.05rem 0.36rem; margin-left: 0.35rem; }
+}
+
+/* "2/104" — 2 waiting of 104 ever placed. The total is context, not the news,
+   so it steps back a little without becoming unreadable. */
+.admin-tab-of { opacity: 0.55; font-weight: 700; margin-left: 0.05rem; }
+.admin-tab.active .admin-tab-of { opacity: 0.8; }
+
+/* The counts that used to sit in page headings; the tab already names them. */
+.section-count {
+  display: inline-block; padding: 0.1rem 0.5rem; border-radius: 999px;
+  background: var(--ivory-dark, #f0e8d8); color: var(--text-light, #6b6b50);
+  font-size: 0.8rem; font-weight: 700; font-variant-numeric: tabular-nums;
+}
+.section-count-spacer { display: inline-block; }

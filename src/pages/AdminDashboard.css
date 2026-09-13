@@ -728,3 +728,7 @@
 .order-row-late > td:first-child { box-shadow: inset 3px 0 0 #c0392b; }
 
 .rev-partial { margin: 0 0 .7rem; font-size: .76rem; color: #7a6a58; background: #fdf6ea; border: 1px dashed #eadcc4; border-radius: 6px; padding: .45rem .6rem; }
+
+/* Revenue to date: one line, not a tile. */
+.admin-revenue-line { margin: .2rem 0 1rem; font-size: .9rem; color: #7a6a58; }
+.admin-revenue-line strong { font-size: 1.15rem; color: #1f2937; margin-left: .35rem; }

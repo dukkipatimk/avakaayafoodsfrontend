@@ -37,7 +37,7 @@ const AdminCustomers = () => {
         <AdminTabs />
 
         <div className="section-header-row">
-          <h2 className="section-title">Customers ({customers.length})</h2>
+          <span className="section-count" title="customers listed">{customers.length}</span>
         </div>
 
         <div className="customer-search">

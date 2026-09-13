@@ -398,7 +398,7 @@ const AdminUsers = () => {
         </div>
 
         <div className="section-header-row">
-          <h2 className="section-title">Users ({users.length})</h2>
+          <span className="section-count" title="users listed">{users.length}</span>
           {isSuperAdmin && (
             <button className="btn btn-primary" onClick={() => setShowCreate(true)}>
               + Add Staff
