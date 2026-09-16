@@ -47,6 +47,11 @@ import GlobalLoader from './components/GlobalLoader';
 import AnalyticsTracker from './components/AnalyticsTracker';
 import RouteSeo from './components/RouteSeo';
 import PrivacyPolicy from './pages/PrivacyPolicy';
+import './components/AdminWorkspace.css';
+
+// The footer is on every page, admin included. It was hidden on /admin alone,
+// which meant the orders screen ended in nothing while every other admin page
+// closed properly — one page behaving differently for no stated reason.
 
 function App() {
   return (

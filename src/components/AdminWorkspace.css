@@ -1,0 +1,112 @@
+/* Shared visual language for the admin tabs. Scoped to their page roots. */
+.admin-workspace.admin-page, .admin-workspace.admin-products-page {
+  --admin-ink: #183324;
+  --admin-muted: #6d7c72;
+  --admin-border: #dfe7df;
+  padding: 32px 0 64px;
+  min-height: 70vh;
+  background: #fff;
+  color: var(--admin-ink);
+  font-family: Arial, sans-serif;
+}
+.admin-workspace > .container { width: 100%; max-width: 1600px; padding: 0 32px; }
+/* The menu styles itself — see AdminTabs.css. Half of it used to be redefined
+   here, which is how the active tab ended up with a grey pill AND a green edge
+   competing to say the same thing (and `box-shadow: none` quietly winning). */
+.admin-workspace .section-header-row { display: flex; align-items: center; gap: 16px; margin: 0 0 16px; }
+.admin-workspace .section-count { padding: 6px 12px; border-radius: 20px; background: #e6f0e4; color: #31573a; font: 600 13px Arial, sans-serif; }
+.admin-workspace .admin-header { gap: 16px; margin-bottom: 20px; }
+.admin-workspace .admin-title { font: 700 26px Arial, sans-serif; }
+.admin-workspace :is(.btn, .btn-table-edit, .btn-table-delete, .combo-row-actions button) { min-height: 40px; border-radius: 8px; font: 600 13px Arial, sans-serif; letter-spacing: 0; text-transform: none; padding: 10px 14px; }
+.admin-workspace .btn-primary { background: #245433; color: #fff; border: 1px solid #245433; box-shadow: none; }
+.admin-workspace .btn-primary:hover { background: #193f26; }
+.admin-workspace :is(.btn-outline, .btn-table-edit, .combo-row-actions button) { background: #fff; color: #315c3b; border: 1px solid #d5e2d3; }
+.admin-workspace :is(.btn-table-delete, .combo-row-actions .combo-row-delete) { background: #fff6f6; color: #a23e43; border: 1px solid #efd8da; }
+.admin-workspace :is(button, a, input, select, textarea):focus-visible { outline: 3px solid #759a5c; outline-offset: 3px; }
+.admin-workspace button:disabled { opacity: .55; cursor: not-allowed; }
+/* The controls sit straight on the page. The card around them drew a second
+   box around fields that already have their own, and on a white page it was a
+   border enclosing nothing. */
+.admin-workspace :is(.product-search, .customer-search, .users-toolbar, .leads-toolbar, .report-controls, .report-section-nav, .admin-collection-filters) { padding: 0; margin: 0 0 20px; border: 0; border-radius: 0; background: transparent; box-shadow: none; }
+.admin-workspace :is(.product-search, .customer-search, .users-toolbar) input { min-width: 0; width: 100%; max-width: none; height: 48px; padding: 12px 14px; background: #f8faf7; border: 1px solid #dce5db; border-radius: 8px; font: 14px Arial, sans-serif; color: var(--admin-ink); }
+.admin-workspace .users-toolbar { display: flex; gap: 16px; align-items: center; }
+.admin-workspace .users-toolbar input { flex: 1; }
+.admin-workspace :is(.users-toolbar, .leads-toolbar, .report-controls, .report-section-nav) select { min-height: 44px; padding: 10px 12px; border: 1px solid #dce5db; border-radius: 8px; background: #fff; color: var(--admin-ink); font: 14px Arial, sans-serif; }
+.admin-workspace .admin-table-wrap { border: 1px solid var(--admin-border); border-radius: 12px; background: #fff; box-shadow: 0 5px 18px #18332403; overflow-x: auto; }
+.admin-workspace .admin-table { width: 100%; border-collapse: collapse; font: 14px Arial, sans-serif; }
+.admin-workspace .admin-table th { padding: 18px 16px; font: 600 12px Arial, sans-serif; text-transform: none; letter-spacing: 0; color: #38503e; background: #f0f5f0; border-bottom: 1px solid #e6ede4; }
+.admin-workspace .admin-table td { padding: 20px 16px; color: #1e3426; border-bottom: 1px solid #edf2eb; vertical-align: middle; line-height: 1.5; }
+.admin-workspace .admin-table tr:last-child td { border-bottom: 0; }
+.admin-workspace .admin-table tr:hover td { background: #f7faf5; }
+.admin-workspace .admin-table td.cell-date { display: table-cell; white-space: nowrap; font-size: 13px; color: var(--admin-muted); }
+.admin-workspace .cell-sub { color: var(--admin-muted); font: 12px Arial, sans-serif; }
+.admin-workspace :is(.status-toggle, .role-chip, .stock-badge, .lead-status, .payment-status, .order-status-pill) { padding: 6px 10px; border-radius: 9px; font: 12px Arial, sans-serif; letter-spacing: 0; text-transform: capitalize; }
+.admin-workspace :is(.status-toggle.active, .stock-ok, .payment-status.paid) { background: #e3f1e5; color: #28613b; border-color: transparent; }
+.admin-workspace :is(.status-toggle.inactive, .stock-na) { background: #eef1ef; color: #68776e; border-color: transparent; }
+.admin-workspace :is(.stock-low, .payment-status.pending) { background: #fff4df; color: #936813; }
+.admin-workspace .stock-out { background: #fcebed; color: #a33f4a; }
+.admin-workspace :is(.table-empty, .combo-empty, .leads-empty) { padding: 40px 20px; text-align: center; color: var(--admin-muted); font: 14px Arial, sans-serif; }
+.admin-workspace :is(.stat-card, .lead-metric, .lead-trends-panel, .lead-regions, .lead-card, .report-block, .combo-table) { border: 1px solid var(--admin-border); background: #fff; border-radius: 12px; box-shadow: 0 3px 14px #18332403; }
+.admin-workspace :is(.stat-value, .lead-metric strong) { font: 700 26px Arial, sans-serif; color: #25482e; }
+.admin-workspace :is(.stat-label, .lead-metric span) { font: 12px Arial, sans-serif; text-transform: none; letter-spacing: 0; color: var(--admin-muted); }
+.admin-workspace :is(.lead-section-head h2, .lead-regions h2, .report-block h3) { font: 600 18px Arial, sans-serif; }
+.admin-workspace :is(.report-caption, .leads-intro, .lead-alert-note) { color: var(--admin-muted); font-size: 13px; line-height: 1.6; }
+.admin-workspace .lead-card { padding: 20px; }
+.admin-workspace .lead-card:hover { border-color: #aac2a4; box-shadow: 0 5px 18px #18332408; }
+.admin-workspace .lead-card-head h3 { font: 600 16px Arial, sans-serif; }
+.admin-workspace .combo-table { overflow: hidden; }
+.admin-workspace .combo-row { border: 0; border-bottom: 1px solid #edf2eb; border-radius: 0; margin: 0; padding: 22px 20px; background: #fff; }
+.admin-workspace .combo-row:last-child { border-bottom: 0; }
+.admin-workspace .combo-row:hover { background: #f8faf6; }
+.admin-workspace .combo-row-main strong { font: 600 15px Arial, sans-serif; }
+.admin-workspace .combo-row-meta { margin-top: 8px; color: var(--admin-muted); font-size: 12px; }
+.admin-workspace .combo-row-save { background: #e6f3e6; border-radius: 8px; padding: 4px 8px; color: #32613a; }
+.admin-collection-filters { display: grid; grid-template-columns: minmax(0, 1fr) 180px; gap: 16px; align-items: end; }
+.admin-collection-search { display: flex; align-items: center; gap: 10px; height: 48px; padding: 0 14px; border: 1px solid #dce5db; border-radius: 8px; background: #f8faf7; color: #6d7c72; }
+.admin-collection-search svg { flex-shrink: 0; }
+.admin-collection-search input { width: 100%; min-width: 0; height: 44px; border: 0; background: transparent; font: 14px Arial, sans-serif; color: #183324; }
+.admin-collection-status { display: flex; flex-direction: column; gap: 7px; font-size: 12px; color: #6d7c72; }
+.admin-collection-status select { height: 48px; padding: 10px 12px; border: 1px solid #dce5db; border-radius: 8px; background: #fff; font: 14px Arial, sans-serif; color: #183324; }
+.admin-collection-results { grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; gap: 12px; font-size: 13px; color: #4e6655; }
+.admin-collection-results button { border: 0; background: transparent; color: #315c3b; padding: 8px; text-decoration: underline; cursor: pointer; }
+.admin-workspace .report-view-picker { display: flex; align-items: center; gap: 14px; color: var(--admin-muted); font-size: 13px; }
+.admin-workspace .report-block { padding: 18px; }
+.admin-workspace .report-block-head { gap: 12px; margin-bottom: 16px; }
+@media (max-width: 800px) {
+  .admin-workspace > .container { padding: 0 16px; }
+  .admin-workspace .admin-table { min-width: 680px; }
+  .admin-workspace :is(.users-toolbar, .leads-toolbar, .admin-header) { flex-wrap: wrap; }
+  .admin-workspace :is(.users-toolbar, .leads-toolbar) input { flex-basis: 100%; }
+  .admin-workspace :is(.product-search, .customer-search, .users-toolbar, .leads-toolbar, .admin-collection-filters) { padding: 0; }
+  .admin-workspace .stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 480px) {
+  .admin-collection-filters { grid-template-columns: minmax(0, 1fr); }
+  .admin-workspace .combo-row { flex-wrap: wrap; gap: 16px; }
+  .admin-workspace .combo-row-main { flex-basis: 100%; }
+}
+
+/* ── The primary action rides with the search ──────────────────────────────
+   "+ Add Product" / "+ Create Coupon" used to sit in a header row of their
+   own above the filters, which spent a whole line on one button and put the
+   count next to it — a number the tab above already carries. The button now
+   sits in the filter bar, beside the search it belongs to. */
+.admin-collection-filters--with-action { grid-template-columns: minmax(0, 1fr) 180px auto; }
+.admin-collection-action .btn { height: 48px; white-space: nowrap; }
+
+.admin-workspace :is(.product-search, .customer-search) { display: flex; align-items: center; gap: 16px; }
+.admin-workspace :is(.product-search, .customer-search) input { flex: 1; }
+.admin-workspace :is(.product-search, .customer-search, .users-toolbar) .btn { height: 48px; white-space: nowrap; }
+/* The result count, where a page has no filter bar to carry one. */
+.admin-workspace .toolbar-count { color: var(--admin-muted); font: 13px Arial, sans-serif; white-space: nowrap; }
+.admin-workspace .users-toolbar .toolbar-count { margin-left: auto; }
+
+@media (max-width: 800px) {
+  .admin-collection-filters--with-action { grid-template-columns: minmax(0, 1fr) 180px; }
+  .admin-collection-filters--with-action .admin-collection-action { grid-column: 1 / -1; justify-self: start; }
+  .admin-workspace :is(.product-search, .customer-search) { flex-wrap: wrap; }
+  .admin-workspace :is(.product-search, .customer-search) input { flex-basis: 100%; }
+}
+@media (max-width: 480px) {
+  .admin-collection-filters--with-action { grid-template-columns: minmax(0, 1fr); }
+}

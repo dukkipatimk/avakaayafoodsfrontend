@@ -267,17 +267,18 @@ const AdminLeads = () => {
   const activeTrend = TREND_OPTIONS.find(option => option.value === trendView) || TREND_OPTIONS[0];
 
   return (
-    <div className="admin-page leads-page">
+    <div className="admin-page leads-page admin-workspace">
       <div className="container">
+        <AdminTabs />
         <div className="admin-header">
           <div>
-            <h1 className="admin-title">Leads & Activity</h1>
+            
             <p className="leads-intro">Visitors who reached cart or checkout, with abandoned-order follow-up alerts.</p>
           </div>
           <button className="btn btn-outline btn-sm" onClick={() => loadLeads()}>Refresh Alerts</button>
         </div>
 
-        <AdminTabs />
+
 
         <div className="leads-metrics">
           <div className="lead-metric"><strong>{summary.page_view || 0}</strong><span>Page Views</span></div>

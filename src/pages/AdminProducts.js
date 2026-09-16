@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import api from '../utils/api';
 import AdminTabs from '../components/AdminTabs';
+import AdminCollectionFilters from '../components/AdminCollectionFilters';
 import './AdminProducts.css';
 
 const WEIGHTS = ['100g', '200g', '250g', '500g', '1kg'];
@@ -212,17 +213,24 @@ const AdminProducts = () => {
   const [editing, setEditing] = useState(null);
   const [saving, setSaving] = useState(false);
   const [search, setSearch] = useState('');
+  // The list holds withdrawn products now, so it needs a way to say which kind
+  // you are looking at. Defaults to active — the day-to-day view.
+  const [visibility, setVisibility] = useState('active');
   const [bulkStockProductId, setBulkStockProductId] = useState(null);
   const [priceProductId, setPriceProductId] = useState(null);
   const [uploading, setUploading] = useState(false);
 
-  const fetchProducts = () => {
-    api.get('/products?limit=100').then(res => {
+  // Withdrawn products are invisible to the shop, which is the point — but the
+  // admin has to be able to find one to put it back. `status=all` is honoured
+  // for staff only; the storefront's own calls are unchanged.
+  const fetchProducts = useCallback(() => {
+    setLoading(true);
+    api.get('/products?limit=100&status=all').then(res => {
       setProducts(res.data.products || []);
     }).catch(console.error).finally(() => setLoading(false));
-  };
+  }, []);
 
-  useEffect(fetchProducts, []);
+  useEffect(() => { fetchProducts(); }, [fetchProducts]);
 
   const openNew = () => {
     setForm(emptyProduct);
@@ -348,31 +356,25 @@ const AdminProducts = () => {
     ));
   };
 
-  const filtered = products.filter(p =>
-    p.name?.toLowerCase().includes(search.toLowerCase())
-  );
+  const filtered = products.filter(p => {
+    if (visibility === 'active' && p.isActive === false) return false;
+    if (visibility === 'inactive' && p.isActive !== false) return false;
+    return p.name?.toLowerCase().includes(search.toLowerCase());
+  });
 
   return (
-    <div className="admin-products-page">
+    <div className="admin-products-page admin-workspace">
       <div className="container">
-        <div className="admin-header">
-          <h1 className="admin-title">Admin Dashboard</h1>
-        </div>
-
         <AdminTabs />
 
-        <div className="section-header-row">
-          <span className="section-count-spacer" />
-          <button className="btn btn-primary" onClick={openNew}>+ Add Product</button>
-        </div>
-
-        {/* Search */}
-        <div className="product-search">
-          <input
-            type="search" placeholder="Search products…"
-            value={search} onChange={e => setSearch(e.target.value)}
-          />
-        </div>
+        {/* Same bar as Coupons, Combos and Stores: search, what to show, and the
+            one button this page exists for. */}
+        <AdminCollectionFilters
+          search={search} onSearch={setSearch}
+          status={visibility} onStatus={setVisibility}
+          count={filtered.length} noun="products" loading={loading}
+          action={<button className="btn btn-primary" onClick={openNew}>+ Add Product</button>}
+        />
 
         {/* Product table */}
         {loading ? (
@@ -405,6 +407,10 @@ const AdminProducts = () => {
                         <td>
                           <div className="product-name-cell">
                             <strong>{p.name}</strong>
+                            {/* Withdrawn products are in this list now, and two
+                                rows that look alike but only one of which the
+                                shop can sell is worse than not listing them. */}
+                            {p.isActive === false && <span className="status-toggle inactive" title="Not on the storefront">Inactive</span>}
                             <span className="cell-sub slug">{p.slug}</span>
                           </div>
                         </td>

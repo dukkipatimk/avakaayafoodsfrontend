@@ -58,6 +58,9 @@ body {
    cover page content. */
 @media (max-width: 1023px) {
   body { padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px)); }
+  /* …except on the admin screens, which don't get the toolbar. Reserving room
+     for a bar that isn't there just leaves a gap under the table. */
+  body:has(.admin-page, .admin-products-page) { padding-bottom: 0; }
 }
 
 /* Backstop against sideways scroll on phones. One over-wide element anywhere

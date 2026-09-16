@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import api from '../utils/api';
 import AdminTabs from '../components/AdminTabs';
+import AdminCollectionFilters from '../components/AdminCollectionFilters';
 import './AdminDashboard.css';
 import './AdminStores.css';
 
@@ -147,6 +148,9 @@ const StoreModal = ({ store, onClose, onSaved }) => {
 /* ── Main Component ── */
 const AdminStores = () => {
   const [stores, setStores] = useState([]);
+  const [search, setSearch] = useState('');
+  const [visibility, setVisibility] = useState('all');
+  const filteredStores = stores.filter(s => [s.name, s.city, s.area, s.phone].some(value => String(value || '').toLowerCase().includes(search.trim().toLowerCase())) && (visibility === 'all' || (visibility === 'active' ? s.isActive : !s.isActive)));
   const [loading, setLoading] = useState(true);
   const [modalStore, setModalStore] = useState(undefined); // undefined = closed, null = new, obj = edit
   const [busyId, setBusyId] = useState(null);
@@ -192,21 +196,13 @@ const AdminStores = () => {
   };
 
   return (
-    <div className="admin-page">
+    <div className="admin-page admin-workspace">
       <div className="container">
-        <div className="admin-header">
-          <h1 className="admin-title">Admin Dashboard</h1>
-        </div>
-
         <AdminTabs />
 
-        <div className="section-header-row">
-          <span className="section-count" title="stores listed">{stores.length}</span>
-          <button className="btn btn-primary" onClick={() => setModalStore(null)}>
-            + Add Store
-          </button>
-        </div>
-
+        {/* Counted on the Stores tab above; the button rides with the search. */}
+        <AdminCollectionFilters search={search} onSearch={setSearch} status={visibility} onStatus={setVisibility} count={filteredStores.length} noun="stores" loading={loading}
+          action={<button className="btn btn-primary" onClick={() => setModalStore(null)}>+ Add Store</button>} />
         {loading ? (
           <div className="loading-spinner" style={{ margin: '4rem auto' }} />
         ) : (
@@ -225,7 +221,7 @@ const AdminStores = () => {
                 </tr>
               </thead>
               <tbody>
-                {stores.map(s => {
+                {filteredStores.map(s => {
                   const busy = busyId === s._id;
                   return (
                     <tr key={s._id} className={busy ? 'row-busy' : ''}>
@@ -262,8 +258,8 @@ const AdminStores = () => {
                 })}
               </tbody>
             </table>
-            {stores.length === 0 && (
-              <div className="table-empty">No stores yet. Add your first one.</div>
+            {filteredStores.length === 0 && (
+              <div className="table-empty">{stores.length ? 'No stores match your filters.' : 'No stores yet. Add your first one.'}</div>
             )}
           </div>
         )}

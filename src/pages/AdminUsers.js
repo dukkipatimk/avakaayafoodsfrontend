@@ -368,12 +368,8 @@ const AdminUsers = () => {
   });
 
   return (
-    <div className="admin-page">
+    <div className="admin-page admin-workspace">
       <div className="container">
-        <div className="admin-header">
-          <h1 className="admin-title">Admin Dashboard</h1>
-        </div>
-
         <AdminTabs />
 
         <div className="stats-grid users-summary">
@@ -397,31 +393,30 @@ const AdminUsers = () => {
           ))}
         </div>
 
-        <div className="section-header-row">
-          <span className="section-count" title="users listed">{users.length}</span>
-          {isSuperAdmin && (
-            <button className="btn btn-primary" onClick={() => setShowCreate(true)}>
-              + Add Staff
-            </button>
-          )}
-        </div>
-
         <div className="users-toolbar">
           <input
             type="search"
             className="users-search"
+            aria-label="Search users by name, email or phone"
             placeholder="Search by name, email or phone…"
             value={search}
             onChange={e => setSearch(e.target.value)}
           />
           <select
             className="users-role-filter"
+            aria-label="Filter users by role"
             value={roleFilter}
             onChange={e => setRoleFilter(e.target.value)}
           >
             <option value="all">All roles</option>
             {ROLES.map(r => <option key={r.value} value={r.value}>{r.label}</option>)}
           </select>
+          {/* The count answers the filters beside it, and the button is where the
+              hand already is — neither needs a row of its own above the table. */}
+          <span className="toolbar-count" role="status">{loading ? 'Loading…' : `${filtered.length} users`}</span>
+          {isSuperAdmin && (
+            <button className="btn btn-primary" onClick={() => setShowCreate(true)}>+ Add Staff</button>
+          )}
         </div>
 
         {loading ? (

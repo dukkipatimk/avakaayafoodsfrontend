@@ -387,21 +387,16 @@ const AdminReports = () => {
   const [section, setSection] = useState('sales');
   const Active = SECTIONS.find(s => s.key === section).Comp;
   return (
-    <div className="admin-page">
+    <div className="admin-page admin-workspace">
       <div className="container">
-        <div className="admin-header"><h1 className="admin-title">Admin Dashboard</h1></div>
         <AdminTabs />
 
-        <div className="section-header-row">
-          <span className="section-count-spacer" />
-        </div>
-
         <div className="report-section-nav">
-          {SECTIONS.map(s => (
-            <button key={s.key} className={`report-section-btn${section === s.key ? ' active' : ''}`} onClick={() => setSection(s.key)}>
-              {s.label}
-            </button>
-          ))}
+          <label className="report-view-picker">Report
+            <select value={section} onChange={e => setSection(e.target.value)}>
+              {SECTIONS.map(s => <option key={s.key} value={s.key}>{s.label}</option>)}
+            </select>
+          </label>
         </div>
 
         <Active />

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import api from '../utils/api';
 import AdminTabs from '../components/AdminTabs';
+import AdminCollectionFilters from '../components/AdminCollectionFilters';
 import './AdminDashboard.css';
 import './AdminCustomers.css';
 
@@ -12,6 +13,7 @@ const AdminCustomers = () => {
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
+  const [visibility, setVisibility] = useState('all');
 
   useEffect(() => {
     api.get('/admin/users?role=customer')
@@ -21,33 +23,28 @@ const AdminCustomers = () => {
   }, []);
 
   const q = search.toLowerCase();
-  const filtered = customers.filter(c =>
-    c.name?.toLowerCase().includes(q) ||
-    c.email?.toLowerCase().includes(q) ||
-    c.phone?.toLowerCase().includes(q)
-  );
+  const filtered = customers.filter(c => {
+    // isActive is the account switch, not email verification — a customer can
+    // be verified and still be closed, so the two columns say different things.
+    if (visibility === 'active' && c.isActive === false) return false;
+    if (visibility === 'inactive' && c.isActive !== false) return false;
+    return c.name?.toLowerCase().includes(q)
+      || c.email?.toLowerCase().includes(q)
+      || c.phone?.toLowerCase().includes(q);
+  });
 
   return (
-    <div className="admin-page">
+    <div className="admin-page admin-workspace">
       <div className="container">
-        <div className="admin-header">
-          <h1 className="admin-title">Admin Dashboard</h1>
-        </div>
-
         <AdminTabs />
 
-        <div className="section-header-row">
-          <span className="section-count" title="customers listed">{customers.length}</span>
-        </div>
-
-        <div className="customer-search">
-          <input
-            type="search"
-            placeholder="Search by name, email or phone…"
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-          />
-        </div>
+        {/* The same bar as every other collection. No create button — customers
+            arrive by shopping, not by being added here. */}
+        <AdminCollectionFilters
+          search={search} onSearch={setSearch}
+          status={visibility} onStatus={setVisibility}
+          count={filtered.length} noun="customers" loading={loading}
+        />
 
         {loading ? (
           <div className="loading-spinner" style={{ margin: '4rem auto' }} />
@@ -66,7 +63,12 @@ const AdminCustomers = () => {
               <tbody>
                 {filtered.map(c => (
                   <tr key={c._id}>
-                    <td><strong>{c.name}</strong></td>
+                    <td>
+                      <strong>{c.name}</strong>
+                      {/* Closed accounts sit in the same list; without this the
+                          filter would hide rows for no visible reason. */}
+                      {c.isActive === false && <span className="status-toggle inactive" title="Account closed — cannot sign in">Inactive</span>}
+                    </td>
                     <td>{c.email}</td>
                     <td>{c.phone || '—'}</td>
                     <td>

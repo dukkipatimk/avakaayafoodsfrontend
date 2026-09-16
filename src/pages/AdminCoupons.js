@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import api from '../utils/api';
 import AdminTabs from '../components/AdminTabs';
+import AdminCollectionFilters from '../components/AdminCollectionFilters';
 import './AdminDashboard.css';
 import './AdminCoupons.css';
 
@@ -144,6 +145,8 @@ const CreateCouponModal = ({ onClose, onCreated }) => {
 /* ── Main Component ── */
 const AdminCoupons = () => {
   const [coupons, setCoupons] = useState([]);
+  const [search, setSearch] = useState('');
+  const [visibility, setVisibility] = useState('all');
   const [loading, setLoading] = useState(true);
   const [showCreate, setShowCreate] = useState(false);
   const [busyId, setBusyId] = useState(null);
@@ -168,23 +171,16 @@ const AdminCoupons = () => {
   };
 
   const isExpired = c => c.expiresAt && new Date(c.expiresAt) < new Date();
+  const filteredCoupons = coupons.filter(c => String(c.code || '').toLowerCase().includes(search.trim().toLowerCase()) && (visibility === 'all' || (visibility === 'active' ? c.isActive && !isExpired(c) : !c.isActive || isExpired(c))));
 
   return (
-    <div className="admin-page">
+    <div className="admin-page admin-workspace">
       <div className="container">
-        <div className="admin-header">
-          <h1 className="admin-title">Admin Dashboard</h1>
-        </div>
-
         <AdminTabs />
 
-        <div className="section-header-row">
-          <span className="section-count" title="coupons listed">{coupons.length}</span>
-          <button className="btn btn-primary" onClick={() => setShowCreate(true)}>
-            + Create Coupon
-          </button>
-        </div>
-
+        {/* Counted on the Coupons tab above; the button rides with the search. */}
+        <AdminCollectionFilters search={search} onSearch={setSearch} status={visibility} onStatus={setVisibility} count={filteredCoupons.length} noun="coupons" loading={loading}
+          action={<button className="btn btn-primary" onClick={() => setShowCreate(true)}>+ Create Coupon</button>} />
         {loading ? (
           <div className="loading-spinner" style={{ margin: '4rem auto' }} />
         ) : (
@@ -202,7 +198,7 @@ const AdminCoupons = () => {
                 </tr>
               </thead>
               <tbody>
-                {coupons.map(c => {
+                {filteredCoupons.map(c => {
                   const busy = busyId === c.id;
                   const expired = isExpired(c);
                   return (
@@ -238,8 +234,8 @@ const AdminCoupons = () => {
                 })}
               </tbody>
             </table>
-            {coupons.length === 0 && (
-              <div className="table-empty">No coupons yet. Create your first one.</div>
+            {filteredCoupons.length === 0 && (
+              <div className="table-empty">{coupons.length ? 'No coupons match your filters.' : 'No coupons yet. Create your first one.'}</div>
             )}
           </div>
         )}

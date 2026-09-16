@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import api from '../utils/api';
 import AdminTabs from '../components/AdminTabs';
+import AdminCollectionFilters from '../components/AdminCollectionFilters';
 import toast from 'react-hot-toast';
 import './AdminDashboard.css';
 import './AdminCombos.css';
@@ -235,6 +236,9 @@ const ComboModal = ({ combo, products, onClose, onSaved }) => {
 
 const AdminCombos = () => {
   const [combos, setCombos] = useState([]);
+  const [search, setSearch] = useState('');
+  const [visibility, setVisibility] = useState('all');
+  const filteredCombos = combos.filter(c => String(c.name || '').toLowerCase().includes(search.trim().toLowerCase()) && (visibility === 'all' || (visibility === 'active' ? c.isActive : !c.isActive)));
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(undefined);   // undefined = closed, null = new
@@ -267,25 +271,21 @@ const AdminCombos = () => {
   };
 
   return (
-    <div className="admin-page">
+    <div className="admin-page admin-workspace">
       <div className="container">
-        <div className="admin-header">
-          <h1 className="admin-title">Admin Dashboard</h1>
-        </div>
         <AdminTabs />
 
-        <div className="section-header-row">
-          <span className="section-count" title="combos listed">{combos.length}</span>
-          <button className="btn btn-primary" onClick={() => setEditing(null)}>+ New Combo</button>
-        </div>
-
+        {/* Counted on the Combos tab above; the button rides with the search. */}
+        <AdminCollectionFilters search={search} onSearch={setSearch} status={visibility} onStatus={setVisibility} count={filteredCombos.length} noun="combos" loading={loading}
+          action={<button className="btn btn-primary" onClick={() => setEditing(null)}>+ New Combo</button>} />
         {loading && <p className="combo-empty">Loading…</p>}
+        {!loading && combos.length > 0 && !filteredCombos.length && <p className="combo-empty">No combos match your filters.</p>}
         {!loading && combos.length === 0 && (
           <p className="combo-empty">No combos yet. Create one to show a “Save with combos” row on the storefront.</p>
         )}
 
         <div className="combo-table">
-          {combos.map((combo) => (
+          {filteredCombos.map((combo) => (
             <div key={combo._id ?? combo.id} className={`combo-row${combo.isActive ? '' : ' combo-row--off'}`}>
               <div className="combo-row-main">
                 <strong>{combo.name}</strong>

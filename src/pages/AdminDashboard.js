@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import api from '../utils/api';
-import { useAuth } from '../context/AuthContext';
 import AdminTabs from '../components/AdminTabs';
+import { useAuth } from '../context/AuthContext';
 import useAdminStats from '../hooks/useAdminStats';
 import './AdminDashboard.css';
 
@@ -9,7 +9,8 @@ const STATUS_OPTIONS = ['placed', 'confirmed', 'processing', 'packed', 'shipped'
 // Orders grouped into tabs. Each tab fetches its set of statuses.
 const ORDER_TABS = [
   { key: 'active',    label: 'Active',              statuses: ['placed', 'confirmed', 'processing', 'packed'] },
-  { key: 'fulfilled', label: 'Shipped & Delivered', statuses: ['out-for-delivery', 'shipped', 'delivered'] },
+  { key: 'fulfilled', label: 'Shipped', statuses: ['out-for-delivery', 'shipped'] },
+  { key: 'delivered', label: 'Delivered', statuses: ['delivered'] },
   { key: 'cancelled', label: 'Cancelled',           statuses: ['cancelled', 'returned'] },
   { key: 'all',       label: 'All',                 statuses: [] },
   // Not a filter over orders but a view of its own; it loads nothing from the
@@ -627,6 +628,17 @@ const AdminDashboard = () => {
   const { stats } = useAdminStats(isAdmin);   // shared with the menu badges
   const [summary, setSummary] = useState(null);
   const [summaryDays, setSummaryDays] = useState(14);
+  const [search, setSearch] = useState('');
+  const [priority, setPriority] = useState('all');
+  const [dateRange, setDateRange] = useState('all');
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(25);
+  const [sort, setSort] = useState('createdAt:desc');
+  const [selectedIds, setSelectedIds] = useState([]);
+  const searchInput = useRef(null);
+  const [ordersError, setOrdersError] = useState('');
+  const [refreshKey, setRefreshKey] = useState(0);
+  const ordersRequest = useRef(0);
 
   const togglePayMethod = async (key) => {
     if (!payMethods) return;
@@ -642,19 +654,24 @@ const AdminDashboard = () => {
     }
   };
 
-  const fetchOrders = (tabKey = statusFilter) => {
-    const tab = ORDER_TABS.find(t => t.key === tabKey) || ORDER_TABS[0];
-    const statusParam = tab.statuses.length ? `&status=${tab.statuses.join(',')}` : '';
-    return api.get(`/orders?limit=50${statusParam}`).then(res => res.data.orders || []);
+  const fetchOrders = async (request) => {
+    const rows = [];
+    let nextPage = 1;
+    let total = Infinity;
+    while (rows.length < total) {
+      const { data } = await api.get(`/orders?limit=100&page=${nextPage}`);
+      if (request !== ordersRequest.current) return [];
+      const batch = data.orders || [];
+      rows.push(...batch);
+      total = Number(data.total ?? rows.length);
+      if (!batch.length) break;
+      nextPage += 1;
+    }
+    return rows;
   };
 
   useEffect(() => {
     // Store managers only see orders — the stats endpoint is admin-only.
-    fetchOrders('active')
-      .then(setRecentOrders)
-      .catch(console.error)
-      .finally(() => setLoading(false));
-
     // Payment settings are super-admin only.
     if (isSuperAdmin) {
       api.get('/settings/payment-methods')
@@ -663,6 +680,29 @@ const AdminDashboard = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAdmin, isSuperAdmin]);
+
+  useEffect(() => {
+    const request = ++ordersRequest.current;
+    setLoading(true);
+    setOrdersError('');
+    fetchOrders(request)
+      .then(orders => { if (request === ordersRequest.current) setRecentOrders(orders); })
+      .catch(() => { if (request === ordersRequest.current) setOrdersError('Orders could not be loaded. Please try again.'); })
+      .finally(() => { if (request === ordersRequest.current) setLoading(false); });
+    return () => { ordersRequest.current += 1; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [refreshKey]);
+
+  useEffect(() => { setPage(1); setSelectedIds([]); }, [search, priority, dateRange, statusFilter, pageSize, sort, refreshKey]);
+  useEffect(() => {
+    const focusSearch = event => {
+      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k' && !selectedOrder && searchInput.current) {
+        event.preventDefault(); searchInput.current.focus();
+      }
+    };
+    window.addEventListener('keydown', focusSearch);
+    return () => window.removeEventListener('keydown', focusSearch);
+  }, [selectedOrder]);
 
   // The period picker gets an effect of its own. It was sharing the one above,
   // so changing it re-ran everything — including a fetch of the ACTIVE orders,
@@ -682,47 +722,58 @@ const AdminDashboard = () => {
     return () => { cancelled = true; };
   }, [isAdmin, summaryDays]);
 
-  const handleFilterChange = async filter => {
+  const handleFilterChange = filter => {
     setStatusFilter(filter);
-    // The revenue view reads its own endpoint; the orders already loaded stay
-    // as they are, so coming back to them costs nothing.
-    if ((ORDER_TABS.find(t => t.key === filter) || {}).view === 'summary') return;
-    try {
-      const orders = await fetchOrders(filter);
-      setRecentOrders(orders);
-    } catch (err) { console.error(err); }
+    setPriority('all');
   };
 
   const handleStatusUpdated = (orderId, updatedOrder) => {
-    setRecentOrders(prev => prev.map(o => o._id === orderId ? { ...o, ...updatedOrder } : o));
+    setRefreshKey(key => key + 1);
   };
+
+  const isOverdue = order => ![...DEAD_STATUSES, 'delivered'].includes(order.orderStatus) && latenessOf(order).late;
+  const visibleOrders = recentOrders.filter(order => {
+    const tab = ORDER_TABS.find(t => t.key === statusFilter);
+    if (tab?.statuses.length && !tab.statuses.includes(order.orderStatus)) return false;
+    if (dateRange !== 'all' && istDay(order.createdAt) < istDay(new Date(Date.now() - (Number(dateRange) - 1) * DAY_MS))) return false;
+    const address = orderAddr(order);
+    const matchesSearch = [order.orderNumber, order.user?.name, order.user?.email, address.fullName, address.name, address.phone, address.city, order.guestEmail]
+      .some(value => String(value || '').toLowerCase().includes(search.trim().toLowerCase().replace(/^#/, '')));
+    return matchesSearch && (priority === 'all' || (priority === 'late' ? isOverdue(order) : order.paymentStatus === 'pending'));
+  });
+  const [sortField, sortDirection] = sort.split(':');
+  const sortValue = order => sortField === 'customer' ? (order.user?.name || orderAddr(order).fullName || orderAddr(order).name || '')
+    : sortField === 'address' ? [orderAddr(order).city, orderAddr(order).line1].filter(Boolean).join(' ')
+    : sortField === 'total' ? Number(order.total || 0) : order[sortField] || '';
+  visibleOrders.sort((a, b) => {
+    const left = sortValue(a), right = sortValue(b);
+    const comparison = sortField === 'total' ? left - right : String(left).localeCompare(String(right), 'en', { numeric: true });
+    return sortDirection === 'asc' ? comparison : -comparison;
+  });
+  const toggleSort = field => setSort(`${field}:${sortField === field && sortDirection === 'asc' ? 'desc' : 'asc'}`);
+  const orderKey = order => String(order._id ?? order.id);
+  const toggleSelection = order => setSelectedIds(ids => ids.includes(orderKey(order)) ? ids.filter(id => id !== orderKey(order)) : [...ids, orderKey(order)]);
+  const pageCount = Math.max(1, Math.ceil(visibleOrders.length / pageSize));
+  const currentPage = Math.min(page, pageCount);
+  const pagedOrders = visibleOrders.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+  const countFor = tab => recentOrders.filter(o => !tab.statuses.length || tab.statuses.includes(o.orderStatus)).length;
+  const allPageSelected = pagedOrders.length > 0 && pagedOrders.every(order => selectedIds.includes(orderKey(order)));
 
   // The server's figures cover every order in the window; the fallback covers
   // only what is loaded. Either way the panel has something to show.
   const view = !isAdmin ? null : (summary || (recentOrders.length ? summarise(recentOrders, summaryDays) : null));
 
   const handleExportCSV = () => {
-    const csv = ordersToCSV(recentOrders);
+    const csv = ordersToCSV(selectedIds.length ? visibleOrders.filter(order => selectedIds.includes(orderKey(order))) : visibleOrders);
     const label = statusFilter === 'all' ? 'all' : statusFilter;
     downloadCSV(csv, `orders-${label}-${Date.now()}.csv`);
   };
 
-  if (loading) return (
-    <div className="admin-page">
-      <div className="container" style={{ textAlign: 'center', padding: '5rem' }}>
-        <div className="loading-spinner" style={{ margin: '0 auto' }} />
-      </div>
-    </div>
-  );
-
   return (
-    <div className="admin-page">
+    <div className="admin-page orders-workspace">
       <div className="container">
-        <div className="admin-header">
-          <h1 className="admin-title">Admin Dashboard</h1>
-        </div>
-
         <AdminTabs />
+
 
         {/* Orders, products and customers are counted on the menu items they
             belong to now. Revenue is not a count of anything and has no menu
@@ -736,8 +787,8 @@ const AdminDashboard = () => {
 
         {/* Payment Methods — super admin only */}
         {isSuperAdmin && payMethods && (
-          <div className="admin-section payment-settings">
-            <h2 className="section-title">Payment Methods</h2>
+          <details className="admin-section payment-settings">
+            <summary>Checkout payment settings <span>Manage available payment methods</span></summary>
             <p className="payment-settings-sub">Choose which payment options customers can use at checkout.</p>
             <div className="payment-toggle-list">
               {[
@@ -758,30 +809,52 @@ const AdminDashboard = () => {
                 </label>
               ))}
             </div>
-          </div>
+          </details>
         )}
 
         {/* Recent Orders */}
-        <div className="admin-section">
-          <div className="section-header-row">
-            <span className="section-count-spacer" />
-            <button className="btn-export-csv" onClick={handleExportCSV}>
-              Export CSV
+        <div className="admin-section orders-panel">
+          <div className={`order-filterbar${statusFilter === 'revenue' ? ' order-filterbar--summary' : ''}`}>
+            {statusFilter !== 'revenue' && <label className="order-filter-search">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" /><path d="m16 16 4 4" /></svg>
+              <input ref={searchInput} type="search" aria-label="Search orders by number, customer, phone or city" value={search} onChange={e => setSearch(e.target.value)} placeholder="Search order number, customer name, phone, email or city…" />
+              <span className="order-search-shortcut" aria-hidden="true"><kbd>Ctrl</kbd><kbd>K</kbd></span>
+            </label>}
+            <label className="order-filter-field"><span>Order view</span>
+              <select value={statusFilter} onChange={e => handleFilterChange(e.target.value)}>
+                {ORDER_TABS.filter(tab => tab.view !== 'summary' || isAdmin).map(tab => (
+                  <option key={tab.key} value={tab.key}>{tab.label}{tab.view !== 'summary' && !loading && !ordersError ? ` (${countFor(tab)})` : ''}</option>
+                ))}
+              </select>
+            </label>
+          {statusFilter !== 'revenue' && <>
+            <label className={`order-filter-field${priority !== 'all' ? ' is-filtered' : ''}`}><span>Attention</span>
+              <select value={priority} onChange={e => setPriority(e.target.value)}>
+                <option value="all">Any priority</option>
+                <option value="late">Overdue delivery</option>
+                <option value="pending">Payment pending</option>
+              </select>
+            </label>
+            <label className={`order-filter-field${dateRange !== 'all' ? ' is-filtered' : ''}`}><span>Placed</span>
+              <select value={dateRange} onChange={e => setDateRange(e.target.value)}><option value="all">Any date</option><option value="1">Today</option><option value="7">Last 7 days</option><option value="30">Last 30 days</option></select>
+            </label>
+          <div className="orders-header-actions order-filter-actions">
+            <button className="orders-icon-button" aria-label="Refresh orders" title="Refresh orders" disabled={loading || statusFilter === 'revenue'} onClick={() => setRefreshKey(key => key + 1)}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false"><path d="M20 7v5h-5M4 17v-5h5" /><path d="M6.1 6.1A8 8 0 0 1 19.5 10L20 12M4 12l.5 2A8 8 0 0 0 17.9 17.9" /></svg>
             </button>
+            {statusFilter !== 'revenue' && <button className="orders-icon-button" aria-label={selectedIds.length ? 'Export selected orders as CSV' : 'Export filtered orders as CSV'} title={selectedIds.length ? 'Export selected orders' : 'Export filtered orders'} disabled={loading || !!ordersError || !visibleOrders.length} onClick={handleExportCSV}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false"><path d="M12 3v12m-5-5 5 5 5-5M5 16v4h14v-4" /></svg>
+            </button>}
+          </div>
+          </>}
+          {/* The chips row restated the controls directly above it — every filter
+              already shows its own setting, and each select can be put back to
+              "any" where it stands. */}
           </div>
 
-          {/* Status tabs */}
-          <div className="order-tabs">
-            {ORDER_TABS.filter(tab => tab.view !== 'summary' || isAdmin).map(tab => (
-              <button
-                key={tab.key}
-                className={`order-tab${statusFilter === tab.key ? ' active' : ''}`}
-                onClick={() => handleFilterChange(tab.key)}
-              >
-                {tab.label}
-              </button>
-            ))}
-          </div>
+          {statusFilter !== 'revenue' && ordersError && <div className="orders-feedback" role="alert">{ordersError} <button className="btn-export-csv" onClick={() => setRefreshKey(key => key + 1)}>Try again</button></div>}
+          {statusFilter !== 'revenue' && loading && <div className="orders-feedback" role="status">Loading your order queue…</div>}
+          {statusFilter === 'revenue' && isAdmin && !view && <div className="orders-feedback">No revenue summary is available.</div>}
 
           {statusFilter === 'revenue' && isAdmin && view && (
             <section className="rev-panel">
@@ -852,34 +925,41 @@ const AdminDashboard = () => {
             </section>
           )}
 
-          {(statusFilter !== 'revenue' || !isAdmin) && (
+          {(statusFilter !== 'revenue' || !isAdmin) && !loading && !ordersError && (
+          <div className="orders-table-card">
+          <div className="order-filter-results">
+            <h2 className="orders-result-count" role="status">{visibleOrders.length} {statusFilter === 'all' ? '' : (ORDER_TABS.find(t => t.key === statusFilter)?.label || '').toLowerCase() + ' '}orders</h2>
+            {selectedIds.length > 0 ? <button className="orders-selection-export" onClick={handleExportCSV}>Export {selectedIds.length} selected</button> : <span className="orders-sort-hint">{sort === 'createdAt:desc' ? 'Showing latest orders' : 'Sorted orders'}</span>}
+            <label className="orders-sort">Sort by:
+              <select value={sort} onChange={e => setSort(e.target.value)}>
+                <option value="createdAt:desc">Latest</option><option value="createdAt:asc">Oldest</option><option value="total:desc">Highest total</option><option value="total:asc">Lowest total</option>
+                {!['createdAt:desc', 'createdAt:asc', 'total:desc', 'total:asc'].includes(sort) && <option value={sort}>Column: {sortField} ({sortDirection})</option>}
+              </select>
+            </label>
+          </div>
           <div className="admin-table-wrap">
-            <table className="admin-table">
+            <table className="admin-table orders-reference-table">
               <thead>
                 <tr>
-                  <th>Order #</th>
-                  <th>Customer</th>
-                  <th>Address</th>
-                  <th>Total</th>
-                  <th>Zone</th>
-                  <th>Payment</th>
-                  <th>Status</th>
-                  <th>Date</th>
+                  <th className="order-check-cell"><input type="checkbox" aria-label="Select all orders on this page" checked={allPageSelected} ref={node => { if (node) node.indeterminate = !allPageSelected && pagedOrders.some(order => selectedIds.includes(orderKey(order))); }} onChange={() => setSelectedIds(ids => allPageSelected ? ids.filter(id => !pagedOrders.some(order => orderKey(order) === id)) : [...new Set([...ids, ...pagedOrders.map(orderKey)])])} /></th>
+                  {[['orderNumber', 'Order #'], ['customer', 'Customer'], ['address', 'Address'], ['total', 'Total'], ['shippingZone', 'Zone'], ['paymentStatus', 'Payment'], ['orderStatus', 'Status'], ['createdAt', 'Date']].map(([field, label]) => <th key={field} aria-sort={sortField === field ? (sortDirection === 'asc' ? 'ascending' : 'descending') : 'none'}><button className="order-column-sort" onClick={() => toggleSort(field)}>{label}<span aria-hidden="true">{sortField === field ? (sortDirection === 'asc' ? '↑' : '↓') : '↕'}</span></button></th>)}
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {recentOrders.map(order => {
+                {pagedOrders.map(order => {
                   const late = latenessOf(order);
                   return (
                   <tr
-                    key={order._id}
+                    key={orderKey(order)}
                     className={`order-row-clickable${late.late ? ' order-row-late' : ''}`}
                     onClick={() => setSelectedOrder(order)}
                     title={late.late
                       ? `${late.daysLate} day${late.daysLate === 1 ? '' : 's'} past the promised delivery window`
                       : 'Click to view details'}
                   >
-                    <td><strong>#{order.orderNumber}</strong>
+                    <td className="order-check-cell" onClick={e => e.stopPropagation()}><input type="checkbox" aria-label={`Select order ${order.orderNumber}`} checked={selectedIds.includes(orderKey(order))} onChange={() => toggleSelection(order)} /></td>
+                    <td><button className="order-open" onClick={e => { e.stopPropagation(); setSelectedOrder(order); }} aria-label={`View order ${order.orderNumber}`}>#{order.orderNumber}</button>
                       {late.late && <span className="late-pill" title={late.dueBy ? `Due by ${fmtDate(late.dueBy)}` : ''}>
                         {late.daysLate}d late
                       </span>}
@@ -887,6 +967,7 @@ const AdminDashboard = () => {
                     <td>
                       <div className="customer-cell">
                         <span>{order.user?.name || orderAddr(order).fullName || orderAddr(order).name || '—'}</span>
+                        <span className="cell-sub">{orderAddr(order).phone || ''}</span>
                         <span className="cell-sub">{order.user?.email || orderAddr(order).email || order.guestEmail || ''}</span>
                       </div>
                     </td>
@@ -903,7 +984,7 @@ const AdminDashboard = () => {
                         );
                       })()}
                     </td>
-                    <td><strong>₹{(order.total ?? 0).toLocaleString()}</strong></td>
+                    <td className="order-total-cell"><strong>{Number(order.total || 0).toLocaleString('en-IN', { style: 'currency', currency: 'INR', minimumFractionDigits: 2 })}</strong></td>
                     <td>
                       <span className="zone-badge">{order.shippingZone?.toUpperCase()}</span>
                     </td>
@@ -915,23 +996,30 @@ const AdminDashboard = () => {
                     <td>
                       <span
                         className={`order-status-badge status-${order.orderStatus}`}
-                        onClick={e => e.stopPropagation()}
                       >
                         {order.orderStatus}
                       </span>
                     </td>
-                    <td className="cell-date">
+                    <td><div className="cell-date">
                       <span>{new Date(order.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
                       <span className="cell-sub">{new Date(order.createdAt).toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit', hour12: true })}</span>
-                    </td>
+                    </div></td>
+                    <td><button className="order-details-action" aria-label={`Open details for order ${order.orderNumber}`} title="View order details" onClick={e => { e.stopPropagation(); setSelectedOrder(order); }}>•••</button></td>
                   </tr>
                   );
                 })}
               </tbody>
             </table>
-            {recentOrders.length === 0 && (
-              <div className="table-empty">No orders found.</div>
+            {visibleOrders.length === 0 && (
+              <div className="table-empty"><strong>{search || priority !== 'all' ? 'No matching orders' : 'No orders in this queue'}</strong><p>{search || priority !== 'all' ? 'Try a different search or clear your filters.' : 'Choose another tab to see other orders.'}</p></div>
             )}
+          </div>
+          <div className="orders-pagination">
+          <label>Rows per page <select value={pageSize} onChange={e => setPageSize(Number(e.target.value))}>{[10, 25, 50].map(size => <option key={size} value={size}>{size}</option>)}</select></label>
+          <span>{visibleOrders.length ? (currentPage - 1) * pageSize + 1 : 0}–{Math.min(currentPage * pageSize, visibleOrders.length)} of {visibleOrders.length}</span>
+          <button aria-label="Previous page" disabled={currentPage === 1} onClick={() => setPage(currentPage - 1)}>‹</button>
+          <button aria-label="Next page" disabled={currentPage === pageCount} onClick={() => setPage(currentPage + 1)}>›</button>
+          </div>
           </div>
           )}
         </div>
