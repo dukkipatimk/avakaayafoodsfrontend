@@ -5169,3 +5169,39 @@
    gives some of its back. */
 .quickbuy-section { padding-bottom: clamp(18px, 2vw, 26px); }
 .catalog-more { margin-top: 22px; }
+
+/* ── Best Sellers, measured like the catalogue below it ─────────────────────
+   The two sections were built differently: this one capped the SECTION at
+   1440px and padded it, while the catalogue is full-width with an inner
+   .container capped at 1280. Side by side that put the Best Sellers cards 36px
+   further left and 71px wider than the products directly beneath them. The
+   section now spans the page and its two children take the container's
+   measurements, so both grids start on the same line. */
+@media (min-width: 769px) {
+  .bestsellers-section {
+    max-width: none;
+    margin: 0;
+    padding: var(--home-section-y) 0 0;   /* vertical rhythm of a full section */
+  }
+  .bestsellers-head,
+  .bestsellers-row {
+    width: 100%;
+    max-width: 1280px;
+    margin-inline: auto;
+    padding-inline: 24px;
+  }
+}
+
+/* ── The story band, on the page's own measurements ─────────────────────────
+   It padded itself with a vw-based clamp and capped its inner grid at 1440px,
+   so its content started at 41px and ran 1269 wide while every section around
+   it starts at 60 and runs 1232. Same container as the rest of the page now;
+   the vertical rhythm comes from --home-section-y like its neighbours. */
+@media (min-width: 769px) {
+  .home-story-band { padding: var(--home-section-y) 0; }
+  .home-story-inner {
+    width: 100%;
+    max-width: 1280px;
+    padding-inline: 24px;
+  }
+}

@@ -307,112 +307,11 @@ const Home = () => {
         </section>
       )}
 
-      {/* â”€â”€ USP strip â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
-      <div className="usp-strip">
-        <div className="container usp-row stagger">
-          {USPS.map(u => (
-            <div key={u.title} className="usp-item">
-              <span className="usp-icon" aria-hidden="true">{u.icon}</span>
-              <div className="usp-text">
-                <strong>{u.title}</strong>
-                <span>{u.desc}</span>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* â”€â”€ Promo callout â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
-      <div className="promo-callout">
-        <div className="container promo-callout-inner">
-          <div className="promo-callout-items">
-            <div className="promo-item">
-              <span className="promo-item-icon">HYD</span>
-              <div className="promo-item-text">
-                <strong>In Hyderabad</strong>
-                <span>24 hours express delivery</span>
-              </div>
-            </div>
-            <div className="promo-item">
-              <span className="promo-item-icon">IND</span>
-              <div className="promo-item-text">
-                <strong>Within India</strong>
-                <span>Delivery in 1-2 days</span>
-              </div>
-            </div>
-            <div className="promo-item">
-              <span className="promo-item-icon">INTL</span>
-              <div className="promo-item-text">
-                <strong>International</strong>
-                <span>3-7 business days worldwide</span>
-              </div>
-            </div>
-            <div className="promo-item">
-              <span className="promo-item-icon">PARTNER</span>
-              <div className="promo-item-text">
-                <a
-                  className="promo-partner-link"
-                  href="https://avakaaya.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Avakaaya.com
-                </a>
-                <span>International Courier partner</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
 
       {/* No branches section: the stores are in the dock that sits on every
           page now, so listing them again here was a second answer to a
           question already answered. */}
 
-      <section className="home-story-band">
-        <div className="home-story-inner">
-          <div className="home-story-brand">
-            <img src="/avakaaya-logo.png" alt="Avakaaya Foods" />
-            <span>Rooted in Andhra and Telangana</span>
-          </div>
-
-          <div className="home-story-copy-block">
-            <div className="home-story-copy">
-              <h1>Authentic Telugu Pickles, Snacks &amp; Sweets</h1>
-              <p>
-                Avakaaya began in a family kitchen where seasonal raw mangoes, hand-ground spices, and cold-pressed oils came together every summer into jars of pickle that defined Telugu cooking. Today, those same recipes are handcrafted in Nimmakuru and Hyderabad, with vegetarian and non-vegetarian products made at separate centres to keep every jar pure.
-              </p>
-            </div>
-            <div className="home-story-actions">
-              <span>Making pickles since 2000&apos;s</span>
-              <Link to="/about" className="btn btn-primary">Read Our Full Story</Link>
-            </div>
-          </div>
-
-          <div className="roots-column">
-            <div className="roots-row home-story-roots anim">
-              <figure className="roots-photo">
-                <span className="roots-cap">Charminar - Hyderabad</span>
-                <div
-                  className="roots-photo-img"
-                  role="img"
-                  aria-label="The Charminar, Hyderabad"
-                  style={{ backgroundImage: "url('/images/hyderabad/charminar.jpg')" }}
-                />
-              </figure>
-              <figure className="roots-photo">
-                <span className="roots-cap">Prakasam Barrage - Vijayawada</span>
-                <div
-                  className="roots-photo-img"
-                  role="img"
-                  aria-label="Prakasam Barrage over the Krishna river, Vijayawada"
-                  style={{ backgroundImage: "url('/images/branding/vijayawada.jpg')" }}
-                />
-              </figure>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* â”€â”€ Full Product Catalog (bestsellers first) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <section className="quickbuy-section">
@@ -554,6 +453,111 @@ const Home = () => {
           </div>
         </section>
       )}
+      {/* The brand story sits below the shop now: someone who lands here is
+          looking for pickles first and for who makes them second. */}
+      <section className="home-story-band">
+        <div className="home-story-inner">
+          <div className="home-story-brand">
+            <img src="/avakaaya-logo.png" alt="Avakaaya Foods" />
+            <span>Rooted in Andhra and Telangana</span>
+          </div>
+
+          <div className="home-story-copy-block">
+            <div className="home-story-copy">
+              <h1>Authentic Telugu Pickles, Snacks &amp; Sweets</h1>
+              <p>
+                Avakaaya began in a family kitchen where seasonal raw mangoes, hand-ground spices, and cold-pressed oils came together every summer into jars of pickle that defined Telugu cooking. Today, those same recipes are handcrafted in Nimmakuru and Hyderabad, with vegetarian and non-vegetarian products made at separate centres to keep every jar pure.
+              </p>
+            </div>
+            <div className="home-story-actions">
+              <span>Making pickles since 2000&apos;s</span>
+              <Link to="/about" className="btn btn-primary">Read Our Full Story</Link>
+            </div>
+          </div>
+
+          <div className="roots-column">
+            <div className="roots-row home-story-roots anim">
+              <figure className="roots-photo">
+                <span className="roots-cap">Charminar - Hyderabad</span>
+                <div
+                  className="roots-photo-img"
+                  role="img"
+                  aria-label="The Charminar, Hyderabad"
+                  style={{ backgroundImage: "url('/images/hyderabad/charminar.jpg')" }}
+                />
+              </figure>
+              <figure className="roots-photo">
+                <span className="roots-cap">Prakasam Barrage - Vijayawada</span>
+                <div
+                  className="roots-photo-img"
+                  role="img"
+                  aria-label="Prakasam Barrage over the Krishna river, Vijayawada"
+                  style={{ backgroundImage: "url('/images/branding/vijayawada.jpg')" }}
+                />
+              </figure>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* â”€â”€ USP strip â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      <div className="usp-strip">
+        <div className="container usp-row stagger">
+          {USPS.map(u => (
+            <div key={u.title} className="usp-item">
+              <span className="usp-icon" aria-hidden="true">{u.icon}</span>
+              <div className="usp-text">
+                <strong>{u.title}</strong>
+                <span>{u.desc}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* â”€â”€ Promo callout â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      <div className="promo-callout">
+        <div className="container promo-callout-inner">
+          <div className="promo-callout-items">
+            <div className="promo-item">
+              <span className="promo-item-icon">HYD</span>
+              <div className="promo-item-text">
+                <strong>In Hyderabad</strong>
+                <span>24 hours express delivery</span>
+              </div>
+            </div>
+            <div className="promo-item">
+              <span className="promo-item-icon">IND</span>
+              <div className="promo-item-text">
+                <strong>Within India</strong>
+                <span>Delivery in 1-2 days</span>
+              </div>
+            </div>
+            <div className="promo-item">
+              <span className="promo-item-icon">INTL</span>
+              <div className="promo-item-text">
+                <strong>International</strong>
+                <span>3-7 business days worldwide</span>
+              </div>
+            </div>
+            <div className="promo-item">
+              <span className="promo-item-icon">PARTNER</span>
+              <div className="promo-item-text">
+                <a
+                  className="promo-partner-link"
+                  href="https://avakaaya.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Avakaaya.com
+                </a>
+                <span>International Courier partner</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
 
 
       {/* â”€â”€ Newsletter â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
