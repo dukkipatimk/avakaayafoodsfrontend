@@ -77,10 +77,11 @@ const Combos = () => {
             row, which changes as combos are added or reordered. */}
         {combos.map((combo) => (
           <article key={combo._id ?? combo.id} className={`combo-card combo-card--${combo.category || 'mixed'}`}>
+            {/* Name, then what is in it, then what it costs, then the button —
+                read top to bottom in the order the decision is actually made. */}
+            <h3 className="combo-name">{combo.name}</h3>
+
             <div className="combo-visual">
-              <div className="combo-card-topline"><span className="combo-kind">{combo.type === 'pick' ? 'Make it yours' : 'Curated combo'}</span>
-                {Number(combo.savings) > 0 && <span className="combo-save">Save ₹{Number(combo.savings).toLocaleString('en-IN')}</span>}
-              </div>
             {(() => {
               // Show what is actually in the combo. For a "pick any N" combo
               // the pool can be longer than the card, so it is trimmed to N
@@ -105,12 +106,7 @@ const Combos = () => {
               );
             })()}
             </div>
-            <div className="combo-content">
-            <div className="combo-title-row">
-              <h3 className="combo-name">{combo.name}</h3>
-            </div>
-            <p className="combo-sub">{combo.subtitle || (combo.type === 'pick' ? `Choose ${combo.pickCount} of your favourites` : 'Your favourites, bundled for less')}</p>
-            <div className="combo-card-footer">
+
             <div className="combo-price">
               <strong>&#8377;{Number(combo.price).toLocaleString('en-IN')}</strong>
               {combo.compareAtPrice > combo.price && (
@@ -119,16 +115,14 @@ const Combos = () => {
             </div>
 
             {combo.type === 'pick' ? (
-              <button className="combo-cta combo-cta--build" aria-label={`Build ${combo.name}`} onClick={() => setBuilding(combo)}>
-                Build combo &rarr;
+              <button className="btn btn-outline btn-sm add-to-cart-btn" aria-label={`Build ${combo.name}`} onClick={() => setBuilding(combo)}>
+                Build Combo
               </button>
             ) : (
-              <button className="combo-cta" aria-label={`Add ${combo.name} to cart`} onClick={() => addFixed(combo)}>
-                Add to cart &rarr;
+              <button className="btn btn-gold btn-sm add-to-cart-btn" aria-label={`Add ${combo.name} to cart`} onClick={() => addFixed(combo)}>
+                Add to Cart
               </button>
             )}
-            </div>
-            </div>
           </article>
         ))}
       </div>

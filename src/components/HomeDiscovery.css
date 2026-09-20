@@ -130,3 +130,39 @@
   .hd-sec--cravings .hd-crave-cap strong { font-size: 21px; }
 
 }
+
+/* ── Phones: the category row steps aside ───────────────────────────────────
+   Seven circles with labels and counts is a screenful before the shop begins,
+   and the bottom toolbar's "Browse categories" opens the same list one tap
+   away. The collections row below stays — it answers a different question
+   ("what am I in the mood for") that the toolbar does not. */
+@media (max-width: 768px) {
+  .hd-sec--categories { display: none; }
+}
+
+/* ── Phones: collections as small tiles ─────────────────────────────────────
+   Six full-width rows at 84px each, under a heading block with an eyebrow, a
+   title, a paragraph and a link, came to 773px — two screenfuls before the
+   shop. Two columns of short tiles, and the heading keeps only the part that
+   names what the row is. */
+@media (max-width: 768px) {
+  .hd-sec--cravings { padding: 16px 14px; margin: 6px 0 16px; gap: 14px; }
+  .hd-sec--cravings .hd-head { gap: 10px; }
+  .hd-sec--cravings .hd-heading-group { gap: 4px; }
+  .hd-sec--cravings .hd-head h2 { font-size: 22px; }
+  /* The strapline explains the row; the row explains itself. */
+  .hd-sec--cravings .hd-head p { display: none; }
+  .hd-sec--cravings .hd-more { padding: 2px 0; font-size: 12px; }
+
+  .hd-sec--cravings .hd-cravings { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .hd-sec--cravings .hd-crave {
+    grid-template-columns: 44px minmax(0, 1fr);
+    min-height: 0; gap: 9px; padding: 7px 9px; border-radius: 10px;
+  }
+  .hd-sec--cravings .hd-crave-img { width: 44px; height: 44px; border-radius: 7px; }
+  .hd-sec--cravings .hd-crave-cap { gap: 1px; }
+  .hd-sec--cravings .hd-crave-cap strong { font-size: 14px; line-height: 1.15; }
+  .hd-sec--cravings .hd-crave-cap span { font-size: 9.5px; line-height: 1.25; }
+  /* No room for a chevron next to a two-word label. */
+  .hd-sec--cravings .hd-crave-arrow { display: none; }
+}

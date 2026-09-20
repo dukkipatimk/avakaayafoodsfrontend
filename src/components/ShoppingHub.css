@@ -60,3 +60,35 @@
   .shopping-hub .buy-again-card, .shopping-hub .offers-strip { padding: 16px; }
 }
 @media (prefers-reduced-motion: reduce) { .shopping-hub .qa-tile { transition: none; } }
+
+/* ── Phones ─────────────────────────────────────────────────────────────────
+   These live here rather than in Home.css because the hub's own rules are two
+   classes deep and would otherwise outrank them — .shop-band-row is
+   display:contents, so hiding the row itself does nothing at all. */
+@media (max-width: 768px) {
+  /* Quick Order and Buy Again are for someone who already knows what they
+     want. On a phone they were two full-height cards between the categories
+     and the shop, and both are reachable from the bottom toolbar anyway. */
+  .shopping-hub .quick-actions,
+  .shopping-hub .buy-again { display: none; }
+
+  /* Coupons as small tickets: at ~95px each they ate most of the screen before
+     the catalogue began. Same words, along one line instead of stacked. */
+  .shopping-hub .offer-ticket { min-height: 0; }
+  .shopping-hub .offer-ticket-main {
+    flex-direction: row; align-items: center; flex-wrap: nowrap;
+    gap: 8px; padding: 7px 10px;
+  }
+  .shopping-hub .offer-ticket-value { font-size: 17px; flex: 0 0 auto; }
+  /* The condition gives up its width first, and clips rather than wrapping —
+     wrapping is what made these two lines tall. */
+  .shopping-hub .offer-ticket-cond {
+    flex: 1 1 auto; min-width: 0; font-size: 10px; line-height: 1.3;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .shopping-hub .offer-ticket-copy {
+    flex: 0 0 auto; width: auto; min-height: 0; margin: 0; padding: 5px 9px;
+    font-size: 9px; white-space: nowrap;
+  }
+  .shopping-hub .offers-strip-heading { font-size: 12px; margin-bottom: 6px; }
+}

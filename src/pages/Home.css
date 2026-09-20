@@ -5151,3 +5151,21 @@
 
 
 
+
+/* ── Phones: the shortcuts step aside ───────────────────────────────────────
+   Quick Order and Buy Again are conveniences for someone who already knows
+   what they want. On a phone they were two full-width cards between the
+   categories and the actual shop, pushing the products down the screen — and
+   both are reachable from the bottom toolbar and the account menu anyway. */
+@media (max-width: 768px) {
+  .shop-band-row { display: none; }
+}
+
+/* ── The gap under "Load More Products" ─────────────────────────────────────
+   The catalogue section ended with 52px of its own bottom padding and the
+   next section opened with 52px of its top padding, so there were 104px of
+   nothing between the button and the heading below it — enough to read as the
+   end of the page. The button carries its own breathing room, so the section
+   gives some of its back. */
+.quickbuy-section { padding-bottom: clamp(18px, 2vw, 26px); }
+.catalog-more { margin-top: 22px; }

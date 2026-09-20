@@ -100,7 +100,6 @@ const Home = () => {
   const [catalogPage, setCatalogPage] = useState(1);
   const [catalogPages, setCatalogPages] = useState(1);
   const [catalogLoading, setCatalogLoading] = useState(false);
-  const [stores, setStores] = useState([]);
   // null until the offers strip has heard back. Keeping the column while we do
   // not know beats widening the band and then snapping it narrow again.
   const [hasOffers, setHasOffers] = useState(null);
@@ -148,12 +147,6 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
-    api.get('/stores')
-      .then(r => setStores(r.data.stores || []))
-      .catch(() => setStores([]));
-  }, []);
-
-  useEffect(() => {
     const t = setInterval(() => setBannerIdx(i => (i + 1) % BANNERS.length), 8500);
     return () => clearInterval(t);
   }, []);
@@ -168,7 +161,7 @@ const Home = () => {
     );
     document.querySelectorAll('.anim, .stagger').forEach(el => observer.observe(el));
     return () => observer.disconnect();
-  }, [catalog, igPosts, stores]);
+  }, [catalog, igPosts]);
 
   // Lightweight scroll parallax â€” rAF-throttled, honors reduced-motion
   useEffect(() => {
@@ -372,53 +365,9 @@ const Home = () => {
         </div>
       </div>
 
-      {/* â”€â”€ Our Roots â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
-      {stores.length > 0 && (
-        <section className="branches-section">
-          <div className="container">
-            <div className="sec-head centered anim">
-              <h2>Visit Us In Hyderabad</h2>
-            </div>
-            <div className="roots-stores stagger">
-              {stores.map(s => (
-                <div key={s._id} className="store-card">
-                  <div className="store-card-copy">
-                    <div className="store-card-title-row">
-                      <div className="store-card-title-details">
-                        <div className="store-card-title-top">
-                          {s.name && <h3 className="store-card-name">{s.name}</h3>}
-                        </div>
-                        <div className="store-card-status-wrap">
-                          <span className={`store-card-status store-card-status--${s.status || 'unknown'}`}>
-                            {s.statusLabel || 'Open'}
-                          </span>
-                          {s.hours && <p className="store-card-hours">{s.hours}</p>}
-                        </div>
-                      </div>
-                    </div>
-                    {s.address && <p className="store-card-line">{s.address}</p>}
-                    <div className="store-card-actions">
-                      <a
-                        className="store-card-link store-card-link--primary"
-                        href={s.mapUrl || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent([s.name, s.area, s.city].filter(Boolean).join(' '))}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        Get Directions
-                      </a>
-                      {s.phone && (
-                        <a className="store-card-phone-inline" href={`tel:${s.phone.replace(/\s/g, '')}`}>
-                          {s.phone}
-                        </a>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
+      {/* No branches section: the stores are in the dock that sits on every
+          page now, so listing them again here was a second answer to a
+          question already answered. */}
 
       <section className="home-story-band">
         <div className="home-story-inner">

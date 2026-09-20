@@ -144,3 +144,22 @@
 @media (min-width: 769px) {
   .offer-ticket-value { font-size: 1.15rem; }
 }
+
+/* ── Phones: coupons as small tickets ───────────────────────────────────────
+   At 96px tall each, three live coupons ate most of a phone screen before the
+   catalogue began. The same information, laid along one line instead of
+   stacked and centred: the discount, what it needs, and the code to copy. */
+@media (max-width: 768px) {
+  .offers-strip-row { gap: 7px; }
+  .offer-ticket { min-height: 0; border-radius: 8px; }
+  .offer-ticket-main {
+    flex-direction: row; align-items: center; justify-content: flex-start;
+    gap: 8px; padding: 7px 10px; text-align: left;
+  }
+  .offer-ticket-value { font-size: .95rem; flex: 0 0 auto; }
+  .offer-ticket-cond { font-size: .62rem; flex: 1; min-width: 0; line-height: 1.25; }
+  .offer-ticket-copy { margin: 0; padding: 5px 10px; font-size: .64rem; flex: 0 0 auto; }
+  .offer-ticket-stub { flex-basis: 24px; }
+  .offer-ticket-stub span { font-size: .6rem; letter-spacing: .08em; }
+  .offers-strip-heading { font-size: .8rem; margin-bottom: 6px; }
+}
