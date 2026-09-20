@@ -1,272 +1,202 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import api from '../utils/api';
 import { useCart } from '../context/CartContext';
+import { useUI } from '../context/UIContext';
+import useLastOrder from '../hooks/useLastOrder';
+import { addOrderToCart, reorderableItems } from '../utils/reorder';
+import ProductCard from '../components/ProductCard';
+import { ShopByCategory, CravingRow } from '../components/HomeDiscovery';
 import './HomeV2.css';
 
 // ── The 2026 homepage ───────────────────────────────────────────────────────
-// Built to the new design: a festival hero, the ways in as circles, three
-// offers, then what people actually buy. It reads the same catalogue endpoints
-// the old homepage did, so nothing behind it changes.
+// Built to the supplied design, section for section: festival hero, the ways in
+// as circles, best sellers, the three shortcuts, what is new, why us, the
+// festival hampers band, the stores, and how it ships. Every list on it comes
+// from the same endpoints the old homepage used — nothing behind it changes.
 
+// The eight supplied banners, cut from the sheet. Each one is a finished piece
+// of artwork — headline, sub-line and button are painted into the image — so the
+// hero shows them whole and makes the banner itself the link. Nothing is set on
+// top of them: a second headline over a headline is how banners get unreadable.
 const SLIDES = [
-  {
-    eyebrow: 'Celebrate every festival with',
-    title: ['A Taste', ' of Home'],
-    copy: 'Authentic pickles, sweets and snacks made with love, tradition and the finest ingredients.',
-    cta: { label: 'Shop Now', to: '/products' },
-    art: '/images/banners/banner_festivals.jpg',
-  },
-  {
-    eyebrow: 'From our kitchen to your doorstep',
-    title: ['Across', ' the World'],
-    copy: '24 hours in Hyderabad, 1–2 days across India, 3–7 days international. Leak-proof packaging built for the journey.',
-    cta: { label: 'Shop Now', to: '/products' },
-    art: '/images/banners/banner_worldwide.jpg',
-  },
-  {
-    eyebrow: 'Traditional. Thoughtful. Always special.',
-    title: ['Perfect', ' for Gifting'],
-    copy: 'Hampers of pickles, sweets and snacks, packed to arrive as handsomely as they taste.',
-    cta: { label: 'Explore Gift Hampers', to: '/gift-hamper' },
-    art: '/images/banners/banner_hampers.jpg',
-  },
+  { img: '/images/banners/hero-authentic.jpg', alt: 'Authentic Telugu flavours since 2000 — shop best sellers', to: '/products?sort=popular' },
+  { img: '/images/banners/hero-mango.jpg', alt: 'Mango season is here — shop mango pickles', to: '/collections/veg-pickles' },
+  { img: '/images/banners/hero-nonveg.jpg', alt: 'Spice up every meal — shop non-veg pickles', to: '/collections/non-veg-pickles' },
+  { img: '/images/banners/hero-sweets.jpg', alt: 'Traditional sweets for every celebration — shop sweets', to: '/collections/sweets' },
+  { img: '/images/banners/hero-combos.jpg', alt: 'More flavour, more savings — explore combos', to: '/combos' },
+  { img: '/images/banners/hero-hampers.jpg', alt: 'Gift a taste of home — explore hampers', to: '/gift-hamper' },
+  { img: '/images/banners/hero-worldwide.jpg', alt: 'A taste of home wherever you are — we deliver worldwide', to: '/shipping-info' },
+  { img: '/images/banners/hero-story.jpg', alt: 'From our family kitchen to yours — our story', to: '/about' },
 ];
 
-// The nine ways in, in the order the design puts them. Photographs where the
-// catalogue has one; a glyph where the idea has no single product behind it.
-const CATS = [
-  { label: 'Pickles', to: '/collections/veg-pickles', img: '/images/products/2024/10/Mango-pickle-1_7_11zon-600x400.webp' },
-  { label: 'Sweets', to: '/collections/sweets', img: '/images/products/2024/10/BOONDHI-LADDU-1-600x600.jpg' },
-  { label: 'Snacks', to: '/collections/snacks', img: '/images/products/2024/10/CHEKKALU-ROUND-600x600.jpg' },
-  { label: 'Combos', to: '/combos', glyph: '🧺' },
-  { label: 'Spice Powders', to: '/collections/powders', img: '/images/products/2024/10/PALLI-KARAM-600x600.jpg' },
-  { label: 'Ready to Eat', to: '/products?ready=1', glyph: '🍲' },
-  { label: 'Gift Hampers', to: '/gift-hamper', glyph: '🎁' },
-  { label: 'Corporate Orders', to: '/corporate', glyph: '📦' },
-  { label: 'Festival Special', to: '/products?sort=popular', glyph: '🪔' },
+const TRUST = ['No Preservatives', 'Traditional Recipes', 'Small Batches', 'Ships Worldwide'];
+
+const SHIPPING = [
+  { icon: '🚚', title: 'In Hyderabad', copy: '24 hours express delivery' },
+  { icon: '✈️', title: 'Within India', copy: 'Delivery in 1-2 days' },
+  { icon: '🌐', title: 'International', copy: '3-7 business days' },
+  { icon: '🛡️', title: 'Secure Payments', copy: '100% safe and secure' },
 ];
 
-const VALUES = [
-  { icon: '🌿', label: 'Pure Ingredients' },
-  { icon: '🍲', label: 'Traditional Recipes' },
-  { icon: '❤️', label: 'Homemade with Love' },
-  { icon: '🌏', label: 'Worldwide Shipping' },
-];
-
-const SAYS = [
-  { text: 'The pickles taste just like home. Amazing quality and fast delivery to the USA!', by: 'Sravanthi R., USA', stars: 5 },
-  { text: 'Fresh, tasty and authentic. Our family’s favorite for every festival.', by: 'Ramesh K., Hyderabad', stars: 4.5 },
-  { text: 'Ordered gift hampers for our clients. Everyone loved it. Great service!', by: 'Anita M., Bangalore', stars: 5 },
-];
-
-const inr = (n) => `₹${Number(n || 0).toFixed(0)}`;
-const firstVariant = (p) => (p.variants && p.variants[0]) || null;
-const priceOf = (p) => p.salePrice || p.price || (firstVariant(p) && firstVariant(p).price) || 0;
-const imgOf = (p) => p.thumbnail || (p.images && p.images[0]) || '/images/branding/logo.png';
+const money = (n) => `₹${Number(n || 0).toLocaleString('en-IN')}`;
 
 const HomeV2 = () => {
   const { addItem } = useCart();
+  const { openQuickOrder } = useUI();
+  const lastOrder = useLastOrder();
+
   const [slide, setSlide] = useState(0);
-  const [best, setBest] = useState([]);
-  const [email, setEmail] = useState('');
-  const [subscribed, setSubscribed] = useState(false);
+  const [bestSellers, setBestSellers] = useState([]);
 
   useEffect(() => {
-    api.get('/products?sort=popular&limit=8')
-      .then((r) => setBest(r.data.products || []))
-      .catch(() => setBest([]));
+    api.get('/products?sort=popular&limit=6').then(r => setBestSellers(r.data.products || [])).catch(() => {});
   }, []);
 
-  // The hero moves on its own, as a shop window should.
+  // The hero advances on its own but stops the moment someone takes the arrows:
+  // a carousel that keeps moving under the hand is a carousel nobody can read.
+  const [paused, setPaused] = useState(false);
   useEffect(() => {
-    const t = setInterval(() => setSlide((s) => (s + 1) % SLIDES.length), 6000);
+    if (paused) return undefined;
+    const t = setInterval(() => setSlide(s => (s + 1) % SLIDES.length), 6000);
     return () => clearInterval(t);
-  }, []);
+  }, [paused]);
 
-  const addToCart = (e, product) => {
-    e.preventDefault();
-    const v = firstVariant(product);
-    if (!v) return;
-    addItem(product, v);
-    toast.success(`${product.name} (${v.weight}) added to cart`);
-  };
+  const go = useCallback((dir) => {
+    setPaused(true);
+    setSlide(s => (s + dir + SLIDES.length) % SLIDES.length);
+  }, []);
 
   const s = SLIDES[slide];
+  const lastItems = lastOrder ? reorderableItems(lastOrder) : [];
+  const addLastOrder = () => {
+    const added = addOrderToCart(lastOrder, addItem);
+    toast.success(`${added} ${added === 1 ? 'item' : 'items'} added to cart`);
+  };
 
   return (
-    <div className="home-v2">
-      {/* ── Hero ───────────────────────────────────────────────────────── */}
-      <section className="hv-hero">
-        <div className="hv-hero-inner">
-          <div>
-            <p className="hv-eyebrow">{s.eyebrow}</p>
-            <h1><em>{s.title[0]}</em>{s.title[1]}</h1>
-            <p>{s.copy}</p>
-            <Link className="hv-cta" to={s.cta.to}>{s.cta.label} <span aria-hidden="true">→</span></Link>
-            <div className="hv-hero-trust">
-              <span>🌿 100% Natural</span>
-              <span>🏠 Homemade</span>
-              <span>❤️ Traditional Recipes</span>
-              <span>🌏 Worldwide Shipping</span>
-            </div>
-          </div>
-          <div className="hv-hero-art">
-            <img src={s.art} alt="" />
-          </div>
+    <div className="hp">
+      {/* ── Hero ─────────────────────────────────────────────────── */}
+      <section className="hp-hero" aria-label="Featured">
+        <Link to={s.to} className="hp-hero-banner">
+          {/* The banner fills the frame. Its own artwork is 5.5:1, so standing
+              taller costs a little off each side — the height below is set where
+              that trim stays outside the headline and the button. */}
+          <img className="hp-hero-fg" src={s.img} alt={s.alt} fetchpriority="high" />
+        </Link>
+        <div className="hp-hero-nav">
+          <button onClick={(e) => { e.preventDefault(); go(-1); }} aria-label="Previous banner">‹</button>
+          <button onClick={(e) => { e.preventDefault(); go(1); }} aria-label="Next banner">›</button>
         </div>
-        <div className="hv-hero-dots">
-          {SLIDES.map((_, i) => (
-            <button key={i} className={i === slide ? 'on' : ''} onClick={() => setSlide(i)}
-              aria-label={`Slide ${i + 1}`} />
+        <div className="hp-hero-dots" role="tablist" aria-label="Banners">
+          {SLIDES.map((sl, i) => (
+            <button key={sl.img} className={i === slide ? 'is-on' : ''} aria-label={sl.alt}
+              aria-selected={i === slide} role="tab" onClick={() => { setPaused(true); setSlide(i); }} />
           ))}
         </div>
       </section>
 
-      {/* ── Ways in ────────────────────────────────────────────────────── */}
-      <section className="hv-cats">
-        <div className="hv-wrap hv-cats-row">
-          {CATS.map((c) => (
-            <Link key={c.label} to={c.to} className="hv-cat">
-              <span className="hv-cat-img">
-                {c.img ? <img src={c.img} alt="" loading="lazy" /> : <span aria-hidden="true">{c.glyph}</span>}
+      {/* The promises sit under the banner rather than on it — the artwork
+          changes every few seconds and these do not. */}
+      <ul className="hp-trust">
+        {TRUST.map(t => <li key={t}>{t}</li>)}
+      </ul>
+
+      <ShopByCategory />
+      <CravingRow />
+
+      {/* ── Best sellers ─────────────────────────────────────────── */}
+      <section className="hp-sec">
+        <header className="hp-head">
+          <h2><span aria-hidden="true">🔥</span> Best Sellers</h2>
+          <p>Loved by Telugu families worldwide</p>
+          <Link to="/products?sort=popular" className="hp-more">View all →</Link>
+        </header>
+        <div className="hp-grid hp-grid--6">
+          {bestSellers.map(p => <ProductCard key={p._id} product={p} />)}
+        </div>
+      </section>
+
+      {/* ── The three shortcuts ──────────────────────────────────── */}
+      <section className="hp-sec hp-shortcuts">
+        <button className="hp-shortcut hp-shortcut--quick" onClick={openQuickOrder}>
+          <span className="hp-shortcut-icon" aria-hidden="true">⚡</span>
+          <span className="hp-shortcut-text">
+            <strong>Quick Order</strong>
+            <span>Add your favourites in seconds.</span>
+            <span className="hp-shortcut-cta">Order Now →</span>
+          </span>
+          <img src="/images/products/2024/10/Mango-pickle-1_7_11zon-600x400.webp" alt="" loading="lazy" />
+        </button>
+
+        <Link className="hp-shortcut hp-shortcut--combos" to="/combos">
+          <span className="hp-shortcut-icon" aria-hidden="true">🎁</span>
+          <span className="hp-shortcut-text">
+            <strong>Combos &amp; Save More</strong>
+            <span>Handpicked bundles at great prices.</span>
+            <span className="hp-shortcut-cta">View Combos →</span>
+          </span>
+          <img src="/images/banners/banner_hampers.jpg" alt="" loading="lazy" />
+        </Link>
+
+        {/* Only for someone who has ordered before; for everyone else the row is
+            two cards rather than a card apologising for being empty. */}
+        {lastOrder && lastItems.length > 0 && (
+          <div className="hp-shortcut hp-shortcut--last">
+            <span className="hp-shortcut-icon" aria-hidden="true">🕑</span>
+            <span className="hp-shortcut-text">
+              <strong>Your Last Order</strong>
+              <span className="hp-last-line">
+                {lastItems[0].product?.name || lastItems[0].name}
+                {lastItems[0].variantWeight ? ` · ${lastItems[0].variantWeight}` : ''}
+                {lastItems.length > 1 ? ` +${lastItems.length - 1} more` : ''}
               </span>
-              <span className="hv-cat-label">{c.label}</span>
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      {/* ── Three offers ───────────────────────────────────────────────── */}
-      <div className="hv-wrap">
-        <section className="hv-promos">
-          <div className="hv-promo hv-promo--off">
-            <div>
-              <div className="hv-off-flat">Flat</div>
-              <div className="hv-off-big">10% OFF</div>
-              <div className="hv-off-flat">on all items</div>
-            </div>
-            <div className="hv-promo-divider" />
-            <div>
-              <p style={{ fontSize: '.74rem', letterSpacing: '.12em', textTransform: 'uppercase' }}>Valid only from</p>
-              <p style={{ fontWeight: 700, marginBottom: '.2rem' }}>Friday – Sunday</p>
-              <Link className="hv-promo-btn" to="/products">Shop Now <span aria-hidden="true">→</span></Link>
-            </div>
+              <span className="hp-last-total">{money(lastOrder.subtotal ?? lastOrder.total)}</span>
+            </span>
+            <span className="hp-last-actions">
+              <Link to="/my-orders" className="hp-last-view">View order →</Link>
+              <button className="hp-btn hp-btn--solid hp-btn--sm" onClick={addLastOrder}>Add all to cart</button>
+            </span>
           </div>
-
-          <div className="hv-promo hv-promo--ship">
-            <div>
-              <h3>Send the Taste of Home<br />Across the World</h3>
-              <p>✈ Worldwide Shipping</p>
-            </div>
-            <img className="hv-promo-media" src="/images/banners/banner_worldwide.jpg" alt="" loading="lazy" />
-          </div>
-
-          <div className="hv-promo hv-promo--gift">
-            <div>
-              <h3>🎁 Perfect for Gifting</h3>
-              <p>Traditional. Thoughtful. Always Special.</p>
-              <Link className="hv-promo-btn" to="/gift-hamper">Explore Gift Hampers <span aria-hidden="true">→</span></Link>
-            </div>
-            <img className="hv-promo-media" src="/images/banners/banner_hampers.jpg" alt="" loading="lazy" />
-          </div>
-        </section>
-
-        {/* ── Bestsellers ──────────────────────────────────────────────── */}
-        {best.length > 0 && (
-          <section>
-            <div className="hv-sec-head">
-              <h2>Our Bestsellers</h2>
-              <Link className="hv-all" to="/products?sort=popular">View All →</Link>
-            </div>
-            <div className="hv-cards">
-              {best.map((p) => (
-                <article key={p._id || p.id} className="hv-card">
-                  <Link to={`/product/${p.slug || p._id}`} className="hv-card-img">
-                    <img src={imgOf(p)} alt={p.name} loading="lazy" />
-                    <button className="hv-wish" title="Save for later"
-                      onClick={(e) => { e.preventDefault(); }}>♡</button>
-                  </Link>
-                  <div className="hv-card-body">
-                    <h3 className="hv-card-name">{p.name}</h3>
-                    <div className="hv-card-foot">
-                      <span className="hv-price">{inr(priceOf(p))}
-                        {firstVariant(p) && <span className="hv-pack"> / {firstVariant(p).weight}</span>}
-                      </span>
-                      <button className="hv-add" onClick={(e) => addToCart(e, p)}>Add to Cart</button>
-                    </div>
-                  </div>
-                </article>
-              ))}
-            </div>
-          </section>
         )}
-      </div>
-
-      {/* ── Story · values · quote ─────────────────────────────────────── */}
-      <section className="hv-band">
-        <div className="hv-story">
-          <img className="hv-story-bg" src="/images/banners/quality.jpg" alt="" loading="lazy" />
-          <div className="hv-story-in">
-            <h2>Our Story</h2>
-            <p>
-              From our kitchens to your homes, Avakaaya Foods brings you authentic flavors rooted in
-              tradition. Since 2000, we have been committed to quality, taste and purity in every bite.
-            </p>
-            <Link className="hv-promo-btn" to="/about" style={{ marginTop: '.9rem' }}>Know More</Link>
-          </div>
-        </div>
-        <div className="hv-values">
-          {VALUES.map((v) => (
-            <div key={v.label} className="hv-value">
-              <span aria-hidden="true">{v.icon}</span>
-              <strong>{v.label}</strong>
-            </div>
-          ))}
-        </div>
-        <div className="hv-quote">
-          <span className="hv-quote-mark" aria-hidden="true">“</span>
-          <p>Food is not just what we eat,<br />but what brings us together.</p>
-        </div>
       </section>
 
-      {/* ── What people say · stay connected ───────────────────────────── */}
-      <div className="hv-wrap">
-        <section className="hv-foot">
-          <div className="hv-says">
-            <h2>What Our Customers Say</h2>
-            <div className="hv-quotes">
-              {SAYS.map((t) => (
-                <div key={t.by} className="hv-testimonial">
-                  <p>“{t.text}”</p>
-                  <div className="hv-stars">{'★'.repeat(Math.floor(t.stars))}{t.stars % 1 ? '½' : ''}</div>
-                  <div className="hv-by">– {t.by}</div>
-                </div>
-              ))}
-            </div>
+      {/* ── Festival hampers + the family kitchen ────────────────
+          Two panels on one band, as in the design: the seasonal reason to buy
+          on the left, who you are buying from on the right. Both are the
+          supplied banner artwork, so the copy sits beside the picture rather
+          than on top of the words already painted into it. */}
+      <section className="hp-band">
+        <div className="hp-band-fest">
+          <div className="hp-band-copy">
+            <h2>Festival Gift Hampers</h2>
+            <p>Authentic Telugu pickles, powders &amp; sweets for every celebration.</p>
+            <Link to="/gift-hamper" className="hp-btn hp-btn--gold">Explore Hampers <span aria-hidden="true">→</span></Link>
           </div>
-          <div className="hv-sub">
-            <h2>Stay Connected</h2>
-            <p>Get updates on new products, offers and festival specials.</p>
-            {subscribed ? (
-              <p style={{ color: 'var(--hv-maroon)', fontWeight: 600 }}>Thank you — you are on the list.</p>
-            ) : (
-              <form className="hv-sub-form" onSubmit={(e) => { e.preventDefault(); if (email) { setSubscribed(true); setEmail(''); } }}>
-                <input type="email" value={email} onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Enter your email address" aria-label="Email address" />
-                <button type="submit">Subscribe</button>
-              </form>
-            )}
-            <div className="hv-social">
-              <a href="https://instagram.com" target="_blank" rel="noreferrer" aria-label="Instagram">📸</a>
-              <a href="https://facebook.com" target="_blank" rel="noreferrer" aria-label="Facebook">📘</a>
-              <a href="https://youtube.com" target="_blank" rel="noreferrer" aria-label="YouTube">▶️</a>
-              <a href="https://wa.me/919999999999" target="_blank" rel="noreferrer" aria-label="WhatsApp">💬</a>
-            </div>
+          <img className="hp-band-art" src="/images/banners/hero-hampers.jpg" alt="" loading="lazy" />
+          {/* The festival names are painted into the artwork itself — listing
+              them again beside it printed every name twice. */}
+        </div>
+        <Link className="hp-band-story" to="/about">
+          <span className="hp-band-copy">
+            <h2>From Our<br />Family Kitchen<br />to Yours</h2>
+            <p>Recipes rooted in Andhra &amp; Telangana since 2000.</p>
+            <span className="hp-btn hp-btn--gold">Our Story <span aria-hidden="true">→</span></span>
+          </span>
+          <img className="hp-band-art" src="/images/banners/hero-story.jpg" alt="" loading="lazy" />
+        </Link>
+      </section>
+
+      {/* ── How it ships ─────────────────────────────────────────── */}
+      <section className="hp-ship">
+        {SHIPPING.map(x => (
+          <div key={x.title} className="hp-ship-item">
+            <span className="hp-ship-icon" aria-hidden="true">{x.icon}</span>
+            <span><strong>{x.title}</strong><span>{x.copy}</span></span>
           </div>
-        </section>
-      </div>
+        ))}
+      </section>
     </div>
   );
 };

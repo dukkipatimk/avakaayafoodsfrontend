@@ -35,7 +35,7 @@
   position: absolute;
   top: 10px;
   left: 10px;
-  background: var(--red-chili);
+  background: var(--highlight-red);
   color: var(--white);
   font-family: var(--font-ui);
   font-size: 0.7rem;

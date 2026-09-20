@@ -1,164 +1,294 @@
 /* ── The 2026 homepage ───────────────────────────────────────────────────────
-   Maroon and gold on cream, the storefront's own palette, laid out as the
-   design does it: a festival hero, then a row of ways in, then three offers,
-   then what people actually buy. Everything below the hero sits on cream so
-   the white product cards lift off it.
+   Everything here is scoped under .hp so the page can be swapped in or out
+   without touching the storefront's other screens. Colours are the brand's:
+   deep green for anything you press, maroon for the line that matters, gold
+   for the festival band, cream for the hero. */
 
-   Scoped under .home-v2 so none of it can reach the old homepage while both
-   exist. */
+.hp {
+  --hp-green: #14532d;
+  --hp-green-dark: #0e3d21;
+  --hp-maroon: #8a1a1a;
+  --hp-gold: #c9a84c;
+  --hp-ink: #24312a;
+  --hp-muted: #7b8a80;
+  --hp-line: #e8e4da;
+  --hp-cream: #f7efe0;
+  --hp-max: 1280px;
+  background: #fff;
+  color: var(--hp-ink);
+  font-family: var(--font-ui, 'Josefin Sans', sans-serif);
+}
 
-.home-v2 {
-  --hv-maroon: #7b1113;
-  --hv-maroon-deep: #5e0d10;
-  --hv-maroon-soft: #8f1a1c;
-  --hv-gold: #f5c518;
-  --hv-gold-deep: #e0a92b;
-  --hv-cream: #fdf6ea;
-  --hv-cream-2: #f8ecd8;
-  --hv-ink: #2a1a10;
-  --hv-muted: #7a6a58;
-  --hv-line: #eadcc4;
-  background: var(--hv-cream);
-  color: var(--hv-ink);
-}
-.home-v2 .hv-wrap { max-width: 1400px; margin: 0 auto; padding: 0 1.25rem; }
-.home-v2 h2 { font-family: Georgia, 'Times New Roman', serif; color: var(--hv-maroon); margin: 0; }
+.hp-sec { max-width: var(--hp-max); margin: 0 auto; padding: 30px 24px 6px; }
 
-/* ── Hero ────────────────────────────────────────────────────────────────── */
-.hv-hero {
-  position: relative;
-  background: linear-gradient(100deg, var(--hv-maroon-deep) 0%, var(--hv-maroon) 42%, var(--hv-maroon-soft) 100%);
-  color: #fff;
-  overflow: hidden;
+/* ── Section headings ───────────────────────────────────────────────────────
+   Title and its one-line explanation sit on the same baseline, with the way
+   out on the far right — the design's rhythm, repeated on every section. */
+.hp-head { display: flex; align-items: baseline; gap: 14px; margin: 0 0 16px; }
+.hp-head h2 {
+  margin: 0; font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 1.65rem; font-weight: 700; color: #1f3a27; white-space: nowrap;
 }
-.hv-hero-inner {
-  max-width: 1400px; margin: 0 auto; padding: 3.2rem 1.25rem 3.4rem;
-  display: grid; grid-template-columns: minmax(0, 46%) minmax(0, 54%); align-items: center; gap: 1rem;
-  min-height: 380px;
+.hp-head h2 span { margin-right: 6px; }
+.hp-head p { margin: 0; color: var(--hp-muted); font-size: .84rem; }
+.hp-more {
+  margin-left: auto; color: var(--hp-green); font-size: .8rem; font-weight: 600;
+  text-decoration: none; white-space: nowrap;
 }
-/* The photograph bleeds off the right edge, as a festival spread should. */
-.hv-hero-art { position: relative; min-height: 300px; }
-.hv-hero-art img { width: 100%; height: 100%; max-height: 420px; object-fit: contain; object-position: center right; display: block; }
-.hv-eyebrow { font-size: .78rem; letter-spacing: .28em; text-transform: uppercase; color: #f3d9a8; margin: 0 0 .6rem; }
-.hv-hero h1 {
-  font-family: Georgia, 'Times New Roman', serif;
-  font-size: clamp(2.4rem, 4.6vw, 4rem); line-height: 1.02; margin: 0 0 .9rem; color: #fff; font-weight: 400;
-}
-.hv-hero h1 em { font-style: normal; color: var(--hv-gold); }
-.hv-hero p { max-width: 30rem; margin: 0 0 1.4rem; color: rgba(255,255,255,.88); font-size: 1.02rem; line-height: 1.55; }
-.hv-cta {
-  display: inline-flex; align-items: center; gap: .55rem;
-  background: var(--hv-gold); color: #4a2b06; font-weight: 700; font-size: 1rem;
-  padding: .72rem 1.5rem; border-radius: 999px; border: none; cursor: pointer;
-  box-shadow: 0 6px 16px rgba(0,0,0,.18);
-}
-.hv-cta:hover { background: #ffd647; }
-.hv-hero-trust { display: flex; flex-wrap: wrap; gap: 1.6rem; margin-top: 1.8rem; font-size: .84rem; color: rgba(255,255,255,.9); }
-.hv-hero-trust span { display: inline-flex; align-items: center; gap: .45rem; }
-.hv-hero-dots { position: absolute; bottom: 1rem; left: 50%; transform: translateX(-50%); display: flex; gap: .4rem; }
-.hv-hero-dots button { width: 8px; height: 8px; padding: 0; border-radius: 50%; border: none; background: rgba(255,255,255,.45); cursor: pointer; }
-.hv-hero-dots button.on { background: var(--hv-gold); width: 20px; border-radius: 999px; }
+.hp-more:hover { color: var(--hp-maroon); }
 
-/* ── Category circles ────────────────────────────────────────────────────── */
-.hv-cats { padding: 1.6rem 0 .4rem; }
-.hv-cats-row { display: grid; grid-template-columns: repeat(9, minmax(0, 1fr)); gap: .8rem; }
-.hv-cat { display: flex; flex-direction: column; align-items: center; gap: .5rem; color: var(--hv-ink); text-align: center; }
-.hv-cat-img {
+/* ── Buttons ───────────────────────────────────────────────────────────── */
+.hp-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 13px 22px; border: 1px solid transparent; border-radius: 8px;
+  font: 600 .86rem var(--font-ui, 'Josefin Sans', sans-serif);
+  text-decoration: none; cursor: pointer; transition: background .16s, color .16s, border-color .16s;
+}
+.hp-btn--solid { background: var(--hp-green); color: #fff; }
+.hp-btn--solid:hover { background: var(--hp-green-dark); }
+.hp-btn--ghost { background: #fff; color: #23402b; border-color: #cdd7cd; }
+.hp-btn--ghost:hover { border-color: var(--hp-green); color: var(--hp-green); }
+.hp-btn--gold { background: var(--hp-gold); color: #35260a; }
+.hp-btn--gold:hover { background: #b9963c; }
+.hp-btn--sm { padding: 9px 16px; font-size: .8rem; }
+
+/* ── Category circles ───────────────────────────────────────────────────── */
+.hp-cats {
+  display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)) 1.35fr;
+  gap: 10px; align-items: start;
+}
+.hp-cat {
+  display: flex; flex-direction: column; align-items: center; gap: 7px;
+  padding: 12px 6px; border-radius: 12px; text-decoration: none; text-align: center;
+  transition: background .16s;
+}
+.hp-cat:hover { background: #f6f8f4; }
+.hp-cat-disc {
   width: 84px; height: 84px; border-radius: 50%; overflow: hidden;
-  background: var(--hv-cream-2); border: 1px solid var(--hv-line);
-  display: grid; place-items: center; font-size: 2rem;
-  transition: transform .15s ease, box-shadow .15s ease;
+  border: 2px solid #fff; box-shadow: 0 2px 10px rgba(30, 50, 35, .13);
 }
-.hv-cat img { width: 100%; height: 100%; object-fit: cover; }
-.hv-cat:hover .hv-cat-img { transform: translateY(-3px); box-shadow: 0 8px 18px rgba(123,17,19,.14); }
-.hv-cat-label { font-size: .84rem; font-weight: 600; }
+.hp-cat-disc img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.hp-cat-name { font-size: .78rem; font-weight: 700; color: #26372b; }
+.hp-cat-note { font-size: .68rem; color: var(--hp-muted); }
+/* Hampers sits in a tinted card rather than the bare row. */
+.hp-cat--gift { background: #fbf6ea; border: 1px solid #f0e4cb; }
+.hp-cat--gift:hover { background: #f8f0dd; }
 
-/* ── Three offers ────────────────────────────────────────────────────────── */
-.hv-promos { display: grid; grid-template-columns: 1fr 1.2fr 1.1fr; gap: 1rem; padding: 1.2rem 0 1.6rem; }
-.hv-promo { border-radius: 10px; padding: 1.15rem 1.35rem; display: flex; align-items: center; gap: 1rem; min-height: 116px; }
-.hv-promo--off { background: var(--hv-maroon); color: #fff; }
-.hv-promo--off .hv-off-big { font-family: Georgia, serif; font-size: 2rem; line-height: 1; }
-.hv-promo--off .hv-off-flat { font-size: .8rem; letter-spacing: .18em; text-transform: uppercase; }
-.hv-promo-divider { width: 1px; align-self: stretch; background: rgba(255,255,255,.28); }
-.hv-promo--ship { background: var(--hv-cream-2); color: var(--hv-maroon); }
-.hv-promo--gift { background: linear-gradient(100deg, #f6c445, #efb02a); color: #5c3a06; }
-.hv-promo h3 { font-family: Georgia, serif; font-size: 1.32rem; margin: 0 0 .3rem; font-weight: 400; }
-.hv-promo p { margin: 0; font-size: .84rem; opacity: .92; }
-.hv-promo-btn {
-  display: inline-flex; align-items: center; gap: .4rem; margin-top: .55rem;
-  padding: .42rem 1rem; border-radius: 999px; font-size: .82rem; font-weight: 700;
-  background: var(--hv-gold); color: #4a2b06; border: none; cursor: pointer;
+/* ── Product rows ───────────────────────────────────────────────────────── */
+.hp-grid { display: grid; gap: 12px; }
+.hp-grid--6 { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+/* The shared card, wearing this page's clothes: a flat outline, not a float. */
+.hp .product-card { border: 1px solid var(--hp-line); border-radius: 12px; box-shadow: none; }
+.hp .product-card:hover { border-color: #cfd9cd; box-shadow: 0 6px 18px rgba(26, 46, 26, .07); }
+
+.hp-mini {
+  display: flex; flex-direction: column; gap: 6px;
+  border: 1px solid var(--hp-line); border-radius: 12px; overflow: hidden;
+  text-decoration: none; background: #fff;
 }
-.hv-promo--gift .hv-promo-btn { background: #fff; color: var(--hv-maroon); }
-.hv-promo-media { margin-left: auto; height: 84px; border-radius: 8px; object-fit: contain; }
-
-/* ── Bestsellers ─────────────────────────────────────────────────────────── */
-.hv-sec-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: .9rem; }
-.hv-sec-head h2 { font-size: 1.6rem; }
-.hv-all { color: var(--hv-maroon); font-weight: 600; font-size: .88rem; }
-.hv-cards { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: .8rem; }
-.hv-card { background: #fff; border: 1px solid var(--hv-line); border-radius: 10px; overflow: hidden; display: flex; flex-direction: column; }
-.hv-card-img { position: relative; aspect-ratio: 1 / .82; background: var(--hv-cream-2); }
-.hv-card-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.hv-wish {
-  position: absolute; top: .45rem; right: .45rem; width: 26px; height: 26px; border-radius: 50%;
-  background: rgba(255,255,255,.92); border: none; cursor: pointer; display: grid; place-items: center;
-  color: var(--hv-maroon); font-size: .8rem;
+.hp-mini:hover { border-color: #cfd9cd; }
+.hp-mini-img { position: relative; display: block; aspect-ratio: 1 / 1; background: #f4f1ea; }
+.hp-mini-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.hp-mini-heart {
+  position: absolute; top: 8px; right: 8px; width: 26px; height: 26px; border-radius: 50%;
+  background: rgba(255, 255, 255, .92); color: #7b8a80; display: grid; place-items: center; font-size: .9rem;
 }
-.hv-card-body { padding: .6rem .7rem .75rem; text-align: center; }
-.hv-card-name { font-size: .84rem; font-weight: 600; margin: 0 0 .35rem; min-height: 2.2em; display: flex; align-items: center; justify-content: center; }
-.hv-card-foot { display: flex; align-items: center; justify-content: space-between; gap: .4rem; }
-.hv-price { font-weight: 700; font-size: .92rem; }
-.hv-add {
-  background: var(--hv-maroon); color: #fff; border: none; border-radius: 999px;
-  padding: .34rem .8rem; font-size: .76rem; font-weight: 600; cursor: pointer; white-space: nowrap;
+.hp-mini-name { padding: 0 10px; font-size: .8rem; font-weight: 600; color: #26372b; }
+.hp-mini-price { padding: 0 10px 12px; font-size: .86rem; font-weight: 700; color: #1f3a27; }
+
+/* ── The three shortcuts ────────────────────────────────────────────────── */
+.hp-shortcuts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.hp-shortcut {
+  position: relative; display: flex; align-items: center; gap: 12px; overflow: hidden;
+  padding: 16px 18px; border: 1px solid var(--hp-line); border-radius: 12px;
+  background: #fff; text-align: left; text-decoration: none; cursor: pointer; font: inherit;
+  color: inherit;
 }
-.hv-add:hover { background: var(--hv-maroon-soft); }
+.hp-shortcut > img { width: 92px; height: 62px; object-fit: cover; border-radius: 8px; margin-left: auto; }
+.hp-shortcut-icon { font-size: 1.3rem; }
+.hp-shortcut-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.hp-shortcut-text strong { font-size: .95rem; }
+.hp-shortcut-text > span { font-size: .76rem; color: var(--hp-muted); }
+.hp-shortcut-cta { font-size: .74rem; font-weight: 700; letter-spacing: .04em; margin-top: 4px; }
+.hp-shortcut--quick { background: #fdf7e8; border-color: #f0e4c8; }
+.hp-shortcut--quick strong, .hp-shortcut--quick .hp-shortcut-cta { color: #8a6b12; }
+.hp-shortcut--combos { background: #fdeef0; border-color: #f4dade; }
+.hp-shortcut--combos strong, .hp-shortcut--combos .hp-shortcut-cta { color: var(--hp-maroon); }
+.hp-shortcut--last { background: #fff; border-color: #dbe7db; }
+.hp-shortcut--last strong { color: var(--hp-green); }
+.hp-last-line { font-size: .78rem; color: #4f5f52; }
+.hp-last-total { font-size: .95rem; font-weight: 700; color: #1f3a27; }
+.hp-last-actions { margin-left: auto; display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
+.hp-last-view { font-size: .74rem; font-weight: 600; color: var(--hp-green); text-decoration: none; }
 
-/* ── Story · values · quote ──────────────────────────────────────────────── */
-.hv-band { display: grid; grid-template-columns: 1.1fr 1fr .85fr; margin: 1.8rem 0 0; }
-.hv-story { position: relative; color: #fff; padding: 1.6rem 1.8rem; background: var(--hv-maroon-deep); }
-.hv-story-bg { position: absolute; inset: 0; object-fit: cover; width: 100%; height: 100%; opacity: .35; }
-.hv-story-in { position: relative; }
-.hv-story h2 { color: #fff; font-size: 1.5rem; margin-bottom: .5rem; }
-.hv-story p { font-size: .88rem; line-height: 1.6; color: rgba(255,255,255,.9); max-width: 30rem; }
-.hv-values { background: var(--hv-cream-2); display: grid; grid-template-columns: repeat(4, 1fr); align-items: center; }
-.hv-value { text-align: center; padding: 1.2rem .5rem; }
-.hv-value span { display: block; font-size: 1.5rem; color: var(--hv-maroon); }
-.hv-value strong { display: block; margin-top: .5rem; font-size: .8rem; font-weight: 600; color: var(--hv-maroon); }
-.hv-quote { background: var(--hv-maroon); color: #fff; padding: 1.6rem 1.8rem; display: flex; align-items: center; }
-.hv-quote p { font-family: Georgia, serif; font-size: 1.12rem; line-height: 1.5; margin: 0; }
-.hv-quote-mark { font-family: Georgia, serif; font-size: 2.4rem; color: var(--hv-gold); line-height: 0; margin-right: .5rem; }
-
-/* ── Testimonials + newsletter ───────────────────────────────────────────── */
-.hv-foot { display: grid; grid-template-columns: 2fr 1fr; gap: 1.6rem; padding: 1.6rem 0 2.2rem; }
-.hv-says h2 { font-size: 1.3rem; margin-bottom: .8rem; }
-.hv-quotes { display: grid; grid-template-columns: repeat(3, 1fr); gap: .8rem; }
-.hv-testimonial { background: #fff; border: 1px solid var(--hv-line); border-radius: 8px; padding: .9rem 1rem; }
-.hv-testimonial p { margin: 0 0 .6rem; font-size: .84rem; line-height: 1.5; }
-.hv-stars { color: var(--hv-gold-deep); font-size: .8rem; }
-.hv-by { color: var(--hv-muted); font-size: .78rem; }
-.hv-sub h2 { font-size: 1.3rem; margin-bottom: .4rem; }
-.hv-sub p { font-size: .84rem; color: var(--hv-muted); margin: 0 0 .7rem; }
-.hv-sub-form { display: flex; gap: .5rem; }
-.hv-sub-form input { flex: 1; padding: .55rem .75rem; border: 1px solid var(--hv-line); border-radius: 6px; background: #fff; }
-.hv-sub-form button { background: var(--hv-gold); color: #4a2b06; font-weight: 700; border: none; border-radius: 6px; padding: .55rem 1.1rem; cursor: pointer; }
-.hv-social { display: flex; gap: .6rem; margin-top: 1rem; font-size: 1.3rem; }
-
-/* ── Narrower screens ────────────────────────────────────────────────────── */
-@media (max-width: 1200px) {
-  .hv-cats-row { grid-template-columns: repeat(5, 1fr); row-gap: 1.2rem; }
-  .hv-cards { grid-template-columns: repeat(4, 1fr); }
-  .hv-promos { grid-template-columns: 1fr 1fr; }
-  .hv-band { grid-template-columns: 1fr 1fr; }
-  .hv-quote { grid-column: 1 / -1; }
+/* ── How it ships ───────────────────────────────────────────────────────── */
+.hp-ship {
+  max-width: var(--hp-max); margin: 22px auto 0; padding: 18px 24px;
+  border-top: 1px solid var(--hp-line);
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px;
 }
+.hp-ship-item { display: flex; align-items: center; gap: 12px; }
+.hp-ship-icon { font-size: 1.4rem; }
+.hp-ship-item strong { display: block; font-size: .84rem; color: #24382a; }
+.hp-ship-item span span { font-size: .72rem; color: var(--hp-muted); }
+
+/* ── Narrower screens ───────────────────────────────────────────────────── */
+@media (max-width: 1080px) {
+  .hp-grid--6 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .hp-cats { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .hp-fest-row { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+}
+@media (max-width: 620px) {
+  .hp-sec { padding: 22px 14px 4px; }
+  .hp-grid--6 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .hp-cats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .hp-cat-disc { width: 68px; height: 68px; }
+  .hp-fest-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* ── The shared product card, in this page's voice ───────────────────────────
+   ProductCard carries the old storefront's gold button and pill variants. On
+   this page the design asks for one dark-green action the width of the card,
+   and quiet outline chips for the weights. Scoped to .hp — the card looks the
+   same as ever everywhere else. */
+.hp .product-card-body { padding: 12px 12px 14px; }
+.hp .product-card-name { font-size: .86rem; line-height: 1.35; }
+.hp .product-card-desc { display: none; }
+.hp .variant-btn {
+  padding: 5px 9px; border: 1px solid #dfe5dd; border-radius: 6px;
+  background: #fff; color: #5f6f63; font-size: .7rem; font-weight: 600;
+}
+.hp .variant-btn.active { background: #edf4ea; border-color: var(--hp-green); color: var(--hp-green); }
+.hp .product-card-price .price-current { font-size: 1rem; color: #1f3a27; }
+.hp .product-card .btn-add-cart,
+.hp .product-card button[class*="add"] {
+  width: 100%; justify-content: center;
+  background: var(--hp-green); border: 0; border-radius: 8px;
+  color: #fff; font: 600 .78rem var(--font-ui, 'Josefin Sans', sans-serif);
+  letter-spacing: .04em; text-transform: none; padding: 11px 14px;
+}
+.hp .product-card .btn-add-cart:hover,
+.hp .product-card button[class*="add"]:hover { background: var(--hp-green-dark); }
+
 @media (max-width: 860px) {
-  .hv-hero-inner { grid-template-columns: 1fr; padding-bottom: 2.4rem; }
-  .hv-hero-art { display: none; }
-  .hv-cats-row { grid-template-columns: repeat(3, 1fr); }
-  .hv-cards { grid-template-columns: repeat(2, 1fr); }
-  .hv-promos, .hv-band, .hv-foot, .hv-quotes { grid-template-columns: 1fr; }
-  .hv-values { grid-template-columns: repeat(2, 1fr); }
 }
-.hv-pack { font-weight: 500; font-size: .74rem; color: var(--hv-muted); }
+
+
+/* ── Hero: the supplied banners, whole ───────────────────────────────────────
+   Each banner is a finished piece of artwork with its own headline and button
+   painted in, so the hero's only job is to show one at a time, full width, and
+   make it a link. Nothing is set on top of it. */
+.hp-hero { position: relative; background: #f6eedf; }
+.hp-hero-banner {
+  position: relative; display: block; overflow: hidden;
+  /* The supplied artwork is 2172x724 — exactly 3:1 — so the frame is 3:1 and a
+     banner lands in it at its own proportions, nothing cropped and no bars.
+     Capped so it cannot swallow a laptop screen on very wide monitors. */
+  aspect-ratio: 3 / 1;
+  max-height: 520px;
+  background: #f6eedf;
+}
+.hp-hero-fg {
+  position: relative; z-index: 1; display: block;
+  width: 100%; height: 100%;
+  /* 'contain' and 'cover' are the same thing for a 3:1 banner in a 3:1 frame.
+     It is 'contain' so that the older 5.5:1 strips from the sheet show whole
+     rather than losing half their width, until they are replaced. */
+  object-fit: contain; object-position: center;
+}
+.hp-hero-nav { position: absolute; right: 18px; bottom: 16px; display: flex; gap: 8px; }
+.hp-hero-nav button {
+  width: 34px; height: 34px; border-radius: 50%; border: 1px solid rgba(255, 255, 255, .55);
+  background: rgba(20, 30, 18, .35); color: #fff; font-size: 1.15rem; line-height: 1;
+  cursor: pointer; backdrop-filter: blur(3px);
+}
+.hp-hero-nav button:hover { background: rgba(20, 30, 18, .6); }
+.hp-hero-dots {
+  position: absolute; left: 50%; bottom: 12px; transform: translateX(-50%);
+  display: flex; gap: 6px;
+}
+.hp-hero-dots button {
+  width: 7px; height: 7px; padding: 0; border: 0; border-radius: 999px;
+  background: rgba(255, 255, 255, .55); cursor: pointer;
+}
+.hp-hero-dots .is-on { width: 20px; background: #fff; }
+
+/* The four promises, under the banner rather than on it: the artwork changes
+   every few seconds and these do not. */
+.hp-trust {
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 10px 46px;
+  margin: 0; padding: 14px 24px; list-style: none;
+  background: #fbf6ec; border-bottom: 1px solid #f0e7d6;
+  font-size: .74rem; font-weight: 600; letter-spacing: .04em; color: #6a7a68;
+}
+.hp-trust li::before { content: '✦'; margin-right: 8px; color: var(--hp-gold); }
+
+/* ── What are you craving today? ─────────────────────────────────────────── */
+.hp-cravings { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 12px; }
+.hp-crave {
+  display: flex; flex-direction: column; overflow: hidden;
+  border: 1px solid var(--hp-line); border-radius: 12px; background: #fff; text-decoration: none;
+  transition: border-color .16s, box-shadow .16s;
+}
+.hp-crave:hover { border-color: #cfd9cd; box-shadow: 0 6px 18px rgba(26, 46, 26, .07); }
+.hp-crave-img { display: block; aspect-ratio: 16 / 11; background: #f4f1ea; overflow: hidden; }
+.hp-crave-img img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .35s; }
+.hp-crave:hover .hp-crave-img img { transform: scale(1.06); }
+.hp-crave-cap { display: flex; flex-direction: column; gap: 2px; padding: 10px 12px 12px; }
+.hp-crave-cap strong { font-size: .84rem; color: #26372b; }
+.hp-crave-cap span { font-size: .72rem; color: var(--hp-muted); }
+
+/* ── Hampers + the family kitchen ────────────────────────────────────────────
+   One band, two panels: the seasonal reason to buy, then who you are buying
+   from. The artwork is the supplied banner, dimmed so the copy beside it can
+   be read — its own painted headline stays in the half that is shown. */
+.hp-band {
+  display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr);
+  gap: 0; margin-top: 26px;
+}
+.hp-band-fest, .hp-band-story {
+  position: relative; display: flex; align-items: center; gap: 18px;
+  min-height: 210px; padding: 26px 30px; overflow: hidden; text-decoration: none;
+}
+.hp-band-fest { background: linear-gradient(100deg, #3c1b0d, #5e2c12); }
+.hp-band-story { background: linear-gradient(100deg, #2e1608, #4a2410); }
+.hp-band-art {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; object-position: right center; opacity: .42;
+}
+.hp-band-copy { position: relative; z-index: 1; max-width: 340px; }
+.hp-band-copy h2 {
+  margin: 0 0 8px; font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 1.9rem; line-height: 1.15; color: #fdf4e0;
+}
+.hp-band-copy p { margin: 0 0 16px; font-size: .82rem; line-height: 1.5; color: #e6d8c0; }
+/* The festival names, as the design lists them beside the hamper. */
+.hp-band-list {
+  position: relative; z-index: 1; margin: 0 0 0 auto; padding: 0; list-style: none;
+  display: flex; flex-direction: column; gap: 9px;
+}
+.hp-band-list li { font-size: .78rem; color: #f2e4c8; }
+.hp-band-list li::before { content: '✦'; margin-right: 9px; color: var(--hp-gold); }
+
+@media (max-width: 1080px) {
+  .hp-cravings { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .hp-band { grid-template-columns: minmax(0, 1fr); }
+  .hp-hero-banner { max-height: 320px; }
+}
+@media (max-width: 620px) {
+  .hp-cravings { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .hp-trust { gap: 8px 20px; font-size: .68rem; }
+  .hp-band-list { display: none; }
+  .hp-hero-banner { max-height: 210px; }
+  .hp-band-copy h2 { font-size: 1.5rem; }
+}
+
+/* The banner artwork carries its own festival list and family photograph, so
+   it is shown nearly at full strength and the copy gets a scrim of its own
+   rather than the whole picture being dimmed to grey. */
+.hp-band-art { opacity: 1; }
+.hp-band-fest::before, .hp-band-story::before {
+  content: ''; position: absolute; inset: 0; z-index: 0;
+  background: linear-gradient(90deg, rgba(38, 18, 8, .93) 0%, rgba(38, 18, 8, .82) 34%, rgba(38, 18, 8, .1) 72%, transparent 100%);
+}
+.hp-band-copy { z-index: 2; }

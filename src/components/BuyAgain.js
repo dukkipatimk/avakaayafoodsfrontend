@@ -45,7 +45,7 @@ const BuyAgain = () => {
       <div className="buy-again-card">
         <div className="buy-again-info">
           <header className="buy-again-head">
-            <span className="buy-again-title">🔄 Your last order</span>
+            <span className="buy-again-title">Your favourites, again</span>
             {date && <span className="buy-again-date">Ordered {date}</span>}
           </header>
 
@@ -66,7 +66,7 @@ const BuyAgain = () => {
           <span className="buy-again-total">₹{Number(order.subtotal || 0).toLocaleString('en-IN')}</span>
           <button className="buy-again-cta" onClick={addAll}>Add all to cart</button>
           <button className="buy-again-modify" onClick={() => navigate('/my-orders')}>
-            Modify order →
+            View past orders →
           </button>
         </div>
       </div>

@@ -2,57 +2,18 @@
 .checkout-title { font-size: 2rem; margin-bottom: 32px; }
 
 /* Steps */
-.checkout-steps {
-  display: flex;
-  align-items: center;
-  margin-bottom: 48px;
-  padding: 20px 24px;
-  background: var(--white);
-  border-radius: var(--radius-md);
-  border: 1px solid var(--ivory-deep);
-}
 
-.step {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex: 1;
-}
 
-.step-num {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  border: 2px solid var(--ivory-deep);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--font-ui);
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: var(--text-light);
-  flex-shrink: 0;
-  transition: var(--transition);
-}
 
-.step.active .step-num { border-color: var(--green-deep); color: var(--green-deep); }
-.step.done .step-num { background: var(--green-deep); border-color: var(--green-deep); color: var(--gold-light); }
 
-.step-label {
-  font-family: var(--font-ui);
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: var(--text-light);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-}
 
-.step.active .step-label { color: var(--green-deep); }
 
-.step-line { flex: 1; height: 1px; background: var(--ivory-deep); }
 
 /* Layout */
-.checkout-layout { display: grid; grid-template-columns: 1fr 360px; gap: 40px; align-items: start; }
+/* Two columns: what we need from you, and what it costs. The basket sits
+   inside the summary, folded, rather than taking a column of its own. */
+.checkout-layout { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 32px; align-items: start; }
+
 
 /* Card */
 .checkout-card {
@@ -152,7 +113,10 @@
   background-size: 12px 12px;
 }
 
-.checkout-next-btn { width: 100%; justify-content: center; margin-top: 16px; }
+/* Full width and a top margin were for when this button stood alone under the
+   form. It shares a row with "Back to cart" now, so it sizes like its neighbour
+   — the row's own margin does the spacing. */
+.checkout-next-btn { justify-content: center; }
 
 /* Shipping preview on address step */
 .addr-shipping-preview {
@@ -500,15 +464,10 @@
 .checkout-step-btns { display: flex; gap: 16px; margin-top: 24px; }
 
 /* Summary sidebar */
-.checkout-summary {
-  background: var(--white);
-  border: 1px solid var(--ivory-deep);
-  border-radius: var(--radius-md);
-  padding: 24px;
-  position: sticky;
-  top: calc(var(--header-h) + 32px);
-  box-shadow: var(--shadow-sm);
-}
+/* The box itself comes from .cart-summary, which this element also carries —
+   the summary here and the one on the cart page are meant to be the same panel,
+   so only one stylesheet should describe it. */
+.checkout-summary { min-width: 0; }
 
 .checkout-summary h3 { font-size: 1.2rem; margin-bottom: 16px; }
 
@@ -526,29 +485,22 @@
 .summary-total { display: flex; justify-content: space-between; font-family: var(--font-display); font-size: 1.3rem; color: var(--green-deep); padding: 12px 0; border-top: 2px solid var(--green-deep); margin-top: 4px; }
 
 @media (max-width: 1024px) {
-  .checkout-layout { grid-template-columns: 1fr; }
+  .checkout-layout { grid-template-columns: minmax(0, 1fr); }
   .checkout-summary { position: static; }
 }
 
 @media (max-width: 768px) {
-  .checkout-steps { padding: 16px; }
-  .step-label { display: none; }
   .checkout-card { padding: 20px; }
 }
 
 @media (max-width: 480px) {
   .checkout-card { padding: 16px; }
-  .checkout-steps { padding: 12px; gap: 0; }
-  .step-num { width: 28px; height: 28px; font-size: 0.75rem; }
   .checkout-summary h3 { font-size: 1.05rem; }
   .summary-total { font-size: 1.1rem; }
   .addr-search-input { font-size: 0.9rem; padding: 10px 12px; }
 }
 
 .coupon-section { margin: 12px 0; }
-.coupon-row { display: flex; gap: 8px; }
-.coupon-input { flex: 1; padding: 8px 12px; border: 1.5px solid var(--ivory-deep); border-radius: var(--radius-sm); font-family: var(--font-ui); font-size: 0.85rem; outline: none; text-transform: uppercase; letter-spacing: 0.08em; }
-.coupon-input:focus { border-color: var(--green-mid); }
 .coupon-applied { display: flex; align-items: center; justify-content: space-between; background: #e8f5e9; border: 1px solid #a5d6a7; border-radius: var(--radius-sm); padding: 8px 12px; font-family: var(--font-ui); font-size: 0.85rem; color: #2e7d32; font-weight: 600; }
 .coupon-remove { background: none; border: none; color: #999; cursor: pointer; font-size: 1rem; padding: 0 4px; }
 .summary-line--green { color: #2e7d32 !important; font-weight: 600; }
@@ -633,3 +585,137 @@
   text-decoration: underline;
   cursor: pointer;
 }
+
+/* ── What else is on offer ───────────────────────────────────────────────────
+   A coupon box that only accepts a code people already know is a discount
+   nobody claims. Every live coupon is listed with what it would save on THIS
+   basket, and the ones that do not qualify yet say how far off they are. */
+
+.checkout-quantity { display: inline-flex; align-items: center; align-self: flex-start; margin-top: 6px; border: 1px solid var(--ivory-deep); border-radius: 6px; overflow: hidden; }
+.checkout-quantity button { width: 36px; min-height: 36px; background: var(--ivory); color: var(--green-deep); font-size: 1rem; }
+.checkout-quantity button:disabled { opacity: .4; cursor: not-allowed; }
+.checkout-quantity button:focus-visible { outline: 2px solid var(--green-deep); outline-offset: -3px; }
+.checkout-quantity span { min-width: 30px; text-align: center; font: .8rem var(--font-ui); }
+
+/* Phones: one column, nothing pinned. */
+@media (max-width: 720px) {
+  .checkout-layout { grid-template-columns: minmax(0, 1fr); gap: 20px; }
+  .checkout-summary { position: static; }
+}
+
+
+/* ── The folded basket inside the summary ───────────────────────────────── */
+.summary-items-toggle {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  width: 100%; margin: 0 0 4px; padding: 12px 0;
+  border: 0; border-bottom: 1px solid var(--ivory); background: none; cursor: pointer;
+  font: 600 .9rem var(--font-ui); color: var(--text-mid);
+}
+.summary-items-toggle:hover { color: var(--green-deep); }
+.summary-items-chevron { font-size: .7rem; color: var(--text-light, #9a8f7d); }
+.summary-items-list { display: flex; flex-direction: column; gap: 10px; padding: 12px 0 4px; }
+
+/* ── Density of the delivery form ───────────────────────────────────────────
+   This card is the tallest thing on the page and every field in it is one
+   line of an address — there is nothing to remove, so it gets tighter instead:
+   smaller labels, shorter inputs, less air between rows. Scoped to the card so
+   the same .form-* classes keep their comfortable sizing everywhere else. */
+.checkout-card { padding: 22px 24px; }
+.checkout-card-title { font-size: 1.2rem; margin-bottom: 14px; }
+
+.checkout-card .form-group { gap: 3px; margin-bottom: 11px; }
+.checkout-card .form-group label {
+  font-size: .68rem; letter-spacing: .05em; color: var(--text-light, #9a8f7d);
+}
+.checkout-card .form-input,
+.checkout-card .form-select { padding: 9px 12px; font-size: .9rem; }
+.checkout-card .form-row { gap: 12px; }
+
+/* The auto-fill search and the billing toggle were spaced like section breaks. */
+.checkout-card .addr-search-wrap { margin-bottom: 14px; }
+.checkout-card .addr-search-input-row { padding: 9px 12px; }
+.checkout-card .billing-same-toggle { margin: 2px 0; font-size: .82rem; }
+.checkout-card .addr-shipping-preview { padding: 10px 12px; }
+.checkout-card .checkout-step-btns { margin-top: 16px; }
+
+/* Country lives in the card heading now — a compact select on the title line. */
+.checkout-card-head {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px; margin-bottom: 14px;
+}
+.checkout-card-head .checkout-card-title { margin-bottom: 0; }
+.checkout-card .checkout-country-select {
+  width: auto; min-width: 150px; padding: 7px 34px 7px 12px; font-size: .84rem;
+}
+
+/* Name / phone / email share one line; they stay readable down to 3x150px. */
+.form-row--three { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+
+/* The courier line inside the summary sits under the Shipping row it explains. */
+.checkout-summary .addr-shipping-preview {
+  margin: 2px 0 8px; padding: 9px 11px;
+  font-size: .82rem; border-radius: var(--radius-sm);
+}
+.checkout-summary .addr-shipping-info strong { font-size: .82rem; }
+
+/* The page title was spaced like a hero. */
+.checkout-title { margin-bottom: 18px; }
+
+/* Who is carrying it, and when it lands. Under the total, but it earns a strip
+   of its own — in grey 11px nobody read the one promise the page makes about
+   when the food turns up. */
+.summary-ship-note {
+  display: flex; align-items: center; gap: 9px;
+  /* Bleeds out to the card's own edges (28px of padding, 20/16 on phones) so it
+     reads as the summary's footer rather than one more boxed row inside it. */
+  margin: 16px -28px -28px;
+  padding: 13px 28px;
+  border: 0; border-top: 1px solid #d8e7d4;
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+  background: #f2f8ef;
+  font-family: var(--font-ui); font-size: .78rem; line-height: 1.35; color: #38563b;
+}
+@media (max-width: 480px) {
+  .summary-ship-note { margin: 14px -16px -20px; padding: 12px 16px; }
+}
+.summary-ship-note strong { display: block; font-size: .82rem; color: var(--green-deep, #1c4a0e); }
+.summary-ship-icon { font-size: 1.05rem; flex-shrink: 0; }
+.summary-ship-note--warn { border-top-color: #efdcb8; background: #fdf6e8; color: #8a6412; }
+.summary-free { color: #2e7d32; font-weight: 700; }
+
+/* Small enough to sit in the price slot while the rate is being fetched. */
+.shipping-spinner--sm { width: 14px; height: 14px; border-width: 2px; display: inline-block; vertical-align: -2px; }
+
+/* The page heading was a hero-sized "Checkout" above a card already headed
+   "Delivery Address" — 60-odd pixels spent saying where you are. Shrunk so the
+   form and its button clear the fold on a 768px-tall laptop. */
+.checkout-title { font-size: 1.45rem; margin-bottom: 12px; }
+.checkout-card { padding: 18px 22px; }
+.checkout-card .form-group { margin-bottom: 9px; }
+.checkout-card .checkout-step-btns { margin-top: 12px; }
+
+/* Title, address search and country on one line. The search takes the slack so
+   it stays usable; the other two are content-width. */
+.checkout-card-head { flex-wrap: wrap; }
+.checkout-card-head .checkout-card-title { flex: 0 0 auto; }
+.checkout-card-head .addr-search-wrap { flex: 1 1 220px; min-width: 0; margin-bottom: 0; }
+.checkout-card-head .addr-search-input-row { padding: 6px 10px; }
+.checkout-card-head .addr-search-input { font-size: .84rem; }
+/* The suggestions drop over the fields below, so they need to sit above them. */
+.checkout-card-head .addr-suggestions { z-index: 20; }
+
+/* Two btn-lg buttons side by side need ~460px; a phone has 390 and the page's
+   overflow guard clips rather than scrolls, so "Review Order" was cut in half
+   off the right edge. On narrow screens they stack, each full width. */
+@media (max-width: 560px) {
+  .checkout-step-btns { flex-wrap: wrap; gap: 10px; }
+  .checkout-step-btns .btn {
+    flex: 1 1 100%;
+    justify-content: center;
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}
+
+/* The waived courier charge, struck through beside the ₹0 that replaced it. */
+.summary-strike { margin-right: 6px; color: var(--text-light, #9a8f7d); font-size: .88em; }

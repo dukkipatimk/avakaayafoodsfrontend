@@ -32,7 +32,7 @@ api.interceptors.request.use(config => {
   if ((config.method || 'get').toLowerCase() === 'get') {
     config.params = { ...(config.params || {}), _ts: Date.now() };
   }
-  if (!isSilent(config.url)) {
+  if (!config.silent && !isSilent(config.url)) {
     config._counted = true;
     pending += 1;
     notifyLoading();

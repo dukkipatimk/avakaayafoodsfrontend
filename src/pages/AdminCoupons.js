@@ -15,6 +15,90 @@ const emptyCoupon = {
   maxDiscount: '0', usageLimit: '0', perUserLimit: '1', expiresAt: '',
 };
 
+// A date input wants YYYY-MM-DD in local time; toISOString() would hand back
+// yesterday for anything stored late in the evening IST.
+const toInputDate = (value) => {
+  if (!value) return '';
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return '';
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+};
+const plusDays = (n) => toInputDate(new Date(Date.now() + n * 86400000));
+
+/* ── Expiry Modal ──────────────────────────────────────────────────────────
+   Bringing an expired coupon back is a new expiry date, not a switch: the shop
+   checks isActive and expiresAt separately, so a coupon that is "active" but
+   out of date is still refused at checkout. This sets both at once. */
+const ExpiryModal = ({ coupon, expired, onClose, onSaved }) => {
+  const [date, setDate] = useState(toInputDate(coupon.expiresAt) || plusDays(30));
+  const [never, setNever] = useState(!coupon.expiresAt);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState('');
+
+  const save = async (e) => {
+    e.preventDefault();
+    if (!never && !date) { setError('Pick a date, or choose “never expires”.'); return; }
+    setSaving(true); setError('');
+    try {
+      const patch = { expiresAt: never ? null : date };
+      // Renewing something the admin can see is expired is also a request to
+      // turn it back on — nobody sets a future date to leave it switched off.
+      if (expired || !coupon.isActive) patch.isActive = true;
+      const { data } = await api.patch(`/coupons/${coupon.id}`, patch);
+      onSaved(data.coupon);
+      onClose();
+    } catch (err) {
+      setError(err.response?.data?.message || 'Could not update the coupon');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div className="coupon-modal-overlay" onClick={onClose}>
+      <div className="coupon-modal coupon-modal--sm" onClick={e => e.stopPropagation()}>
+        <div className="coupon-modal-header">
+          <h2>{expired ? 'Renew' : 'Change expiry'} · {coupon.code}</h2>
+          <button className="coupon-modal-close" onClick={onClose}>✕</button>
+        </div>
+        <form className="coupon-form" onSubmit={save}>
+          {expired && (
+            <p className="coupon-note">
+              This coupon expired on {fmtDate(coupon.expiresAt)}. Give it a new date and it
+              goes back on sale — the storefront will accept it again straight away.
+            </p>
+          )}
+          <div className="coupon-form-group">
+            <label>Expires on</label>
+            <input type="date" value={date} disabled={never} onChange={e => setDate(e.target.value)} />
+            <div className="coupon-quick">
+              {[7, 30, 90].map(n => (
+                <button type="button" key={n} onClick={() => { setNever(false); setDate(plusDays(n)); }}>
+                  +{n} days
+                </button>
+              ))}
+            </div>
+          </div>
+          <label className="coupon-check">
+            <input type="checkbox" checked={never} onChange={e => setNever(e.target.checked)} />
+            Never expires
+          </label>
+          <p className="coupon-note coupon-note--quiet">
+            A coupon runs until the end of the day you choose.
+          </p>
+          {error && <p className="coupon-form-error">{error}</p>}
+          <div className="coupon-form-actions">
+            <button type="button" className="btn btn-outline" onClick={onClose}>Cancel</button>
+            <button type="submit" className="btn btn-primary" disabled={saving}>
+              {saving ? 'Saving…' : expired ? 'Renew coupon' : 'Save'}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
 /* ── Create Coupon Modal ── */
 const CreateCouponModal = ({ onClose, onCreated }) => {
   const [form, setForm] = useState(emptyCoupon);
@@ -150,6 +234,7 @@ const AdminCoupons = () => {
   const [loading, setLoading] = useState(true);
   const [showCreate, setShowCreate] = useState(false);
   const [busyId, setBusyId] = useState(null);
+  const [expiryFor, setExpiryFor] = useState(null);   // the coupon whose date is being set
 
   useEffect(() => {
     api.get('/coupons')
@@ -215,19 +300,31 @@ const AdminCoupons = () => {
                       </td>
                       <td>{c.perUserLimit}</td>
                       <td className="cell-date">
-                        {c.expiresAt
-                          ? <span className={expired ? 'coupon-expired' : ''}>{fmtDate(c.expiresAt)}</span>
-                          : 'Never'}
+                        {/* The date is the control: an expired coupon comes back
+                            by being given a new one. */}
+                        <button className="coupon-date-btn" onClick={() => setExpiryFor(c)}
+                          title={c.expiresAt ? 'Change the expiry date' : 'Set an expiry date'}>
+                          {c.expiresAt
+                            ? <span className={expired ? 'coupon-expired' : ''}>{fmtDate(c.expiresAt)}</span>
+                            : 'Never'}
+                        </button>
                       </td>
                       <td>
-                        <button
-                          className={`status-toggle ${c.isActive && !expired ? 'active' : 'inactive'}`}
-                          disabled={busy}
-                          title="Click to toggle"
-                          onClick={() => toggleActive(c)}
-                        >
-                          {expired ? 'Expired' : c.isActive ? 'Active' : 'Inactive'}
-                        </button>
+                        {expired ? (
+                          <button className="coupon-renew" disabled={busy} onClick={() => setExpiryFor(c)}
+                            title="Expired — give it a new date to put it back on sale">
+                            Expired · Renew
+                          </button>
+                        ) : (
+                          <button
+                            className={`status-toggle ${c.isActive ? 'active' : 'inactive'}`}
+                            disabled={busy}
+                            title="Click to toggle"
+                            onClick={() => toggleActive(c)}
+                          >
+                            {c.isActive ? 'Active' : 'Inactive'}
+                          </button>
+                        )}
                       </td>
                     </tr>
                   );
@@ -240,6 +337,15 @@ const AdminCoupons = () => {
           </div>
         )}
       </div>
+
+      {expiryFor && (
+        <ExpiryModal
+          coupon={expiryFor}
+          expired={isExpired(expiryFor)}
+          onClose={() => setExpiryFor(null)}
+          onSaved={saved => setCoupons(prev => prev.map(c => (c.id === saved.id ? saved : c)))}
+        />
+      )}
 
       {showCreate && (
         <CreateCouponModal

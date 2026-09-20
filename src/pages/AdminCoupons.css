@@ -134,3 +134,37 @@
 @media (max-width: 480px) {
   .coupon-form-row { grid-template-columns: 1fr; gap: 0; }
 }
+
+/* ── Renewing a coupon ───────────────────────────────────────────────────────
+   The expiry date is a control, not a label: it is the only way an expired
+   coupon comes back, so it has to look pressable. */
+.coupon-date-btn {
+  padding: 4px 8px; border: 1px solid transparent; border-radius: 7px;
+  background: transparent; color: inherit; font: inherit; cursor: pointer;
+}
+.coupon-date-btn:hover { border-color: #d8e3d7; background: #f5f9f4; }
+
+.coupon-renew {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 11px; border: 1px solid #e6c9a8; border-radius: 9px;
+  background: #fdf3e6; color: #8a5a12; font: 600 12px Arial, sans-serif; cursor: pointer;
+}
+.coupon-renew:hover { background: #f8e8d2; border-color: #d9b489; }
+.coupon-renew:disabled { opacity: .55; cursor: not-allowed; }
+
+.coupon-modal--sm { max-width: 460px; }
+.coupon-note {
+  margin: 0 0 14px; padding: 10px 12px; border-radius: 8px;
+  background: #fdf6ea; border: 1px solid #f0e2c8; color: #7a6136;
+  font-size: 13px; line-height: 1.5;
+}
+.coupon-note--quiet { background: transparent; border: 0; padding: 0; color: #7b8a80; font-size: 12px; }
+.coupon-quick { display: flex; gap: 8px; margin-top: 8px; }
+.coupon-quick button {
+  padding: 6px 10px; border: 1px solid #d8e3d7; border-radius: 7px;
+  background: #fff; color: #315c3b; font: 600 12px Arial, sans-serif; cursor: pointer;
+}
+.coupon-quick button:hover { background: #f2f8ef; border-color: #afc7aa; }
+.coupon-check { display: flex; align-items: center; gap: 8px; margin: 4px 0 12px; font-size: 13px; }
+.coupon-check input { width: auto; }
+.coupon-form-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 6px; }

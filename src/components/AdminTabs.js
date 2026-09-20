@@ -40,8 +40,10 @@ const AdminTabs = () => {
       { to: '/admin/combos', label: 'Combos', group: 'catalogue', count: stats?.totalCombos, title: 'Active combos' },
       { to: '/admin/coupons', label: 'Coupons', group: 'catalogue', count: stats?.totalCoupons, title: 'Active coupons' },
       { to: '/admin/stores', label: 'Stores', group: 'shop', count: stats?.totalStores, title: 'Open stores' },
-      { to: '/admin/customers', label: 'Customers', group: 'shop', count: stats?.totalUsers, title: 'Registered customers' },
-      { to: '/admin/users', label: 'Users', group: 'shop' },
+      // Customers was this list filtered to one role, minus the orders, leads
+      // and role controls — so it is this list. The count moves here with it;
+      // it always counted everyone registered, staff included.
+      { to: '/admin/users', label: 'Users', group: 'shop', count: stats?.totalUsers, title: 'Everyone registered — customers and staff' },
     );
   }
   if (isSuperAdmin) {

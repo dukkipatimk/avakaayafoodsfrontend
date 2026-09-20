@@ -4,6 +4,10 @@ import { useAuth } from '../context/AuthContext';
 import useLastOrder from '../hooks/useLastOrder';
 import './QuickActions.css';
 
+const ShortcutIcon = ({ name }) => <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+  {name === 'order' ? <path d="m13 2-9 12h7l-1 8 10-13h-7l1-7Z" /> : name === 'again' ? <><path d="M3 5v6h6M3 11a9 9 0 1 1 2 7" /></> : <><rect x="3" y="8" width="18" height="4" rx="1" /><path d="M5 12v9h14v-9M12 8v13M12 8H8a3 3 0 1 1 3-3l1 3Zm0 0h4a3 3 0 1 0-3-3l-1 3Z" /></>}
+</svg>;
+
 // Intent-based shortcuts for shoppers who already know what they want.
 const QuickActions = ({ onQuickOrder }) => {
   const { user } = useAuth();
@@ -16,7 +20,7 @@ const QuickActions = ({ onQuickOrder }) => {
       <h2 className="quick-actions-heading">⚡ Quick actions</h2>
       <div className={`quick-actions-grid${hasLastOrder ? ' quick-actions-grid--three' : ''}`}>
         <button className="qa-tile qa-tile--order" onClick={onQuickOrder}>
-          <span className="qa-tile-icon" aria-hidden="true">⚡</span>
+          <span className="qa-tile-icon"><ShortcutIcon name="order" /></span>
           <span className="qa-tile-label">Quick Order</span>
           <span className="qa-tile-sub">Order favourites in seconds</span>
           <span className="qa-tile-cta">Order now &rarr;</span>
@@ -26,7 +30,7 @@ const QuickActions = ({ onQuickOrder }) => {
             visitors go to log in rather than to an action that cannot work. */}
         {!hasLastOrder && (
           <Link className="qa-tile qa-tile--again" to={user ? '/my-orders' : '/login'}>
-            <span className="qa-tile-icon" aria-hidden="true">🔄</span>
+            <span className="qa-tile-icon"><ShortcutIcon name="again" /></span>
             <span className="qa-tile-label">Buy Again</span>
             <span className="qa-tile-sub">{user ? 'Reorder past favourites' : 'Sign in to reorder'}</span>
             <span className="qa-tile-cta">Buy again &rarr;</span>
@@ -34,7 +38,7 @@ const QuickActions = ({ onQuickOrder }) => {
         )}
 
         <a className="qa-tile qa-tile--combo" href="#combos">
-          <span className="qa-tile-icon" aria-hidden="true">🎁</span>
+          <span className="qa-tile-icon"><ShortcutIcon name="combo" /></span>
           <span className="qa-tile-label">Combos</span>
           <span className="qa-tile-sub">Save on bundles</span>
           <span className="qa-tile-cta">Build now &rarr;</span>

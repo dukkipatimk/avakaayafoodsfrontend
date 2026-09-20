@@ -14,9 +14,10 @@ const memberThumbs = (combo) => {
   return (combo.items || []).reduce((list, member) => {
     const product = member.product;
     const src = product?.thumbnail || product?.images?.[0];
-    if (!product || !src || seen.has(String(product.id))) return list;
-    seen.add(String(product.id));
-    return [...list, { key: String(product.id), name: product.name, src }];
+    const key = String(product?._id ?? product?.id ?? src);
+    if (!product || !src || seen.has(key)) return list;
+    seen.add(key);
+    return [...list, { key, name: product.name, src }];
   }, []);
 };
 
@@ -66,7 +67,7 @@ const Combos = () => {
   return (
     <section className="combos" id="combos" aria-label="Save with combos">
       <div className="combos-head">
-        <h2 className="combos-heading">🎁 Save more with combos</h2>
+        <div><span className="combos-eyebrow">BETTER TOGETHER</span><h2 className="combos-heading">Good things come in combos.</h2><p className="combos-intro">Your favourites, thoughtfully paired. A little more flavour for less.</p></div>
         <Link to="/combos" className="combos-all">View all combos ›</Link>
       </div>
 
@@ -76,19 +77,21 @@ const Combos = () => {
             row, which changes as combos are added or reordered. */}
         {combos.map((combo) => (
           <article key={combo._id ?? combo.id} className={`combo-card combo-card--${combo.category || 'mixed'}`}>
+            <div className="combo-visual">
+              <div className="combo-card-topline"><span className="combo-kind">{combo.type === 'pick' ? 'Make it yours' : 'Curated combo'}</span>
+                {Number(combo.savings) > 0 && <span className="combo-save">Save ₹{Number(combo.savings).toLocaleString('en-IN')}</span>}
+              </div>
             {(() => {
               // Show what is actually in the combo. For a "pick any N" combo
               // the pool can be longer than the card, so it is trimmed to N
               // with a "+ more" chip — the customer chooses the rest anyway.
-              const shown = combo.type === 'pick'
-                ? Math.max(1, Number(combo.pickCount) || 1)
-                : 4;
+              const shown = 3;
               const thumbs = memberThumbs(combo).slice(0, shown);
               const extra = memberThumbs(combo).length - thumbs.length;
               if (!thumbs.length) {
                 return combo.image
                   ? <img className="combo-img" src={combo.image} alt="" loading="lazy" />
-                  : null;
+                  : <span className="combo-visual-empty">A little more to love.</span>;
               }
               return (
                 <div className="combo-thumbs">
@@ -101,31 +104,31 @@ const Combos = () => {
                 </div>
               );
             })()}
-
+            </div>
+            <div className="combo-content">
             <div className="combo-title-row">
               <h3 className="combo-name">{combo.name}</h3>
-              {combo.savings > 0 && (
-                <span className="combo-save">Save &#8377;{combo.savings.toLocaleString('en-IN')}</span>
-              )}
             </div>
-            {combo.subtitle && <p className="combo-sub">{combo.subtitle}</p>}
-
+            <p className="combo-sub">{combo.subtitle || (combo.type === 'pick' ? `Choose ${combo.pickCount} of your favourites` : 'Your favourites, bundled for less')}</p>
+            <div className="combo-card-footer">
             <div className="combo-price">
+              <strong>&#8377;{Number(combo.price).toLocaleString('en-IN')}</strong>
               {combo.compareAtPrice > combo.price && (
                 <span className="combo-mrp">&#8377;{Number(combo.compareAtPrice).toLocaleString('en-IN')}</span>
               )}
-              <strong>&#8377;{Number(combo.price).toLocaleString('en-IN')}</strong>
             </div>
 
             {combo.type === 'pick' ? (
-              <button className="combo-cta combo-cta--build" onClick={() => setBuilding(combo)}>
+              <button className="combo-cta combo-cta--build" aria-label={`Build ${combo.name}`} onClick={() => setBuilding(combo)}>
                 Build combo &rarr;
               </button>
             ) : (
-              <button className="combo-cta" onClick={() => addFixed(combo)}>
+              <button className="combo-cta" aria-label={`Add ${combo.name} to cart`} onClick={() => addFixed(combo)}>
                 Add to cart &rarr;
               </button>
             )}
+            </div>
+            </div>
           </article>
         ))}
       </div>

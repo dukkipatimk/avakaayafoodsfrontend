@@ -1,0 +1,132 @@
+/* ── Shop by Category / What are you craving today? ─────────────────────────
+   Shared by both homepages, so the rows are scoped to their own class names
+   and carry no assumptions about the page around them. */
+
+.hd-sec {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 30px 24px 6px;
+  font-family: var(--font-ui, 'Josefin Sans', sans-serif);
+  color: #24312a;
+}
+
+/* Title, its one-line explanation and the way out, all on one baseline. */
+.hd-head { display: flex; align-items: baseline; gap: 14px; margin: 0 0 16px; }
+.hd-head h2 {
+  margin: 0; font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 1.65rem; font-weight: 700; color: #1f3a27; white-space: nowrap;
+}
+.hd-head h2 span { margin-right: 6px; }
+.hd-head p { margin: 0; color: #7b8a80; font-size: .84rem; }
+.hd-more {
+  margin-left: auto; color: #14532d; font-size: .8rem; font-weight: 600;
+  text-decoration: none; white-space: nowrap;
+}
+.hd-more:hover { color: #8a1a1a; }
+
+/* ── The circles ─────────────────────────────────────────────────────────── */
+.hd-cats {
+  display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)) 1.35fr;
+  gap: 10px; align-items: start;
+}
+.hd-cat {
+  display: flex; flex-direction: column; align-items: center; gap: 7px;
+  padding: 12px 6px; border-radius: 12px; text-decoration: none; text-align: center;
+  transition: background .16s;
+}
+.hd-cat:hover { background: #f6f8f4; }
+.hd-cat-disc {
+  width: 84px; height: 84px; border-radius: 50%; overflow: hidden;
+  border: 2px solid #fff; box-shadow: 0 2px 10px rgba(30, 50, 35, .13);
+}
+.hd-cat-disc img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.hd-cat-name { font-size: .78rem; font-weight: 700; color: #26372b; }
+.hd-cat-note { font-size: .68rem; color: #7b8a80; }
+.hd-cat--gift { background: #fbf6ea; border: 1px solid #f0e4cb; }
+.hd-cat--gift:hover { background: #f8f0dd; }
+
+/* ── The craving tiles ───────────────────────────────────────────────────── */
+.hd-cravings { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 12px; }
+.hd-crave {
+  display: flex; flex-direction: column; overflow: hidden;
+  border: 1px solid #e8e4da; border-radius: 12px; background: #fff; text-decoration: none;
+  transition: border-color .16s, box-shadow .16s;
+}
+.hd-crave:hover { border-color: #cfd9cd; box-shadow: 0 6px 18px rgba(26, 46, 26, .07); }
+.hd-crave-img { display: block; aspect-ratio: 16 / 11; background: #f4f1ea; overflow: hidden; }
+.hd-crave-img img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .35s; }
+.hd-crave:hover .hd-crave-img img { transform: scale(1.06); }
+.hd-crave-cap { display: flex; flex-direction: column; gap: 2px; padding: 10px 12px 12px; }
+.hd-crave-cap strong { font-size: .84rem; color: #26372b; }
+.hd-crave-cap span { font-size: .72rem; color: #7b8a80; }
+
+/* Category directory: quiet green, round images and short navigation labels. */
+.hd-sec--categories { width: 100%; max-width: none; margin: 12px 0 26px; padding: 28px max(24px, calc((100% - 1232px) / 2)); background: #f3f7ef; border-block: 1px solid #e5ecdd; border-radius: 0; }
+.hd-heading-group { display: flex; flex-direction: column; gap: 6px; }
+.hd-eyebrow { color: #688060; font: 700 10px Arial, sans-serif; letter-spacing: .16em; }
+.hd-sec .hd-head { align-items: center; margin-bottom: 22px; }
+.hd-sec .hd-head h2 { font-size: clamp(25px, 2.4vw, 34px); white-space: normal; line-height: 1.15; }
+.hd-sec .hd-head p { font-size: 12px; line-height: 1.5; }
+.hd-sec--categories .hd-cats { padding: 0; align-items: stretch; }
+.hd-sec--categories .hd-cat { gap: 8px; padding: 12px 6px; }
+.hd-sec--categories .hd-cat:hover { background: #e8f0df; }
+.hd-sec--categories .hd-cat-disc { width: 82px; height: 82px; border: 4px solid #fff; box-shadow: 0 3px 12px #38502b0c; }
+.hd-sec--categories .hd-cat-name { font-size: 12px; }
+.hd-sec--categories .hd-cat-note { font-size: 11px; color: #6d7b62; }
+.hd-sec--categories .hd-cat--gift { background: #fffaf0; border-color: #e9d9b5; }
+
+/* Collections: a compact, menu-inspired strip with a distinct forest palette. */
+.hd-sec--cravings { display: grid; grid-template-columns: minmax(200px, .65fr) minmax(0, 2fr); gap: 40px; align-items: center; width: 100%; max-width: none; margin: 12px 0 30px; padding: 36px max(24px, calc((100% - 1232px) / 2)); border: 0; border-radius: 0; background: #203d2b; }
+.hd-sec--cravings .hd-head { display: flex; flex-direction: column; align-items: flex-start; gap: 22px; margin: 0; }
+.hd-sec--cravings .hd-eyebrow { color: #dfc786; }
+.hd-sec--cravings .hd-heading-group { gap: 14px; }
+.hd-sec--cravings .hd-head h2 { color: #fff7e5; font-size: clamp(28px, 3vw, 38px); line-height: 1.08; }
+.hd-sec--cravings .hd-head p { color: #c5d1bf; font-size: 13px; line-height: 1.7; }
+.hd-sec--cravings .hd-more { margin: 0; padding: 10px 0; color: #e4cc88; border-bottom: 1px solid #84916a; }
+.hd-sec--cravings .hd-cravings { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.hd-sec--cravings .hd-crave { display: grid; grid-template-columns: 80px minmax(0, 1fr) 28px; align-items: center; gap: 14px; min-height: 100px; padding: 10px 14px 10px 10px; border: 1px solid #ffffff1f; border-radius: 12px; background: #f8f7ef; transition: background .2s, border-color .2s; }
+.hd-sec--cravings .hd-crave-img { position: relative; width: 80px; height: 80px; aspect-ratio: 1; border-radius: 8px; }
+.hd-sec--cravings .hd-crave-cap { padding: 0; gap: 7px; min-width: 0; }
+.hd-sec--cravings .hd-crave-cap strong { color: #254531; font: 600 22px 'Cormorant Garamond', Georgia, serif; line-height: 1.1; }
+.hd-sec--cravings .hd-crave-cap span { color: #75816e; font-size: 11px; line-height: 1.4; }
+.hd-crave-arrow { display: grid; place-items: center; width: 28px; height: 28px; border: 1px solid #d9e0d1; border-radius: 50%; background: transparent; color: #60754b; font: 17px Arial, sans-serif; }
+.hd-sec--cravings .hd-crave:hover { background: #fffdf3; border-color: #d5bd7b; box-shadow: none; }
+.hd-sec--cravings a:focus-visible { outline: 3px solid #e7cd82; outline-offset: 3px; }
+.hd-sec a:focus-visible { outline: 3px solid #b08b3d; outline-offset: 4px; }
+@media (prefers-reduced-motion: reduce) {
+  .hd-cat, .hd-crave, .hd-crave-img img { transition: none; }
+  .hd-crave:hover .hd-crave-img img { transform: none; }
+}
+
+@media (max-width: 1080px) {
+  .hd-cats { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .hd-cravings { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .hd-sec--cravings { grid-template-columns: 1fr; gap: 24px; }
+  .hd-sec--cravings .hd-head { flex-direction: row; align-items: center; justify-content: space-between; }
+}
+@media (max-width: 860px) {
+  .hd-head { flex-wrap: wrap; }
+  .hd-head p { flex-basis: 100%; order: 3; }
+}
+@media (max-width: 620px) {
+  .hd-sec { padding: 22px 14px 4px; }
+  .hd-cats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .hd-cat-disc { width: 68px; height: 68px; }
+  .hd-cravings { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .hd-sec--categories { width: 100%; margin: 8px 0 18px; padding: 20px 14px; }
+  .hd-sec--categories .hd-cats { padding: 0; gap: 5px; }
+  .hd-sec--categories .hd-cat-disc { width: 68px; height: 68px; }
+  .hd-sec--categories .hd-cat--gift { grid-column: 1 / -1; display: grid; grid-template-columns: 60px 1fr; text-align: left; column-gap: 14px; padding: 12px 18px; }
+  .hd-sec--categories .hd-cat--gift .hd-cat-disc { grid-row: 1 / 3; width: 56px; height: 56px; }
+  .hd-sec--categories .hd-cat--gift .hd-cat-name { align-self: end; }
+  .hd-sec--categories .hd-cat--gift .hd-cat-note { align-self: start; }
+  .hd-sec--cravings { width: 100%; padding: 20px 14px; margin: 8px 0 24px; }
+  .hd-sec--cravings .hd-cravings { grid-template-columns: 1fr; gap: 10px; }
+  .hd-sec--cravings .hd-crave { grid-template-columns: 64px minmax(0, 1fr) 28px; min-height: 84px; }
+  .hd-sec--cravings .hd-crave-img { width: 64px; height: 64px; }
+  .hd-sec--cravings .hd-head { align-items: flex-start; }
+  .hd-sec--cravings .hd-more { margin: 0; padding: 4px 0; }
+  .hd-sec--cravings .hd-crave-cap { padding: 0; }
+  .hd-sec--cravings .hd-crave-cap strong { font-size: 21px; }
+
+}

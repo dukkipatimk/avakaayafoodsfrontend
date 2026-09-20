@@ -1,8 +1,18 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
+import api from '../utils/api';
+import { useAuth } from './AuthContext';
+import toast from 'react-hot-toast';
+
 const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
+  const { user } = useAuth();
+  const [selectedCouponCode, setSelectedCouponCode] = useState(() => {
+    try { return sessionStorage.getItem('akf_coupon') || ''; } catch { return ''; }
+  });
+  const [validatedCoupon, setValidatedCoupon] = useState(null);
+  const [couponLoading, setCouponLoading] = useState(false);
   const [items, setItems] = useState(() => {
     try {
       const raw = JSON.parse(localStorage.getItem('akf_cart')) || [];
@@ -124,16 +134,48 @@ export const CartProvider = ({ children }) => {
   };
 
   const removeBundle = bundleId => setItems(prev => prev.filter(i => i.bundleId !== bundleId));
-  const clearCart = () => setItems([]);
+  const clearCart = () => { setItems([]); setSelectedCouponCode(''); setValidatedCoupon(null); };
 
   const subtotal = items.reduce((sum, i) => sum + i.price * i.quantity, 0);
   const totalItems = items.reduce((sum, i) => sum + i.quantity, 0);
   const savings = items.reduce((sum, i) => sum + (i.mrp - i.price) * i.quantity, 0);
 
+  const couponUserId = user?._id || user?.id;
+  const appliedCoupon = validatedCoupon?.code === selectedCouponCode && validatedCoupon?.subtotal === subtotal && validatedCoupon?.userId === couponUserId ? validatedCoupon : null;
+  useEffect(() => {
+    try {
+      if (selectedCouponCode) sessionStorage.setItem('akf_coupon', selectedCouponCode);
+      else sessionStorage.removeItem('akf_coupon');
+    } catch {}
+  }, [selectedCouponCode]);
+  useEffect(() => {
+    let cancelled = false;
+    setValidatedCoupon(null);
+    if (!selectedCouponCode || !items.length) {
+      setCouponLoading(false);
+      if (!items.length) setSelectedCouponCode('');
+      return;
+    }
+    setCouponLoading(true);
+    api.post('/coupons/validate', { code: selectedCouponCode, subtotal, userId: couponUserId })
+      .then(({ data }) => {
+        if (cancelled) return;
+        if (!data.success) throw new Error(data.message || 'Invalid coupon');
+        setValidatedCoupon({ code: selectedCouponCode, discount: Number(data.discount) || 0, message: data.message, subtotal, userId: couponUserId });
+      })
+      .catch(error => {
+        if (cancelled) return;
+        setSelectedCouponCode('');
+        toast.error(error.response?.data?.message || error.message || 'Could not validate coupon');
+      })
+      .finally(() => { if (!cancelled) setCouponLoading(false); });
+    return () => { cancelled = true; };
+  }, [selectedCouponCode, subtotal, couponUserId, items.length]);
+
   return (
     <CartContext.Provider value={{
       items, addItem, addHamper, addCombo, updateQuantity, removeItem, removeBundle, clearCart,
-      subtotal, totalItems, savings
+      subtotal, totalItems, savings, appliedCoupon, couponLoading: couponLoading || Boolean(selectedCouponCode && !appliedCoupon), setSelectedCouponCode
     }}>
       {children}
     </CartContext.Provider>

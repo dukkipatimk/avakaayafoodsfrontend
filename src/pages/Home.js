@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import api from '../utils/api';
 import ProductCard from '../components/ProductCard';
 import QuickActions from '../components/QuickActions';
+import { ShopByCategory, CravingRow } from '../components/HomeDiscovery';
 import BuyAgain from '../components/BuyAgain';
 import Combos from '../components/Combos';
 import OffersStrip from '../components/OffersStrip';
@@ -10,6 +11,7 @@ import { useUI } from '../context/UIContext';
 import useLastOrder from '../hooks/useLastOrder';
 import { collectionApiFilters } from '../utils/seo';
 import './Home.css';
+import '../components/ShoppingHub.css';
 
 const BANNERS = [
   {
@@ -65,16 +67,6 @@ const CATEGORIES = [
   { name: 'Snacks',   slug: 'snacks',   image: '/images/products/2024/10/CHEKKALU-ROUND-600x600.jpg',  count: '17 varieties' },
   { name: 'Sweets',   slug: 'sweets',   image: '/images/products/2024/10/BOONDHI-LADDU-1-600x600.jpg', count: '5 varieties'  },
   { name: 'Ghee',     slug: 'ghee',     image: '/images/products/2024/10/COW-GHEE-600x600.jpg',        count: '4 varieties'  },
-];
-
-// Thumb-sized category shortcuts shown only on phones, directly under the hero.
-// The six product categories reuse the CATEGORIES photos; hampers and "shop
-// all" close out the grid. Cross-cutting intents (Quick Order, Buy Again,
-// Combos, Offers) live in the Quick Actions block below instead.
-const MOBILE_TILES = [
-  ...CATEGORIES.map(c => ({ label: c.name, to: `/collections/${c.slug}`, image: c.image, count: c.count })),
-  { label: 'Hampers',  to: '/gift-hamper', glyph: '🎁', accent: 'gift' },
-  { label: 'More Categories', to: '/products', glyph: '•••', accent: 'all' },
 ];
 
 const FESTIVALS = [
@@ -281,29 +273,8 @@ const Home = () => {
       {/* Stacked on phones; one horizontal band on laptops. */}
       {/* Shop band: categories and shortcuts on the left, live offers and the
           last-order card on the right. */}
-      <section className={`shop-band${hasLastOrder ? ' shop-band--with-order' : ''}${hasOffers === false ? ' shop-band--no-offers' : ''}`}>
+      <section className={`shop-band shopping-hub${hasLastOrder ? ' shop-band--with-order' : ''}${hasOffers === false ? ' shop-band--no-offers' : ''}`}>
       <div className="shop-band-main">
-      <h2 className="cat-circles-heading">What would you like?</h2>
-      <nav className="cat-circles" aria-label="Shop by category">
-        {MOBILE_TILES.map(tile => {
-          const body = (
-            <>
-              <span className={`cat-circle-disc${tile.accent ? ` cat-circle-disc--${tile.accent}` : ''}`}>
-                {tile.image
-                  ? <img src={tile.image} alt="" loading="lazy" />
-                  : <span className="cat-circle-glyph">{tile.glyph}</span>}
-              </span>
-              <span className="cat-circle-label">{tile.label}</span>
-              {tile.count && <span className="cat-circle-count">{tile.count}</span>}
-            </>
-          );
-          // In-page anchors (Combos) stay plain <a> so the browser handles the
-          // scroll — <Link> would treat "#combos" as a route change.
-          return tile.to.startsWith('#')
-            ? <a key={tile.label} href={tile.to} className="cat-circle">{body}</a>
-            : <Link key={tile.label} to={tile.to} className="cat-circle">{body}</Link>;
-        })}
-      </nav>
 
         {/* Shortcuts and the last order share one row under the circles. */}
         <div className="shop-band-row">
@@ -321,6 +292,12 @@ const Home = () => {
         </div>
       )}
       </section>
+
+      {/* The two ways into the catalogue, shared with the 2026 homepage: by name,
+          then by mood. These replace the band's own circle row — it showed the
+          same categories smaller, with nowhere to say how many of each. */}
+      <ShopByCategory />
+      <CravingRow />
 
       <Combos />
 

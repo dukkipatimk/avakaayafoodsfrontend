@@ -1,12 +1,12 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 import { UIProvider } from './context/UIContext';
 import Header from './components/Header';
 import Footer from './components/Footer';
-import CartBar from './components/CartBar';
+import StoreCartDock from './components/StoreCartDock';
 import QuickOrderHost from './components/QuickOrderHost';
 import Home from './pages/Home';
 import HomeV2 from './pages/HomeV2';   // the 2026 design, parked at /home-v2
@@ -24,7 +24,7 @@ import Account from './pages/Account';
 import Orders from './pages/Orders';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminProducts from './pages/AdminProducts';
-import AdminCustomers from './pages/AdminCustomers';
+
 import AdminUsers from './pages/AdminUsers';
 import AdminCoupons from './pages/AdminCoupons';
 import AdminCombos from './pages/AdminCombos';
@@ -80,7 +80,11 @@ function App() {
           <main style={{ minHeight: '60vh' }}>
             <Routes>
               <Route path="/" element={<Home />} />
-              <Route path="/home-v2" element={<HomeV2 />} />
+              {/* The 2026 design, parked at /home2 until it is signed off.
+                  /home-v2 was its first address and is in the wild, so it
+                  forwards rather than 404s. */}
+              <Route path="/home2" element={<HomeV2 />} />
+              <Route path="/home-v2" element={<Navigate to="/home2" replace />} />
               <Route path="/products" element={<Products />} />
               <Route path="/collections/:category" element={<Products collectionPage />} />
               <Route path="/products/:slug" element={<ProductDetail />} />
@@ -106,7 +110,9 @@ function App() {
               <Route path="/combos" element={<CombosPage />} />
               <Route path="/admin" element={<AdminRoute roles={['admin', 'store_manager']}><AdminDashboard /></AdminRoute>} />
               <Route path="/admin/products" element={<AdminRoute><AdminProducts /></AdminRoute>} />
-              <Route path="/admin/customers" element={<AdminRoute><AdminCustomers /></AdminRoute>} />
+              {/* Customers was the Users list filtered to one role. Old links
+                  and bookmarks land on the list that replaced it. */}
+              <Route path="/admin/customers" element={<Navigate to="/admin/users" replace />} />
               <Route path="/admin/users" element={<AdminRoute><AdminUsers /></AdminRoute>} />
               <Route path="/admin/coupons" element={<AdminRoute><AdminCoupons /></AdminRoute>} />
               <Route path="/admin/combos" element={<AdminRoute><AdminCombos /></AdminRoute>} />
@@ -116,7 +122,7 @@ function App() {
             </Routes>
           </main>
           <Footer />
-          <CartBar />
+          <StoreCartDock />
           <QuickOrderHost />
         </Router>
         </UIProvider>

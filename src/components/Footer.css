@@ -1,5 +1,6 @@
 .footer {
-  background: var(--color-forest-dark, #0f1a0f);
+  /* Deep forest green frames the storefront. */
+  background: #14301a;
   color: rgba(255, 255, 255, 0.75);
   margin-top: auto;
 }

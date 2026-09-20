@@ -1,0 +1,62 @@
+/* Quick shopping tools: consistent height, quiet colour, one clear action each. */
+.shop-band.shopping-hub { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; align-items: stretch; max-width: 1440px; margin: 0 auto; padding: 24px; }
+.shopping-hub.shop-band--with-order { grid-template-columns: minmax(220px, .8fr) minmax(280px, 1.1fr) minmax(300px, 1.15fr); }
+.shopping-hub.shop-band--no-offers { grid-template-columns: minmax(0, 1fr); }
+.shopping-hub.shop-band--no-offers.shop-band--with-order { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+.shopping-hub .shop-band-main, .shopping-hub .shop-band-row { display: contents; }
+.shopping-hub .shop-band-side { padding: 0; min-width: 0; }
+.shopping-hub .quick-actions { min-width: 0; padding: 0; margin: 0; }
+.shopping-hub .quick-actions-heading { display: none; }
+.shopping-hub .quick-actions-grid { height: 100%; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.shopping-hub.shop-band--with-order .quick-actions-grid { grid-template-columns: 1fr; grid-template-rows: repeat(2, 1fr); }
+.shopping-hub .qa-tile { display: grid; grid-template-columns: 38px 1fr; align-content: center; gap: 4px 12px; padding: 16px; border: 1px solid #e2e7dc; border-radius: 12px; background: #fffdf7; box-shadow: 0 3px 12px #2e472804; }
+.shopping-hub .qa-tile-icon { grid-row: 1 / 4; align-self: center; display: grid; place-items: center; width: 38px; height: 38px; margin: 0; border-radius: 11px; background: #f7edcd; color: #a48129; }
+.shopping-hub .qa-tile--combo { background: #fff; }
+.shopping-hub .qa-tile--combo .qa-tile-icon { background: #f6e8df; color: #a46b4b; }
+.shopping-hub .qa-tile--again .qa-tile-icon { background: #e8f0e3; color: #4c7140; }
+.shopping-hub .qa-tile-label { font: 600 15px var(--font-ui, Arial, sans-serif); color: #2a492f; }
+.shopping-hub .qa-tile-sub { font-size: 11px; line-height: 1.4; color: #7a8270; }
+.shopping-hub .qa-tile-cta { grid-column: 2; margin: 2px 0 0; padding: 0; font-size: 11px; letter-spacing: 0; text-transform: none; color: #537043; }
+.shopping-hub .qa-tile:hover { transform: none; border-color: #bacbb0; box-shadow: 0 4px 12px #2e47280b; }
+.shopping-hub .buy-again { display: flex; min-width: 0; }
+.shopping-hub .buy-again-card { width: 100%; display: flex; flex-direction: column; gap: 16px; padding: 20px; border: 1px solid #d9e5d1; border-radius: 14px; background: #f3f7ef; }
+.shopping-hub .buy-again-head { display: flex; flex-direction: column; gap: 5px; margin-bottom: 12px; }
+.shopping-hub .buy-again-title { color: #2d4f32; font: 600 20px var(--font-display, Georgia, serif); text-transform: none; letter-spacing: 0; }
+.shopping-hub .buy-again-date { color: #7c8873; font-size: 11px; }
+.shopping-hub .buy-again-lines li { padding: 5px 0; border: 0; font-size: 12px; }
+.shopping-hub .buy-again-weight { font-size: 11px; }
+.shopping-hub .buy-again-actions { display: grid; grid-template-columns: 1fr auto; gap: 8px 12px; margin-top: auto; padding-top: 12px; border-top: 1px solid #dfe8d8; min-width: 0; }
+.shopping-hub .buy-again-total { align-self: center; font-size: 20px; color: #315a33; }
+.shopping-hub .buy-again-cta { min-height: 40px; padding: 10px 14px; border-radius: 8px; font-size: 12px; background: #2e5434; }
+.shopping-hub .buy-again-modify { grid-column: 1 / -1; justify-self: start; padding: 2px 0; color: #6e7f62; font-size: 11px; }
+.shopping-hub .offers-strip { height: 100%; padding: 20px; border: 1px solid #e8ddc1; border-radius: 14px; background: #fffcf4; }
+.shopping-hub .offers-strip-heading { margin: 0 0 14px; text-align: left; color: #70572d; font: 600 20px var(--font-display, Georgia, serif); letter-spacing: 0; text-transform: none; }
+.shopping-hub .offers-strip-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; flex: none; }
+.shopping-hub .offer-ticket { height: auto; border: 1px solid #ede3cd; border-radius: 10px; background: #fff; }
+.shopping-hub .offer-ticket-main { align-items: flex-start; padding: 14px; gap: 6px; text-align: left; }
+.shopping-hub .offer-ticket-value { font-size: 23px; color: var(--highlight-red); }
+.shopping-hub .offer-ticket-cond { font-size: 11px; line-height: 1.45; color: #7d806e; }
+.shopping-hub .offer-ticket-copy { display: flex; width: 100%; align-items: center; justify-content: space-between; gap: 8px; margin-top: 6px; min-height: 36px; padding: 8px; border: 1px dashed #cfdbbf; border-radius: 6px; background: #f3f7ec; color: #3b6032; font-size: 10px; letter-spacing: 0; text-transform: none; }
+.shopping-hub .offer-code-text { font: 600 11px monospace; overflow-wrap: anywhere; }
+.shopping-hub .offer-ticket-copy:hover { background: #e9f1df; }
+.shopping-hub .offers-strip-notes { justify-content: flex-start; gap: 6px 14px; margin-top: 12px; font-size: 10px; color: #8a866e; }
+.shopping-hub :is(button, a):focus-visible { outline: 3px solid #b69a52; outline-offset: 3px; }
+@media (min-width: 1101px) {
+  .shopping-hub:not(.shop-band--with-order) .qa-tile { display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 8px; }
+  .shopping-hub:not(.shop-band--with-order) .qa-tile-cta { margin-top: 8px; }
+}
+@media (max-width: 1100px) {
+  .shopping-hub.shop-band--with-order { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .shopping-hub.shop-band--with-order .shop-band-side { grid-column: 1 / -1; }
+  .shopping-hub .quick-actions-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 620px) {
+  .shop-band.shopping-hub, .shopping-hub.shop-band--no-offers.shop-band--with-order { grid-template-columns: 1fr; padding: 18px 14px; gap: 14px; }
+  .shopping-hub .shop-band-side { grid-column: auto; }
+  .shopping-hub .quick-actions-grid, .shopping-hub.shop-band--with-order .quick-actions-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: auto; }
+  .shopping-hub .qa-tile { display: flex; flex-direction: column; gap: 6px; padding: 14px; }
+  .shopping-hub .qa-tile-icon { margin-bottom: 3px; }
+  .shopping-hub .qa-tile-cta { margin-top: auto; padding-top: 6px; }
+  .shopping-hub .buy-again-card, .shopping-hub .offers-strip { padding: 16px; }
+}
+@media (prefers-reduced-motion: reduce) { .shopping-hub .qa-tile { transition: none; } }

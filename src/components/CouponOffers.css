@@ -1,0 +1,39 @@
+.coupon-offers { list-style: none; margin: 12px 0 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.coupon-offer {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 12px; border: 1px dashed #d9cdb4; border-radius: 10px; background: #fdfaf3;
+}
+.coupon-offer.is-locked { background: #fafafa; border-color: #e4e4e4; }
+.coupon-offer.is-on { background: #eef7ec; border-style: solid; border-color: #b6d6b0; }
+.coupon-offer-main { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
+.coupon-offer-code {
+  font-family: var(--font-ui, 'Josefin Sans', sans-serif);
+  font-size: .82rem; font-weight: 800; letter-spacing: .06em; color: #1c4a0e;
+}
+.coupon-offer.is-locked .coupon-offer-code { color: #7a7a7a; }
+.coupon-offer-desc { font-size: .74rem; color: #6b6b50; line-height: 1.4; }
+/* The number that decides it: what you save, or what you are short by. */
+.coupon-offer-note { font-size: .72rem; font-weight: 700; color: #1f6b33; }
+.coupon-offer.is-locked .coupon-offer-note { color: #9a6a12; font-weight: 600; }
+.coupon-offer-apply {
+  flex-shrink: 0; padding: 7px 14px; border-radius: 999px; border: 1px solid #1c4a0e;
+  background: #1c4a0e; color: #f3ead2; font-family: var(--font-ui, 'Josefin Sans', sans-serif);
+  font-size: .74rem; font-weight: 700; cursor: pointer;
+}
+.coupon-offer-apply:hover:not(:disabled) { background: #163a0b; }
+.coupon-offer-apply:disabled { background: #f0f0f0; border-color: #e0e0e0; color: #a5a5a5; cursor: not-allowed; }
+.coupon-offer-on {
+  flex-shrink: 0; padding: 7px 12px; border-radius: 999px; background: #d8ecd4; color: #1f6b33;
+  font-size: .72rem; font-weight: 700;
+}
+@media (max-width: 480px) {
+  .coupon-offer { align-items: flex-start; }
+  .coupon-offer-apply, .coupon-offer-on { align-self: center; }
+}
+
+.summary-shipping-progress { margin: 8px 0 12px; padding: 10px 12px; border-radius: 8px; background: var(--ivory); color: var(--text-mid); font: .75rem/1.5 var(--font-ui); }
+.summary-shipping-progress.is-unlocked { background: #eef7ec; color: #1f6b33; }
+.summary-shipping-track { height: 5px; margin-top: 8px; border-radius: 100px; overflow: hidden; background: var(--ivory-deep); }
+.summary-shipping-track span { display: block; height: 100%; background: linear-gradient(90deg, var(--green-light), var(--gold)); border-radius: inherit; }
+.cart-coupon-section > .cart-offer-savings { padding: 10px 12px; background: #eef7ec; color: #1f6b33; border-radius: 8px; font-weight: 600; }
+.coupon-offer.is-locked > .coupon-offer-on { background: #eeeeea; color: #666; }

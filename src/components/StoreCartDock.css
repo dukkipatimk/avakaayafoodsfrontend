@@ -1,0 +1,53 @@
+.store-cart-dock { position: fixed; left: 0; right: 0; bottom: 0; z-index: 940; display: flex; align-items: center; max-width: none; margin-inline: auto; border: 1px solid #d8b750; border-radius: 999px; background: #fcf9f0; color: #194620; box-shadow: 0 4px 14px #2b391c20; animation: store-dock-in .22s ease; }
+.dock-stores { display: flex; align-items: center; flex: 1; min-width: 0; overflow-x: auto; padding: 7px 8px 7px 16px; scrollbar-width: thin; scrollbar-color: #d8b750 transparent; }
+.dock-store { display: flex; align-items: center; gap: 12px; padding: 0 16px; flex: 1 0 auto; border-right: 1px solid #dec97e; }
+.dock-store:first-child { padding-left: 6px; }
+.dock-store:last-child { border-right: 0; }
+.dock-store-heading { display: flex; flex-direction: column; align-items: flex-start; gap: 3px; }
+.dock-store h2 { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 17px; font-weight: 700; color: #173c20; margin: 0; white-space: nowrap; }
+.dock-store-status { padding: 2px 8px; border-radius: 20px; font: 600 11px Arial, sans-serif; background: #eceee6; color: #56624c; white-space: nowrap; }
+.dock-store-status--open { color: #197047; background: #d9efde; }
+.dock-store-status--closed { color: #a32e28; background: #fbe1d9; }
+.dock-store-status--coming_soon { color: #876820; background: #f8eac3; }
+.dock-store-info { display: flex; flex-direction: column; gap: 5px; font: 11px Arial, sans-serif; }
+.dock-store-hours, .dock-store-links, .dock-store-links a { display: flex; align-items: center; gap: 7px; white-space: nowrap; }
+.dock-store-links { gap: 12px; }
+.dock-store-links a { color: #244827; font-weight: 600; text-underline-offset: 4px; }
+.dock-store-links a:hover { color: #946b16; }
+.dock-store-links .dock-store-phone { text-decoration: none; }
+.dock-store-phone svg { color: #cb3982; }
+.dock-store-fallback { display: flex; align-items: center; gap: 12px; padding: 10px 16px; color: #244827; text-decoration: none; font-weight: 600; }
+.dock-store-fallback span { font-size: 12px; font-weight: 400; }
+.dock-mobile-stores { display: none; }
+.dock-cart { display: flex; align-items: center; gap: 10px; flex-shrink: 0; align-self: stretch; position: relative; margin: -1px; padding: 7px 12px; border: 1px solid #d8b750; border-radius: 999px; background: linear-gradient(120deg, #133b18, #204c17); color: #fff8dc; box-shadow: -5px 4px 18px #23381a1a; }
+.dock-cart-icon { display: inline-flex; color: #e1bd4d; padding-right: 10px; border-right: 1px solid #b29b44; }
+.dock-cart-icon svg { width: 24px; height: 24px; }
+.dock-cart-text { display: flex; flex-direction: column; gap: 2px; font-family: var(--font-ui, Arial, sans-serif); }
+.dock-cart-text strong { font-size: 11px; font-weight: 500; white-space: nowrap; }
+.dock-cart-total { color: #edc752; font-size: 18px; font-weight: 700; line-height: 1.1; }
+.dock-cart-cta { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border-radius: 999px; min-height: 38px; padding: 8px 14px; background: #e7c251; color: #173e1c; font: 700 12px var(--font-ui, Arial, sans-serif); text-decoration: none; white-space: nowrap; }
+.dock-cart-cta:hover { background: #f2d571; }
+.store-cart-dock a:focus-visible { outline: 3px solid #97721e; outline-offset: 4px; }
+.dock-cart a:focus-visible { outline-color: #fff4bb; }
+body.has-store-dock { padding-bottom: 88px; }
+body.has-store-dock .side-menu-btn--cart { display: none; }
+@keyframes store-dock-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+@media (max-width: 1023px) {
+  .store-cart-dock { bottom: calc(72px + env(safe-area-inset-bottom, 0px)); left: 10px; right: 10px; border-radius: 12px; }
+  .dock-stores { display: none; }
+  .dock-mobile-stores { display: flex; flex-direction: column; align-items: center; gap: 3px; min-width: 52px; padding: 6px 8px; color: #244827; font: 600 12px Arial, sans-serif; text-decoration: none; }
+  .dock-cart { flex: 1; min-width: 0; margin: -1px; gap: 8px; padding: 5px 8px; border-radius: 12px; }
+  .dock-cart-icon { display: none; }
+  .dock-cart-text { flex: 1; min-width: 0; }
+  .dock-cart-text strong { font-size: 11px; }
+  .dock-cart-total { font-size: 16px; }
+  .dock-cart-cta { min-height: 40px; padding: 8px 12px; font-size: 12px; }
+  body.has-store-dock { padding-bottom: calc(140px + env(safe-area-inset-bottom, 0px)); }
+}
+@media (prefers-reduced-motion: reduce) { .store-cart-dock { animation: none; } }
+
+@media (min-width: 1024px) {
+  .store-cart-dock { border-radius: 0; border-bottom: 0; }
+  .dock-cart { border-radius: 16px 0 0 0; margin-bottom: 0; border-bottom: 0; }
+}

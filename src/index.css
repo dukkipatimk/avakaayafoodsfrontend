@@ -1,12 +1,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,600&family=Josefin+Sans:wght@300;400;600;700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap');
 
 :root {
-  /* Brand greens — matched to physical packaging hue (~115°, warm yellow-green) */
+  /* Brand greens ? matched to physical packaging hue (~115?, warm yellow-green) */
   --green-deep:   #1c4a0e;   /* dark, nav/section backgrounds */
   --green-forest: #2a6b14;   /* medium-dark, hover states */
   --green-mid:    #3d8b22;   /* packaging green */
   --green-light:  #57a83a;   /* lighter accents */
-  --green-brand:  #3d8b22;   /* alias — the exact packaging colour */
+  --green-brand:  #3d8b22;   /* alias ? the exact packaging colour */
 
   /* Category accent colours (product packaging variants) */
   --cat-pickles: #3d8b22;    /* brand green */
@@ -22,6 +22,10 @@
   --ivory-dark: #f0e8d8;
   --ivory-deep: #e8d8c0;
   --red-chili: #c0392b;
+  /* Poster red is reserved for small promotional highlights. */
+  --highlight-red: #b52620;
+  --highlight-red-soft: #fceee9;
+  --highlight-red-border: #edc5bc;
   --text-dark: #1a1a0e;
   --text-mid: #3d3d2e;
   --text-light: #6b6b50;

@@ -1,3 +1,5 @@
+import FreeShippingOffer, { FREE_SHIPPING_THRESHOLD } from '../components/FreeShippingOffer';
+import '../components/CouponOffers.css';
 import React, { useState, useEffect } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
@@ -77,18 +79,17 @@ async function lookupPincodeLocation(pincode, country) {
   }
 }
 
-const STEPS = ['Address', 'Review'];
 
 const Checkout = () => {
-  const { items, subtotal, clearCart } = useCart();
+  const { items, subtotal, clearCart, updateQuantity, appliedCoupon, couponLoading, setSelectedCouponCode } = useCart();
   const { user } = useAuth();
   const navigate = useNavigate();
 
   const [step, setStep] = useState(0);
   const [processing, setProcessing] = useState(false);
-  const [couponCode, setCouponCode] = useState('');
-  const [couponLoading, setCouponLoading] = useState(false);
-  const [appliedCoupon, setAppliedCoupon] = useState(null); // { code, discount, message }
+  // The basket is folded in the summary — the totals are what this panel is for.
+  const [itemsOpen, setItemsOpen] = useState(false);
+  const [offers, setOffers] = useState([]);           // every live coupon, for the list below the box
 
   const [address, setAddress] = useState({
     fullName: user?.name || '',
@@ -167,7 +168,7 @@ const Checkout = () => {
 
   const countryConfig = COUNTRIES.find(c => c.value === address.country) || COUNTRIES[0];
   const isIndia = countryConfig.zone === 'india';
-  const isFreeShipping = isIndia && subtotal >= 2000;
+  const isFreeShipping = isIndia && subtotal >= FREE_SHIPPING_THRESHOLD;
 
   // Estimated delivery time: 24 hrs in Hyderabad, 1–2 days rest of India, 3–7 days international
   const isHyderabad = isIndia && (
@@ -180,12 +181,13 @@ const Checkout = () => {
 
   // shippingCost is only known once a service is selected
   const shippingConfirmed = selectedService !== null || isFreeShipping;
+  // The quoted rate behind a waived charge, so the summary can strike it out.
+  const waivedRate = isFreeShipping ? Number(liveRates?.[0]?.total) || 0 : 0;
   const shippingCost = !shippingConfirmed ? null
     : isFreeShipping ? 0
     : selectedService.total;
   const discountAmount = appliedCoupon?.discount || 0;
   const total = subtotal - discountAmount + (shippingCost ?? 0);
-  const isFirstBundleItem = (item, index) => item.bundleId && items.findIndex(entry => entry.bundleId === item.bundleId) === index;
 
   useEffect(() => {
     trackEvent('begin_checkout', {
@@ -195,54 +197,49 @@ const Checkout = () => {
     });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const applyCoupon = async () => {
-    if (!couponCode.trim()) return;
-    setCouponLoading(true);
-    try {
-      const res = await api.post('/coupons/validate', {
-        code: couponCode.trim().toUpperCase(),
-        subtotal,
-        userId: user?._id
-      });
-      if (res.data.success) {
-        setAppliedCoupon({ code: couponCode.trim().toUpperCase(), discount: res.data.discount, message: res.data.message });
-        toast.success(`Coupon applied! You save ₹${res.data.discount}`);
-      } else {
-        toast.error(res.data.message || 'Invalid coupon');
-      }
-    } catch(e) {
-      toast.error(e.response?.data?.message || 'Invalid coupon code');
-    } finally {
-      setCouponLoading(false);
-    }
+  // Every live coupon, so the page can show what is on offer instead of asking
+  // people to already know a code. /coupons/active hides expired ones and ones
+  // that have hit their usage limit, and returns only the fields needed to work
+  // out whether this basket qualifies.
+  useEffect(() => {
+    api.get('/coupons/active')
+      .then(r => setOffers(r.data.coupons || []))
+      .catch(() => setOffers([]));
+  }, []);
+
+  // Only ever called with a code from the offers list now that the type-it-in
+  // box is gone, so there is no free-text state left to hold.
+  const applyCoupon = (code) => {
+    const clean = String(code || '').trim().toUpperCase();
+    if (clean) setSelectedCouponCode(clean);
   };
 
-  const fetchLiveRates = () => {
-    if (!address.pincode) return;
+  // Recalculate rates after address or quantity changes; discard stale responses.
+  useEffect(() => {
+    let cancelled = false;
     setLiveRates(null);
     setSelectedService(null);
-    setLiveRatesLoading(true);
-    api.post('/shipping/rate', {
-      pincode: address.pincode,
-      country: address.country,
-      items: items.map(i => ({ productId: i.productId, weight: i.weight, quantity: i.quantity })),
-    })
-      .then(r => {
-        const svcs = r.data.services || [];
-        setLiveRates(svcs);
-        if (svcs.length > 0) setSelectedService(svcs[0]);
-      })
-      .catch(() => setLiveRates([]))
-      .finally(() => setLiveRatesLoading(false));
-  };
-
-  // Fetch rates whenever pincode/country changes — works on any step, debounced 600ms
-  useEffect(() => {
     const minLength = isIndia ? 6 : 3;
-    if (!address.pincode || address.pincode.length < minLength) return;
-    const timer = setTimeout(fetchLiveRates, 600);
-    return () => clearTimeout(timer);
-  }, [address.pincode, address.country]); // eslint-disable-line react-hooks/exhaustive-deps
+    if (!address.pincode || address.pincode.length < minLength) {
+      setLiveRatesLoading(false);
+      return;
+    }
+    setLiveRatesLoading(true);
+    const timer = setTimeout(() => {
+      api.post('/shipping/rate', {
+        pincode: address.pincode,
+        country: address.country,
+        items: items.map(i => ({ productId: i.productId, weight: i.weight, quantity: i.quantity })),
+      }).then(r => {
+        if (cancelled) return;
+        const services = r.data.services || [];
+        setLiveRates(services);
+        setSelectedService(services[0] || null);
+      }).catch(() => { if (!cancelled) setLiveRates([]); })
+        .finally(() => { if (!cancelled) setLiveRatesLoading(false); });
+    }, 600);
+    return () => { cancelled = true; clearTimeout(timer); };
+  }, [address.pincode, address.country, isIndia, items]);
 
   // Auto-fill delivery city + state from the postal code (debounced)
   useEffect(() => {
@@ -650,16 +647,8 @@ const Checkout = () => {
       <div className="container">
         <h1 className="checkout-title">Checkout</h1>
 
-        {/* Step indicator */}
-        <div className="checkout-steps">
-          {STEPS.map((s, i) => (
-            <div key={s} className={`step ${i <= step ? 'active' : ''} ${i < step ? 'done' : ''}`}>
-              <div className="step-num">{i < step ? '✓' : i + 1}</div>
-              <span className="step-label">{s}</span>
-              {i < STEPS.length - 1 && <div className="step-line" />}
-            </div>
-          ))}
-        </div>
+        {/* No step bar: there are two steps, each headed by its own card title,
+            and the strip cost more vertical room than it explained. */}
 
         <div className="checkout-layout">
           {/* Left: Form */}
@@ -668,7 +657,40 @@ const Checkout = () => {
             {/* Step 0: Address */}
             {step === 0 && (
               <div className="checkout-card">
-                <h2 className="checkout-card-title">Delivery Address</h2>
+                {/* Country sits in the heading: it is set once, usually never
+                    changed, and it was costing a whole field row. */}
+                <div className="checkout-card-head">
+                  <h2 className="checkout-card-title">Delivery Address</h2>
+                  <div className="addr-search-wrap">
+                    <div className="addr-search-input-row">
+                      <span className="addr-search-icon">🔍</span>
+                      <input
+                        className="addr-search-input"
+                        type="text"
+                        placeholder="Search address to auto-fill…"
+                        value={addrQuery}
+                        onChange={e => setAddrQuery(e.target.value)}
+                        onFocus={() => addrSuggestions.length > 0 && setAddrDropdownOpen(true)}
+                        onBlur={() => setTimeout(() => setAddrDropdownOpen(false), 180)}
+                        autoComplete="off"
+                      />
+                      {addrSearchLoading && <span className="shipping-spinner addr-search-spinner" />}
+                    </div>
+                    {addrDropdownOpen && addrSuggestions.length > 0 && (
+                      <ul className="addr-suggestions">
+                        {addrSuggestions.map((p, i) => (
+                          <li key={i} onMouseDown={() => applyAddrSuggestion(p)} className="addr-suggestion-item">
+                            <span className="addr-suggestion-icon">📍</span>
+                            <span>{p.display_name}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                  <select name="country" value={address.country} onChange={handleAddressChange} className="form-select checkout-country-select" aria-label="Delivery country">
+                    {COUNTRIES.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
+                  </select>
+                </div>
 
                 {!user && (
                   <p className="checkout-guest-note">
@@ -679,64 +701,36 @@ const Checkout = () => {
                   </p>
                 )}
 
-                <div className="addr-search-wrap">
-                  <div className="addr-search-input-row">
-                    <span className="addr-search-icon">🔍</span>
-                    <input
-                      className="addr-search-input"
-                      type="text"
-                      placeholder="Search address to auto-fill…"
-                      value={addrQuery}
-                      onChange={e => setAddrQuery(e.target.value)}
-                      onFocus={() => addrSuggestions.length > 0 && setAddrDropdownOpen(true)}
-                      onBlur={() => setTimeout(() => setAddrDropdownOpen(false), 180)}
-                      autoComplete="off"
-                    />
-                    {addrSearchLoading && <span className="shipping-spinner addr-search-spinner" />}
-                  </div>
-                  {addrDropdownOpen && addrSuggestions.length > 0 && (
-                    <ul className="addr-suggestions">
-                      {addrSuggestions.map((p, i) => (
-                        <li key={i} onMouseDown={() => applyAddrSuggestion(p)} className="addr-suggestion-item">
-                          <span className="addr-suggestion-icon">📍</span>
-                          <span>{p.display_name}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
 
-                <div className="form-group">
-                  <label>Country *</label>
-                  <select name="country" value={address.country} onChange={handleAddressChange} className="form-select">
-                    {COUNTRIES.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
-                  </select>
-                </div>
-
-                <div className="form-row">
+                {/* Two-up wherever a field doesn't need the width: the column is
+                    narrower now, and six stacked rows pushed the button off screen.
+                    Line 2 is optional, so it stays folded away until asked for. */}
+                <div className="form-row form-row--three">
                   <div className="form-group">
                     <label>Full Name *</label>
                     <input name="fullName" value={address.fullName} onChange={handleAddressChange} className="form-input" placeholder="As on delivery ID" />
                   </div>
                   <div className="form-group">
+                    <label>Phone / WhatsApp *</label>
+                    <input name="phone" value={address.phone} onChange={handleAddressChange} className="form-input" placeholder="+91…" />
+                  </div>
+                  <div className="form-group">
                     <label>Email (optional)</label>
-                    <input name="email" type="email" value={address.email} onChange={handleAddressChange} className="form-input" placeholder="For order updates (optional)" />
+                    <input name="email" type="email" value={address.email} onChange={handleAddressChange} className="form-input" placeholder="Order updates" />
                   </div>
                 </div>
-
-                <div className="form-group">
-                  <label>Phone / WhatsApp *</label>
-                  <input name="phone" value={address.phone} onChange={handleAddressChange} className="form-input" placeholder="+91 for India, +1 for USA, etc." />
-                </div>
-
-                <div className="form-group">
-                  <label>Address Line 1 *</label>
-                  <input name="line1" value={address.line1} onChange={handleAddressChange} className="form-input" placeholder="House/Flat No., Street" />
-                </div>
-
-                <div className="form-group">
-                  <label>Address Line 2</label>
-                  <input name="line2" value={address.line2} onChange={handleAddressChange} className="form-input" placeholder="Apartment, area, landmark (optional)" />
+                {/* Both address lines on one row — the fold saved a row but cost
+                    a click, and the second line is short enough to sit beside
+                    the first rather than under it. */}
+                <div className="form-row">
+                  <div className="form-group">
+                    <label>Address Line 1 *</label>
+                    <input name="line1" value={address.line1} onChange={handleAddressChange} className="form-input" placeholder="House/Flat No., Street" />
+                  </div>
+                  <div className="form-group">
+                    <label>Apartment, area, landmark</label>
+                    <input name="line2" value={address.line2} onChange={handleAddressChange} className="form-input" placeholder="Optional" />
+                  </div>
                 </div>
 
                 <div className="form-row">
@@ -773,11 +767,11 @@ const Checkout = () => {
 
                 {!billingSameAsDelivery && (
                   <div className="billing-fields">
-                    <h3 className="billing-fields-title">Billing Address</h3>
-
-                    <div className="form-group">
-                      <label>Country *</label>
-                      <select name="country" value={billing.country} onChange={handleBillingChange} className="form-select">
+                    {/* Same shape as the delivery block above: country on the
+                        heading line, then contact, then the two address lines. */}
+                    <div className="checkout-card-head">
+                      <h3 className="billing-fields-title">Billing Address</h3>
+                      <select name="country" value={billing.country} onChange={handleBillingChange} className="form-select checkout-country-select" aria-label="Billing country">
                         {COUNTRIES.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
                       </select>
                     </div>
@@ -793,14 +787,15 @@ const Checkout = () => {
                       </div>
                     </div>
 
-                    <div className="form-group">
-                      <label>Address Line 1 *</label>
-                      <input name="line1" value={billing.line1} onChange={handleBillingChange} className="form-input" placeholder="House/Flat No., Street" />
-                    </div>
-
-                    <div className="form-group">
-                      <label>Address Line 2</label>
-                      <input name="line2" value={billing.line2} onChange={handleBillingChange} className="form-input" placeholder="Apartment, area, landmark (optional)" />
+                    <div className="form-row">
+                      <div className="form-group">
+                        <label>Address Line 1 *</label>
+                        <input name="line1" value={billing.line1} onChange={handleBillingChange} className="form-input" placeholder="House/Flat No., Street" />
+                      </div>
+                      <div className="form-group">
+                        <label>Apartment, area, landmark</label>
+                        <input name="line2" value={billing.line2} onChange={handleBillingChange} className="form-input" placeholder="Optional" />
+                      </div>
                     </div>
 
                     <div className="form-row">
@@ -827,43 +822,25 @@ const Checkout = () => {
                   </div>
                 )}
 
-                {/* Live shipping preview */}
-                {liveRatesLoading && (
-                  <div className="addr-shipping-preview addr-shipping-preview--loading">
-                    <span className="shipping-spinner" />
-                    Checking shipping rates…
-                  </div>
-                )}
-                {!liveRatesLoading && liveRates && liveRates.length > 0 && (() => {
-                  const svc = liveRates[0];
-                  const cost = isFreeShipping ? 0 : svc.total;
-                  return (
-                    <div className="addr-shipping-preview">
-                      <span className="addr-shipping-icon">🚚</span>
-                      <div className="addr-shipping-info">
-                        <strong>Avakaaya.com Delivery</strong>
-                        <span>{deliveryEstimate}</span>
-                      </div>
-                      <span className="addr-shipping-cost">
-                        {cost === 0
-                          ? <>{isFreeShipping && <s style={{ color: '#999', fontSize: '0.85em', marginRight: 4 }}>₹{svc.total.toLocaleString()}</s>}<span style={{ color: '#2e7d32', fontWeight: 700 }}>FREE</span></>
-                          : `₹${cost.toLocaleString()}`}
-                      </span>
-                    </div>
-                  );
-                })()}
-                {!liveRatesLoading && liveRates && liveRates.length === 0 && (
-                  <div className="addr-shipping-preview addr-shipping-preview--error">
-                    ⚠️ Could not fetch rates for this pincode
-                  </div>
-                )}
-
-                <button
-                  className="btn btn-primary btn-lg checkout-next-btn"
-                  onClick={goToReview}
-                >
-                  {liveRatesLoading ? 'Checking shipping…' : 'Review Order →'}
-                </button>
+                {/* Back sits beside the button that moves you on, the way it
+                    already does on the review step — not orphaned at the top
+                    of the page where it read as "leave checkout". */}
+                <div className="checkout-step-btns">
+                  <button
+                    type="button"
+                    className="btn btn-outline btn-lg"
+                    disabled={processing}
+                    onClick={() => navigate('/cart')}
+                  >
+                    <span aria-hidden="true">←</span> Back to cart
+                  </button>
+                  <button
+                    className="btn btn-primary btn-lg checkout-next-btn"
+                    onClick={goToReview}
+                  >
+                    {liveRatesLoading ? 'Checking shipping…' : 'Review Order →'}
+                  </button>
+                </div>
               </div>
             )}
 
@@ -922,39 +899,22 @@ const Checkout = () => {
                   </div>
                 )}
 
-                <div className="checkout-items-preview">
-                  {items.map((item, index) => (
-                    <React.Fragment key={`${item.productId}_${item.weight}_${item.bundleId || 'regular'}`}>
-                      {isFirstBundleItem(item, index) && (
-                        <div className="checkout-hamper-note">
-                          <strong>{item.bundleLabel || 'Custom Gift Hamper'}</strong>
-                          {item.customization?.styleInstructions && <span>Style: {item.customization.styleInstructions}</span>}
-                          {item.customization?.personalMessage && <span>Message card: {item.customization.personalMessage}</span>}
-                        </div>
-                      )}
-                      <div className={`checkout-item-row ${item.bundleId ? 'checkout-item-row--hamper' : ''}`}>
-                        <img src={item.thumbnail} alt={item.name} className="checkout-item-img" />
-                        <span className="checkout-item-name">{item.name}{item.bundleId && <small>Inside {item.bundleLabel || 'custom hamper'}</small>}</span>
-                        <span className="checkout-item-weight">{item.weight}</span>
-                        <span className="checkout-item-qty">x{item.quantity}</span>
-                        <span className="checkout-item-price">INR {(Number(item.price) * item.quantity).toLocaleString()}</span>
-                      </div>
-                    </React.Fragment>
-                  ))}
-                </div>
-
-                <div className="payment-security-note">
-                  {paymentMethod === 'cod'
-                    ? '💵 Pay in cash when your order is delivered.'
-                    : '🔒 Secured by Razorpay — payment is auto-verified the moment your transfer confirms.'}
-                </div>
+                {/* The basket is listed in the summary, so it is not repeated here.
+                    Nor is the Razorpay reassurance — the gateway says so itself on
+                    the screen where the card details are actually typed. Cash on
+                    delivery still gets a line, because nothing else explains it. */}
+                {paymentMethod === 'cod' && (
+                  <div className="payment-security-note">
+                    💵 Pay in cash when your order is delivered.
+                  </div>
+                )}
 
                 <div className="checkout-step-btns">
-                  <button className="btn btn-outline" onClick={() => setStep(0)}>← Back</button>
+                  <button className="btn btn-outline btn-lg" onClick={() => setStep(0)}>← Back</button>
                   <button
                     className="btn btn-gold btn-lg"
                     onClick={placeOrder}
-                    disabled={processing}
+                    disabled={processing || couponLoading || liveRatesLoading}
                   >
                     {processing ? '⏳ Processing...' : `Place Order · ₹${total.toLocaleString()}`}
                   </button>
@@ -964,63 +924,149 @@ const Checkout = () => {
           </div>
 
           {/* Right: Order summary */}
-          <div className="checkout-summary">
-            <h3>Order Summary</h3>
-            {items.map(item => (
-              <div key={`${item.productId}_${item.weight}_${item.bundleId || 'regular'}`} className="summary-item">
-                <img src={item.thumbnail} alt={item.name} className="summary-item-img" />
-                <div className="summary-item-info">
-                  <span className="summary-item-name">{item.name}</span>
-                  <span className="summary-item-meta">{item.bundleId ? `${item.bundleLabel || 'Custom hamper'} | ` : ''}{item.weight} x {item.quantity}</span>
+          <div className="checkout-summary cart-summary">
+            <h2 className="summary-title">Order Summary</h2>
+            {/* The basket, folded away. A summary that opens with a list of
+                everything you already chose buries the numbers people came
+                here to check. */}
+            <button
+              type="button"
+              className="summary-items-toggle"
+              aria-expanded={itemsOpen}
+              onClick={() => setItemsOpen(o => !o)}
+            >
+              <span>{items.length} {items.length === 1 ? 'item' : 'items'} in this order</span>
+              <span className="summary-items-chevron" aria-hidden="true">{itemsOpen ? '▲' : '▼'}</span>
+            </button>
+            {itemsOpen && (
+              <div className="summary-items-list">
+              {items.map(item => (
+                <div key={`${item.productId}_${item.weight}_${item.bundleId || 'regular'}`} className="summary-item">
+                  <img src={item.thumbnail} alt={item.name} className="summary-item-img" />
+                  <div className="summary-item-info">
+                    <span className="summary-item-name">{item.name}</span>
+                    <span className="summary-item-meta">{item.bundleId ? `${item.bundleLabel || 'Custom hamper'} | ` : ''}{item.weight} x {item.quantity}</span>
+                    {!item.bundleId && <div className="checkout-quantity" role="group" aria-label={`Quantity for ${item.name}`}>
+                      <button type="button" disabled={processing || item.quantity <= 1} aria-label={`Decrease quantity of ${item.name}`} onClick={() => updateQuantity(item.productId, item.weight, item.quantity - 1)}>-</button>
+                      <span aria-live="polite">{item.quantity}</span>
+                      <button type="button" disabled={processing} aria-label={`Increase quantity of ${item.name}`} onClick={() => updateQuantity(item.productId, item.weight, item.quantity + 1)}>+</button>
+                    </div>}
+  
+                  </div>
+                  <span className="summary-item-price">INR {(Number(item.price) * item.quantity).toLocaleString()}</span>
                 </div>
-                <span className="summary-item-price">INR {(Number(item.price) * item.quantity).toLocaleString()}</span>
+              ))}
               </div>
-            ))}
+            )}
             {/* Coupon code */}
             <div className="coupon-section">
-              {appliedCoupon ? (
+              {/* No code box: every live coupon is listed below with what it
+                  saves on this basket, so there is nothing left to type. The
+                  applied one still shows, and can still be taken off. */}
+              {appliedCoupon && (
                 <div className="coupon-applied">
                   <span>🎟️ {appliedCoupon.code} applied</span>
-                  <button className="coupon-remove" onClick={() => setAppliedCoupon(null)}>✕</button>
+                  <button className="coupon-remove" onClick={() => setSelectedCouponCode('')}>✕</button>
                 </div>
-              ) : (
-                <div className="coupon-row">
-                  <input
-                    type="text"
-                    placeholder="Coupon code"
-                    value={couponCode}
-                    onChange={e => setCouponCode(e.target.value.toUpperCase())}
-                    className="coupon-input"
-                    onKeyDown={e => e.key === 'Enter' && applyCoupon()}
-                  />
-                  <button className="btn btn-outline btn-sm" onClick={applyCoupon} disabled={couponLoading}>
-                    {couponLoading ? '…' : 'Apply'}
-                  </button>
-                </div>
+              )}
+              {/* What else is on offer, and whether this basket qualifies. The
+                  list stays visible with a coupon applied so a better one can be
+                  seen and swapped to — the discount each would give is worked out
+                  against the current subtotal, not guessed at. */}
+              {offers.length > 0 && (
+                <ul className="coupon-offers">
+                  {offers.map(o => {
+                    const min = Number(o.minOrder) || 0;
+                    const cap = Number(o.maxDiscount) || 0;
+                    const short = Math.max(0, min - subtotal);
+                    const eligible = short === 0;
+                    const raw = o.type === 'percent' ? (subtotal * Number(o.value)) / 100 : Number(o.value);
+                    const saving = Math.round(Math.min(raw, cap > 0 ? cap : raw));
+                    const isOn = appliedCoupon?.code === o.code;
+                    return (
+                      <li key={o.code} className={`coupon-offer${eligible ? '' : ' is-locked'}${isOn ? ' is-on' : ''}`}>
+                        <div className="coupon-offer-main">
+                          <span className="coupon-offer-code">{o.code}</span>
+                          <span className="coupon-offer-desc">
+                            {o.type === 'percent'
+                              ? `${Number(o.value)}% off${cap > 0 ? ` up to ₹${cap.toLocaleString('en-IN')}` : ''}`
+                              : `₹${Number(o.value).toLocaleString('en-IN')} off`}
+                            {min > 0 ? ` · on orders above ₹${min.toLocaleString('en-IN')}` : ''}
+                          </span>
+                          <span className="coupon-offer-note">
+                            {eligible
+                              ? `You save ₹${saving.toLocaleString('en-IN')}`
+                              : `Add ₹${short.toLocaleString('en-IN')} more to use this`}
+                          </span>
+                        </div>
+                        {isOn ? (
+                          <span className="coupon-offer-on">Applied</span>
+                        ) : (
+                          <button
+                            type="button"
+                            className="coupon-offer-apply"
+                            disabled={!eligible || couponLoading}
+                            onClick={() => applyCoupon(o.code)}
+                          >
+                            {eligible ? 'Apply' : 'Locked'}
+                          </button>
+                        )}
+                      </li>
+                    );
+                  })}
+                </ul>
               )}
             </div>
             <div className="summary-divider" />
-            <div className="summary-line">
+            <div className="summary-row">
               <span>Subtotal</span><span>₹{subtotal.toLocaleString()}</span>
             </div>
+            <FreeShippingOffer subtotal={subtotal} isIndia={isIndia} />
             {discountAmount > 0 && (
-              <div className="summary-line summary-line--green">
+              <div className="summary-row summary-row--green">
                 <span>Discount ({appliedCoupon?.code})</span>
                 <span>-₹{discountAmount.toLocaleString()}</span>
               </div>
             )}
-            <div className="summary-line">
+            <div className="summary-row">
               <span>Shipping</span>
               <span>
-                {shippingCost === null ? '—'
-                  : shippingCost === 0 ? <span style={{ color: '#2e7d32' }}>FREE</span>
-                  : `₹${shippingCost.toLocaleString()}`}
+                {/* While the courier is being asked, the price slot holds a
+                    small spinner — the row keeps its place instead of a
+                    banner appearing and pushing the total down. */}
+                {liveRatesLoading
+                  ? <span className="shipping-spinner shipping-spinner--sm" role="status" aria-label="Checking shipping rates" />
+                  : shippingCost === null ? '—'
+                    : shippingCost === 0 ? (
+                      <>
+                        {/* What the courier would have charged, struck through —
+                            the saving shown as a price rather than a sentence. */}
+                        {waivedRate > 0 && <s className="summary-strike">₹{waivedRate.toLocaleString('en-IN')}</s>}
+                        <span className="summary-free">₹0</span>
+                      </>
+                    )
+                      : `₹${shippingCost.toLocaleString()}`}
               </span>
             </div>
+
             <div className="summary-total">
               <strong>Total</strong>
               <strong>{shippingCost === null ? '—' : `₹${total.toLocaleString()}`}</strong>
             </div>
+
+            {/* Under the total: it is a note about the delivery, not a line of the bill. */}
+            {!liveRatesLoading && liveRates && liveRates.length > 0 && (
+              <p className="summary-ship-note">
+                <span className="summary-ship-icon" aria-hidden="true">🚚</span>
+                <span><strong>Avakaaya.com Delivery</strong>{deliveryEstimate ? <> · {deliveryEstimate}</> : null}</span>
+              </p>
+            )}
+            {!liveRatesLoading && liveRates && liveRates.length === 0 && (
+              <p className="summary-ship-note summary-ship-note--warn">
+                <span className="summary-ship-icon" aria-hidden="true">⚠️</span>
+                <span>Could not fetch rates for this pincode</span>
+              </p>
+            )}
           </div>
         </div>
       </div>

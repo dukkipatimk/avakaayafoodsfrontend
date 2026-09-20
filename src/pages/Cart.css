@@ -267,3 +267,9 @@
   font-weight: 700;
   color: var(--red-chili, #c0392b);
 }
+
+.cart-coupon-section { margin: 16px 0; }
+.cart-coupon-section h3 { font-size: 1.1rem; margin-bottom: 6px; }
+.cart-coupon-section > p { font: .74rem var(--font-ui); color: var(--text-light); line-height: 1.5; }
+.cart-coupon-section .coupon-offer-code { overflow-wrap: anywhere; }
+.cart-coupon-section .coupon-offer-apply:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }

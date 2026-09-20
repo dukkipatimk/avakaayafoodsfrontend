@@ -327,6 +327,9 @@ const AdminUsers = () => {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [roleFilter, setRoleFilter] = useState('all');
+  // Came over with the Customers tab this list replaced. Closed accounts are
+  // still in the list — the ✓/✕ tick shows which — but now they can be asked for.
+  const [visibility, setVisibility] = useState('all');
   const [showCreate, setShowCreate] = useState(false);
   const [manageUser, setManageUser] = useState(null);
   const [ordersUser, setOrdersUser] = useState(null);
@@ -364,7 +367,9 @@ const AdminUsers = () => {
       u.email?.toLowerCase().includes(q) ||
       u.phone?.toLowerCase().includes(q);
     const matchesRole = roleFilter === 'all' || u.role === roleFilter;
-    return matchesSearch && matchesRole;
+    const matchesStatus = visibility === 'all'
+      || (visibility === 'active' ? u.isActive !== false : u.isActive === false);
+    return matchesSearch && matchesRole && matchesStatus;
   });
 
   return (
@@ -410,6 +415,16 @@ const AdminUsers = () => {
           >
             <option value="all">All roles</option>
             {ROLES.map(r => <option key={r.value} value={r.value}>{r.label}</option>)}
+          </select>
+          <select
+            className="users-role-filter"
+            aria-label="Filter users by account status"
+            value={visibility}
+            onChange={e => setVisibility(e.target.value)}
+          >
+            <option value="all">Any status</option>
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
           </select>
           {/* The count answers the filters beside it, and the button is where the
               hand already is — neither needs a row of its own above the table. */}
@@ -462,7 +477,15 @@ const AdminUsers = () => {
                         <strong>{u.name}</strong>
                         {isSelf && <span className="self-tag">you</span>}
                       </td>
-                      <td>{u.email}</td>
+                      <td>
+                        {u.email}
+                        {/* Carried over from the Customers tab, which this list
+                            replaced. Only the unverified case is worth a mark —
+                            verified is the normal state and needs no badge. */}
+                        {u.isEmailVerified === false && (
+                          <span className="payment-status pending" title="Email address not verified">Unverified</span>
+                        )}
+                      </td>
                       <td>{u.phone || '—'}</td>
                       <td>
                         <button

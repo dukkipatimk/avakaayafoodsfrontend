@@ -1,7 +1,9 @@
+import FreeShippingOffer, { FREE_SHIPPING_THRESHOLD } from '../components/FreeShippingOffer';
 import React, { useEffect, useRef } from 'react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { trackEvent } from '../utils/tracking';
+import OffersStrip from '../components/OffersStrip';
 import './Cart.css';
 
 function parseWeightGrams(weight) {
@@ -17,7 +19,7 @@ function formatWeight(grams) {
 }
 
 const Cart = () => {
-  const { items, updateQuantity, removeItem, removeBundle, subtotal, savings } = useCart();
+  const { items, updateQuantity, removeItem, removeBundle, subtotal, savings, appliedCoupon, couponLoading } = useCart();
   const navigate = useNavigate();
   const trackedFilledCart = useRef(items.length > 0);
 
@@ -36,10 +38,6 @@ const Cart = () => {
   // the shopper back to the catalogue instead of showing a dead-end page.
   // `replace` keeps /cart out of history so Back doesn't bounce them here again.
   if (items.length === 0) return <Navigate to="/products" replace />;
-
-  const FREE_SHIP_THRESHOLD = 2000; // matches checkout free-shipping rule (India)
-  const remainingForFree = Math.max(0, FREE_SHIP_THRESHOLD - subtotal);
-  const freeShipPct = Math.min(100, Math.round((subtotal / FREE_SHIP_THRESHOLD) * 100));
 
   const totalWeightGrams = items.reduce((sum, item) => sum + parseWeightGrams(item.weight) * item.quantity, 0);
   const regularItems = items.filter(item => !item.bundleId);
@@ -87,21 +85,6 @@ const Cart = () => {
     <div className="cart-page">
       <div className="container">
         <h1 className="cart-title">Your Cart <span className="cart-count">({items.reduce((sum, item) => sum + item.quantity, 0)} items)</span></h1>
-        {remainingForFree > 0 ? (
-          <div className="shipping-bar">
-            <div className="shipping-bar-text">
-              Add <strong>INR {remainingForFree.toLocaleString()}</strong> more for <strong>FREE shipping</strong> within India
-            </div>
-            <div className="shipping-bar-track">
-              <div className="shipping-bar-fill" style={{ width: `${freeShipPct}%` }} />
-            </div>
-          </div>
-        ) : (
-          <div className="shipping-bar shipping-bar--achieved">
-            🎉 <strong>You've unlocked FREE shipping</strong> within India
-          </div>
-        )}
-
         <div className="cart-layout">
           <div className="cart-items">
             {Object.entries(hamperGroups).map(([bundleId, hamperItems], index) => {
@@ -163,12 +146,15 @@ const Cart = () => {
               <span>Subtotal ({items.reduce((sum, item) => sum + item.quantity, 0)} items)</span>
               <span>INR {subtotal.toLocaleString()}</span>
             </div>
+            <FreeShippingOffer subtotal={subtotal} />
             {savings > 0 && <div className="summary-row summary-row--green"><span>Your Savings</span><span>-INR {savings.toLocaleString()}</span></div>}
             <div className="summary-row"><span>Est. Shipment Weight</span><span className="summary-weight">{formatWeight(totalWeightGrams)}</span></div>
-            <div className="summary-row"><span>Shipping</span><span>Calculated at checkout</span></div>
+            <div className="summary-row"><span>Shipping</span><span>{subtotal >= FREE_SHIPPING_THRESHOLD ? '₹0 within India' : 'Calculated at checkout'}</span></div>
+            <OffersStrip cartSubtotal={subtotal} />
+            {appliedCoupon && <div className="summary-row summary-row--green"><span>Discount ({appliedCoupon.code})</span><span>-INR {appliedCoupon.discount.toLocaleString()}</span></div>}
             <div className="summary-divider" />
-            <div className="summary-total"><span>Total</span><span>INR {subtotal.toLocaleString()}</span></div>
-            <button className="btn btn-gold btn-lg checkout-btn" onClick={() => {
+            <div className="summary-total"><span>Total</span><span>INR {Math.max(0, subtotal - (appliedCoupon?.discount || 0)).toLocaleString()}</span></div>
+            <button className="btn btn-gold btn-lg checkout-btn" disabled={couponLoading} onClick={() => {
               trackEvent('begin_checkout', {
                 cartValue: subtotal,
                 cartItems: items,
