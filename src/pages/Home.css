@@ -5205,3 +5205,34 @@
     padding-inline: 24px;
   }
 }
+
+/* ── Instagram Reels ─────────────────────────────────
+   Vertical 9:16 tiles, six across on desktop; on phones they become a
+   swipeable row rather than a tall stack of videos. Kept last so it wins over
+   the square-grid rules above. */
+.ig-grid { grid-template-columns: repeat(6, 1fr); gap: 12px; }
+.ig-reel, .ig-skeleton { aspect-ratio: 9 / 16; }
+.ig-reel .ig-img { background: #000; }
+.ig-reel .ig-play {
+  position: absolute; top: 10px; right: 10px;
+  font-size: 0.9rem; opacity: 0.9; transform: none;
+}
+.ig-reel:hover .ig-img { transform: none; }
+
+@media (max-width: 1024px) {
+  .ig-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 640px) {
+  .ig-grid {
+    display: grid;
+    grid-auto-flow: column;
+    grid-template-columns: none;
+    grid-auto-columns: 44%;
+    gap: 10px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 6px;
+  }
+  .ig-grid > * { scroll-snap-align: start; }
+}

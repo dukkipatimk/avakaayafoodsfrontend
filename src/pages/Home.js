@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../utils/api';
 import ProductCard from '../components/ProductCard';
@@ -12,6 +12,32 @@ import useLastOrder from '../hooks/useLastOrder';
 import { collectionApiFilters } from '../utils/seo';
 import './Home.css';
 import '../components/ShoppingHub.css';
+
+// One Instagram video. It plays muted only while it is on screen: six videos
+// downloading and playing at once would drag the page down, on phones most of all.
+function IgReel({ post }) {
+  const ref = useRef(null);
+  useEffect(() => {
+    const v = ref.current;
+    if (!v || !('IntersectionObserver' in window)) return undefined;
+    const io = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) v.play().catch(() => {});
+      else v.pause();
+    }, { threshold: 0.6 });
+    io.observe(v);
+    return () => io.disconnect();
+  }, []);
+  return (
+    <a href={post.permalink} target="_blank" rel="noopener noreferrer" className="ig-tile ig-reel">
+      <video ref={ref} src={post.videoUrl} poster={post.poster || undefined}
+        className="ig-img" muted loop playsInline preload="none" aria-label={post.caption || 'Instagram video'} />
+      <div className="ig-overlay">
+        <span className="ig-play" aria-hidden="true">▶</span>
+        {post.caption && <p className="ig-caption">{post.caption}</p>}
+      </div>
+    </a>
+  );
+}
 
 const BANNERS = [
   {
@@ -434,15 +460,7 @@ const Home = () => {
             <div className="ig-grid stagger">
               {igLoading
                 ? Array(6).fill(0).map((_, i) => <div key={i} className="ig-skeleton skeleton" />)
-                : igPosts.slice(0, 6).map(post => (
-                    <a key={post.id} href={post.permalink} target="_blank" rel="noopener noreferrer" className="ig-tile">
-                      <img src={post.url} alt={post.caption || 'Instagram post'} className="ig-img" />
-                      <div className="ig-overlay">
-                        {post.isVideo && <span className="ig-play">Video</span>}
-                        {post.caption && <p className="ig-caption">{post.caption}</p>}
-                      </div>
-                    </a>
-                  ))
+                : igPosts.slice(0, 6).map(post => <IgReel key={post.id} post={post} />)
               }
             </div>
             <div style={{ textAlign: 'center', marginTop: 28 }}>
