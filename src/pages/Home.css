@@ -918,6 +918,149 @@
   .banner-slide-img { animation: none; transform: none; }
 }
 
+/* ── Festive gifting slides (Dussehra, Diwali) ─────────────────────
+   Photo on the right, fading into a deep festive colour on the left that
+   carries the copy and the two ways in: corporate and personal gifting. */
+.banner-slide--festive { background: #2a0a14; }
+.banner-slide--festive .banner-slide-img {
+  position: absolute;
+  inset: 0 0 0 auto;
+  width: 62%;
+  height: 100%;
+  object-fit: cover;
+}
+.banner-slide--dussehra { --festive-bg: #5c0f12; --festive-rgb: 92, 15, 18; --festive-accent: #f5a623; }
+.banner-slide--dussehra .banner-slide-img { object-position: center 45%; }
+.banner-slide--diwali   { --festive-bg: #1d0b05; --festive-rgb: 29, 11, 5; --festive-accent: #e4c87a; }
+.banner-slide--diwali   .banner-slide-img { object-position: center 50%; }
+
+.banner-slide--festive::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(90deg,
+    var(--festive-bg) 0%,
+    var(--festive-bg) 38%,
+    rgba(var(--festive-rgb), 0.7) 52%,
+    transparent 72%);
+}
+/* A marigold toran along the top edge */
+.banner-slide--festive::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 14px;
+  z-index: 2;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 7px 2px, #f7b32b 0 6px, transparent 6.5px) 0 0 / 28px 14px repeat-x,
+    radial-gradient(circle at 21px 2px, #e8590c 0 6px, transparent 6.5px) 0 0 / 28px 14px repeat-x;
+}
+
+.festive-cap {
+  position: absolute;
+  inset: 0 auto 0 0;
+  z-index: 3;
+  width: 48%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: clamp(6px, 0.9vw, 14px);
+  padding: 0 clamp(18px, 4vw, 72px);
+  color: #fff;
+}
+.festive-eyebrow {
+  align-self: flex-start;
+  font-family: var(--font-ui);
+  font-size: clamp(0.62rem, 0.8vw, 0.78rem);
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--festive-accent);
+  border-bottom: 1px solid currentColor;
+  padding-bottom: 4px;
+}
+.festive-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(1.45rem, 3.2vw, 3rem);
+  line-height: 1.06;
+  color: #fff;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.35);
+}
+.festive-title span { display: block; }
+.banner-slide--festive .festive-sub {
+  margin: 0;
+  max-width: 30em;
+  font-family: var(--font-body);
+  font-size: clamp(0.85rem, 1.15vw, 1.15rem);
+  line-height: 1.35;
+  color: rgba(255, 255, 255, 0.86);
+}
+.festive-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: clamp(2px, 0.6vw, 8px);
+}
+.festive-btn {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-ui);
+  font-size: clamp(0.66rem, 0.85vw, 0.8rem);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 11px 22px;
+  border-radius: 999px;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 0.25s, color 0.25s, transform 0.25s, box-shadow 0.25s;
+}
+.festive-btn:hover { transform: translateY(-2px); }
+.festive-btn--primary {
+  background: var(--gold, #c9a84c);
+  color: var(--green-deep, #1c4a0e);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.25);
+}
+.festive-btn--primary:hover { background: var(--gold-light, #e4c87a); }
+.festive-btn--ghost {
+  color: #fff;
+  border: 1.5px solid rgba(255, 255, 255, 0.7);
+}
+.festive-btn--ghost:hover { background: #fff; color: var(--festive-bg); }
+.festive-btn:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+
+@media (max-width: 1100px) {
+  .festive-cap { width: 56%; }
+}
+
+/* Phones: the photo fills the slide behind a darker wash, and the copy keeps
+   to a title and the two buttons so it fits the shorter banner. */
+@media (max-width: 768px) {
+  .banner-slide--festive .banner-slide-img { width: 100%; }
+  .banner-slide--festive::before {
+    background: linear-gradient(90deg,
+      var(--festive-bg) 0%,
+      rgba(var(--festive-rgb), 0.82) 55%,
+      rgba(var(--festive-rgb), 0.35) 100%);
+  }
+  .festive-cap {
+    width: 100%;
+    gap: 6px;
+    padding: 10px 16px 34px;
+  }
+  .festive-title { font-size: clamp(1.2rem, 5.6vw, 1.7rem); }
+  .banner-slide--festive .festive-sub { display: none; }
+  .festive-actions { gap: 8px; }
+  .festive-btn { padding: 8px 14px; font-size: 0.64rem; }
+}
+
 /* ── Trust bar ────────────────────────────────────── */
 .trust-bar {
   background: var(--green-deep);

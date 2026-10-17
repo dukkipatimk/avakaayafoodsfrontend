@@ -39,6 +39,35 @@ function IgReel({ post }) {
   );
 }
 
+const WHATSAPP_NUMBER = '919115595959';
+const waLink = text => `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
+
+// Festive gifting slides. Each one leads the carousel until the day after its
+// festival and then drops out by itself, so nothing stale is left on the
+// homepage. Dussehra (Vijayadashami) 2026 is 20 Oct, Diwali is 8 Nov.
+const FESTIVE_BANNERS = [
+  {
+    key: 'dussehra',
+    showUntil: '2026-10-21T23:59:59+05:30',
+    src: '/images/festivals/diwali.jpg',
+    alt: 'Marigold rangoli lit with diyas for Dussehra',
+    eyebrow: 'Dussehra Gifting',
+    headline: 'Celebrate victory\nwith a taste of home',
+    sub: 'Pickles, sweets and snacks for your team, clients and family.',
+    corporateText: "Hi, I'd like to enquire about Dussehra corporate gifting from Avakaaya Foods.",
+  },
+  {
+    key: 'diwali',
+    showUntil: '2026-11-10T23:59:59+05:30',
+    src: '/images/products/2024/10/KAZU-BURFi.jpg',
+    alt: 'Silver-leaf kaju burfi arranged in a star around a marigold for Diwali',
+    eyebrow: 'Diwali Gifting',
+    headline: 'Light up Diwali\nwith Telugu flavours',
+    sub: 'Corporate gifts for every desk, and special hampers for the ones you love.',
+    corporateText: "Hi, I'd like to enquire about Diwali corporate gifting from Avakaaya Foods.",
+  },
+];
+
 const BANNERS = [
   {
     src: '/images/banners/quality.png',
@@ -109,14 +138,17 @@ const TESTIMONIALS = [
   { name: 'Sunitha Devi', location: 'Singapore',       initials: 'SD', rating: 5, text: 'Fast shipping, beautiful packaging, 100% authentic taste. My go-to for Telugu food.' },
 ];
 
-const WHATSAPP_NUMBER = '919115595959';
-
 const Home = () => {
   const { openQuickOrder } = useUI();
   const hasLastOrder = Boolean(useLastOrder());
   const [igPosts, setIgPosts] = useState([]);
   const [igLoading, setIgLoading] = useState(true);
   const [bannerIdx, setBannerIdx] = useState(0);
+  // Festive slides first while their festival is still ahead, then the regulars.
+  const [banners] = useState(() => [
+    ...FESTIVE_BANNERS.filter(b => Date.now() <= Date.parse(b.showUntil)),
+    ...BANNERS,
+  ]);
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
   const [activeCategory, setActiveCategory] = useState('all');
@@ -173,9 +205,9 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
-    const t = setInterval(() => setBannerIdx(i => (i + 1) % BANNERS.length), 8500);
+    const t = setInterval(() => setBannerIdx(i => (i + 1) % banners.length), 8500);
     return () => clearInterval(t);
-  }, []);
+  }, [banners.length]);
 
 
   useEffect(() => {
@@ -230,7 +262,49 @@ const Home = () => {
       <section className="hero-split">
         <div className="banner-slider">
           <div className="banner-track">
-            {BANNERS.map((b, i) => (
+            {banners.map((b, i) => b.showUntil ? (
+              // A festive slide carries two destinations, so it is a plain block
+              // with two links rather than one link around the whole slide.
+              <div
+                key={b.key}
+                className={`banner-slide banner-slide--festive banner-slide--${b.key}${i === bannerIdx ? ' is-active' : ''}`}
+              >
+                <img
+                  src={b.src}
+                  alt={b.alt}
+                  className="banner-slide-img"
+                  loading={i === 0 ? 'eager' : 'lazy'}
+                  decoding="async"
+                  fetchPriority={i === 0 ? 'high' : 'auto'}
+                  draggable="false"
+                />
+                <div className="festive-cap">
+                  <span className="festive-eyebrow">{b.eyebrow}</span>
+                  <h2 className="festive-title">
+                    {b.headline.split('\n').map((line, li) => <span key={li}>{line}</span>)}
+                  </h2>
+                  <p className="festive-sub">{b.sub}</p>
+                  <div className="festive-actions">
+                    <a
+                      href={waLink(b.corporateText)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="festive-btn festive-btn--primary"
+                      tabIndex={i === bannerIdx ? 0 : -1}
+                    >
+                      Corporate Gifting
+                    </a>
+                    <Link
+                      to="/collections/gift-hampers"
+                      className="festive-btn festive-btn--ghost"
+                      tabIndex={i === bannerIdx ? 0 : -1}
+                    >
+                      Special Gift Hampers
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            ) : (
               <Link
                 key={b.src}
                 to={b.ctaLink}
@@ -276,7 +350,7 @@ const Home = () => {
             ))}
           </div>
           <div className="banner-dots">
-            {BANNERS.map((_, i) => (
+            {banners.map((_, i) => (
               <button
                 key={i}
                 className={`banner-dot${i === bannerIdx ? ' active' : ''}`}
