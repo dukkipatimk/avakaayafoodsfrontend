@@ -3,7 +3,8 @@ import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import api from '../utils/api';
 import ProductCard from '../components/ProductCard';
 import Seo from '../components/Seo';
-import { CATEGORY_SEO, SITE_URL, categoryPath, collectionApiFilters } from '../utils/seo';
+import { SITE_URL, categoryPath, categorySeoFor, collectionApiFilters } from '../utils/seo';
+import { useCategories, customCategories } from '../utils/categories';
 import './Products.css';
 
 const CATEGORIES = [
@@ -40,7 +41,10 @@ const Products = ({ collectionPage = false }) => {
   const sort = searchParams.get('sort') || 'newest';
   const minPrice = searchParams.get('minPrice') || '';
   const maxPrice = searchParams.get('maxPrice') || '';
-  const categorySeo = CATEGORY_SEO[category];
+  const cats = useCategories();
+  // Built-in filters, then any categories the admin has added.
+  const categoryOptions = useMemo(() => [...CATEGORIES, ...customCategories(cats).map((c) => ({ value: c.value, label: c.label }))], [cats]);
+  const categorySeo = categorySeoFor(category, cats);
   const validCollection = !collectionPage || Boolean(categorySeo);
   const canonicalPath = categorySeo ? categoryPath(category) : '/products';
   const isFilteredPage = Boolean(search || minPrice || maxPrice || page > 1 || sort !== 'newest');
@@ -109,7 +113,7 @@ const Products = ({ collectionPage = false }) => {
         <div className="products-layout">
           <aside className="filters-sidebar">
             <h3 className="filters-title">Categories</h3>
-            {CATEGORIES.map(option => (
+            {categoryOptions.map(option => (
               <button
                 key={option.value}
                 className={`filter-btn ${category === option.value ? 'active' : ''}`}

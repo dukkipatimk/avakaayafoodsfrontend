@@ -1,8 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useCategories, customCategories } from '../utils/categories';
 import './Footer.css';
 
 const Footer = () => {
+  const cats = useCategories();
   return (
     <footer className="footer">
       <div className="footer-top">
@@ -56,6 +58,7 @@ const Footer = () => {
               <li><Link to="/collections/sweets">Sweets</Link></li>
               <li><Link to="/collections/ghee">Ghee</Link></li>
               <li><Link to="/collections/gift-hampers">Gift Hampers</Link></li>
+              {customCategories(cats).map((c) => <li key={c.value}><Link to={`/collections/${c.value}`}>{c.label}</Link></li>)}
               <li><Link to="/about">Our Story</Link></li>
             </ul>
           </div>

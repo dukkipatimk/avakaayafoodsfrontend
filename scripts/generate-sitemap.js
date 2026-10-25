@@ -48,6 +48,18 @@ const fetchProducts = async () => {
   return products;
 };
 
+// Categories added in Admin → Products → Categories get their own collection pages.
+const fetchCustomCategoryPaths = async () => {
+  try {
+    const response = await fetch(`${API_URL}/settings/categories`);
+    if (!response.ok) return [];
+    const body = await response.json();
+    return (body.categories || []).filter(c => !c.builtIn && c.value).map(c => `/collections/${c.value}`);
+  } catch {
+    return [];
+  }
+};
+
 const createUrl = ({ location, lastModified, priority, frequency }) => [
   '  <url>',
   `    <loc>${escapeXml(`${SITE_URL}${location}`)}</loc>`,
@@ -70,8 +82,11 @@ const main = async () => {
     console.warn(`Could not load live products for sitemap: ${error.message}. Writing public pages only.`);
   }
 
+  const customPaths = (await fetchCustomCategoryPaths()).filter(p => !staticPaths.includes(p));
+  if (customPaths.length) console.log(`Including ${customPaths.length} custom category URLs in sitemap.`);
+
   const urls = [
-    ...staticPaths.map(location => ({
+    ...[...staticPaths, ...customPaths].map(location => ({
       location,
       priority: location === '/' ? '1.0' : location.startsWith('/collections/') ? '0.8' : '0.6',
       frequency: location === '/' || location.startsWith('/collections/') ? 'weekly' : 'monthly',

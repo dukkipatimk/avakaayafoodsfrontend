@@ -7,7 +7,8 @@ import toast from 'react-hot-toast';
 import ProductCard from '../components/ProductCard';
 import Seo from '../components/Seo';
 import { trackEvent } from '../utils/tracking';
-import { CATEGORY_SEO, SITE_URL, absoluteUrl, categoryPath, productCategorySlug, textSummary } from '../utils/seo';
+import { SITE_URL, absoluteUrl, categoryPath, categorySeoFor, productCategorySlug, textSummary } from '../utils/seo';
+import { useCategories } from '../utils/categories';
 import './ProductDetail.css';
 
 // Some API rows return JSON array columns as raw strings — coerce to arrays.
@@ -56,6 +57,7 @@ const ProductDetail = () => {
   const [reviewRating, setReviewRating] = useState(0);
   const [reviewComment, setReviewComment] = useState('');
   const [reviewSubmitting, setReviewSubmitting] = useState(false);
+  const cats = useCategories();
 
   const { addItem, subtotal } = useCart();
   const { user } = useAuth();
@@ -132,6 +134,7 @@ const ProductDetail = () => {
   const isOutOfStock = selectedVariant?.stock !== undefined && selectedVariant.stock <= 0;
   const canonicalPath = `/products/${product.slug}`;
   const productCollection = productCategorySlug(product);
+  const collectionName = categorySeoFor(productCollection, cats)?.name || product.category;
   const productImages = images.filter(Boolean).map(absoluteUrl);
   const productSchema = {
     '@context': 'https://schema.org',
@@ -140,7 +143,7 @@ const ProductDetail = () => {
     description: product.description,
     image: productImages,
     sku: product.variants?.[0]?.sku || String(product._id),
-    category: CATEGORY_SEO[productCollection]?.name || product.category,
+    category: collectionName,
     brand: { '@type': 'Brand', name: 'Avakaaya Foods' },
     ...(product.variants?.length ? {
       offers: product.variants.map(variant => ({
@@ -167,7 +170,7 @@ const ProductDetail = () => {
     itemListElement: [
       { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_URL },
       { '@type': 'ListItem', position: 2, name: 'Products', item: `${SITE_URL}/products` },
-      { '@type': 'ListItem', position: 3, name: CATEGORY_SEO[productCollection]?.name || product.category, item: `${SITE_URL}${categoryPath(productCollection)}` },
+      { '@type': 'ListItem', position: 3, name: collectionName, item: `${SITE_URL}${categoryPath(productCollection)}` },
       { '@type': 'ListItem', position: 4, name: product.name, item: `${SITE_URL}${canonicalPath}` },
     ],
   };
@@ -239,7 +242,7 @@ const ProductDetail = () => {
           <span>›</span>
           <Link to="/products">Products</Link>
           <span>›</span>
-          <Link to={categoryPath(productCollection)}>{CATEGORY_SEO[productCollection]?.name || product.category}</Link>
+          <Link to={categoryPath(productCollection)}>{collectionName}</Link>
           <span>›</span>
           <span>{product.name}</span>
         </nav>

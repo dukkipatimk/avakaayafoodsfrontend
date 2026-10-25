@@ -8,12 +8,14 @@ import OffersPanel from './OffersPanel';
 import api from '../utils/api';
 import toast from 'react-hot-toast';
 import { trackEvent } from '../utils/tracking';
+import { useCategories, customCategories } from '../utils/categories';
 import './Header.css';
 
 const Header = () => {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const cats = useCategories();
   const [searchResults, setSearchResults] = useState([]);
   const [searchLoading, setSearchLoading] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -100,6 +102,8 @@ const Header = () => {
     { label: 'Snacks', path: '/collections/snacks' },
     { label: 'Sweets', path: '/collections/sweets' },
     { label: 'Ghee', path: '/collections/ghee' },
+    // Categories added in Admin → Products → Categories
+    ...customCategories(cats).map((c) => ({ label: c.label, path: `/collections/${c.value}` })),
     { label: 'Build a Hamper', path: '/gift-hamper' },
   ];
 

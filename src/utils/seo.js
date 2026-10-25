@@ -72,6 +72,21 @@ export const productCategorySlug = (product) => {
   return product.isVeg === false ? 'non-veg-pickles' : 'veg-pickles';
 };
 
+// Page text for any collection: the hand-written built-ins above, else generated
+// from an admin-added category's name and description (see utils/categories).
+export const categorySeoFor = (slug, categories = []) => {
+  if (!slug) return null;
+  if (CATEGORY_SEO[slug]) return CATEGORY_SEO[slug];
+  const c = categories.find((x) => x.value === slug);
+  if (!c) return null;
+  return {
+    name: c.label,
+    title: `${c.label} Online | ${SITE_NAME}`,
+    description: `${c.description || `Shop ${c.label} from Avakaaya Foods.`} Authentic Telugu foods made in Hyderabad, delivered across India and abroad.`.slice(0, 160),
+    introduction: c.description || '',
+  };
+};
+
 export const textSummary = (value = '', maximum = 155) => {
   const cleaned = String(value).replace(/\s+/g, ' ').trim();
   if (cleaned.length <= maximum) return cleaned;

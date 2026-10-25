@@ -2,10 +2,76 @@ import React, { useCallback, useEffect, useState } from 'react';
 import api from '../utils/api';
 import AdminTabs from '../components/AdminTabs';
 import AdminCollectionFilters from '../components/AdminCollectionFilters';
+import { useCategories, setCategories } from '../utils/categories';
 import './AdminProducts.css';
 
 const WEIGHTS = ['100g', '200g', '250g', '500g', '1kg'];
-const CATEGORIES = ['pickles', 'powders', 'snacks', 'sweets', 'ghee', 'gift-hampers'];
+// Categories come from the server: the six built-ins plus any added here (Categories button).
+
+// Add / rename / remove the categories you've added. The built-in six stay fixed.
+// A category in use by any product can't be removed (move its products first).
+const CategoriesModal = ({ categories, onClose }) => {
+  const [label, setLabel] = useState('');
+  const [description, setDescription] = useState('');
+  const [busy, setBusy] = useState(false);
+  const run = async (fn) => {
+    setBusy(true);
+    try { const { data } = await fn(); setCategories(data.categories); return true; }
+    catch (err) { alert(err.response?.data?.message || 'Could not save the category'); return false; }
+    finally { setBusy(false); }
+  };
+  const add = async (e) => {
+    e.preventDefault();
+    if (await run(() => api.post('/settings/categories', { label, description }))) { setLabel(''); setDescription(''); }
+  };
+  const rename = (c) => {
+    const next = window.prompt('Category name', c.label);
+    if (next == null || !next.trim()) return;
+    const desc = window.prompt('Short description for the category page (optional)', c.description || '');
+    run(() => api.put(`/settings/categories/${c.value}`, { label: next.trim(), description: desc ?? c.description }));
+  };
+  const remove = (c) => {
+    if (!window.confirm(`Remove the "${c.label}" category?`)) return;
+    run(() => api.delete(`/settings/categories/${c.value}`));
+  };
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: 560 }}>
+        <div className="modal-header">
+          <h2>Product categories</h2>
+          <button className="modal-close" onClick={onClose}>✕</button>
+        </div>
+        <div style={{ padding: '0 1.5rem 1.5rem' }}>
+          <p style={{ marginTop: 0, color: '#6b6b6b', fontSize: '.9rem' }}>
+            Categories you add appear in the shop menu, the footer and the Products filter, each with its own page at /collections/&lt;name&gt;.
+          </p>
+          <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 1rem' }}>
+            {categories.map((c) => (
+              <li key={c.value} style={{ display: 'flex', alignItems: 'center', gap: '.5rem', padding: '.45rem 0', borderBottom: '1px solid #eee' }}>
+                <span style={{ flex: 1 }}><strong>{c.label}</strong> <span style={{ color: '#999', fontSize: '.8rem' }}>/collections/{c.value}</span></span>
+                {c.builtIn ? <span style={{ color: '#999', fontSize: '.8rem' }}>built-in</span> : (<>
+                  <button type="button" className="btn btn-outline" disabled={busy} onClick={() => rename(c)}>Edit</button>
+                  <button type="button" className="btn btn-outline" disabled={busy} onClick={() => remove(c)}>Remove</button>
+                </>)}
+              </li>
+            ))}
+          </ul>
+          <form onSubmit={add} className="product-form" style={{ padding: 0 }}>
+            <div className="form-group">
+              <label>New category name *</label>
+              <input type="text" required value={label} onChange={(e) => setLabel(e.target.value)} placeholder="e.g. Millet Mixes" />
+            </div>
+            <div className="form-group">
+              <label>Short description <span style={{ fontWeight: 400, color: '#999' }}>(shown on its page, optional)</span></label>
+              <input type="text" value={description} onChange={(e) => setDescription(e.target.value)} />
+            </div>
+            <button type="submit" className="btn btn-primary" disabled={busy || !label.trim()}>{busy ? 'Saving…' : '+ Add category'}</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 // shippingType values must match the Product model enum: 'standard' | 'international' | 'both'
 const SHIPPING_TYPES = [
@@ -219,6 +285,8 @@ const AdminProducts = () => {
   const [bulkStockProductId, setBulkStockProductId] = useState(null);
   const [priceProductId, setPriceProductId] = useState(null);
   const [uploading, setUploading] = useState(false);
+  const categories = useCategories();
+  const [showCategories, setShowCategories] = useState(false);
 
   // Withdrawn products are invisible to the shop, which is the point — but the
   // admin has to be able to find one to put it back. `status=all` is honoured
@@ -373,7 +441,10 @@ const AdminProducts = () => {
           search={search} onSearch={setSearch}
           status={visibility} onStatus={setVisibility}
           count={filtered.length} noun="products" loading={loading}
-          action={<button className="btn btn-primary" onClick={openNew}>+ Add Product</button>}
+          action={<>
+            <button className="btn btn-outline" onClick={() => setShowCategories(true)} style={{ marginRight: '.5rem' }}>Categories</button>
+            <button className="btn btn-primary" onClick={openNew}>+ Add Product</button>
+          </>}
         />
 
         {/* Product table */}
@@ -415,7 +486,7 @@ const AdminProducts = () => {
                           </div>
                         </td>
                         <td>
-                          <span className="category-badge">{p.category}</span>
+                          <span className="category-badge">{categories.find((c) => c.value === p.category)?.label || p.category}</span>
                         </td>
                         <td>{p.variants?.length || 0}</td>
                         <td>
@@ -488,6 +559,8 @@ const AdminProducts = () => {
         )}
       </div>
 
+      {showCategories && <CategoriesModal categories={categories} onClose={() => setShowCategories(false)} />}
+
       {/* Form modal */}
       {showForm && (
         <div className="modal-overlay" onClick={() => setShowForm(false)}>
@@ -508,7 +581,8 @@ const AdminProducts = () => {
                   <label>Category *</label>
                   <select value={form.category}
                     onChange={e => setForm({ ...form, category: e.target.value })}>
-                    {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+                    {categories.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
+                    {form.category && !categories.some(c => c.value === form.category) && <option value={form.category}>{form.category}</option>}
                   </select>
                 </div>
               </div>
