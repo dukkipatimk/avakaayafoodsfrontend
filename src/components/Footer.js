@@ -1,7 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useCategories, customCategories } from '../utils/categories';
+import { useCategories, customCategories, isCategoryOn } from '../utils/categories';
 import './Footer.css';
+
+// Built-in collections in the footer; a category turned off in admin drops out.
+const FOOTER_COLLECTIONS = [
+  ['veg-pickles', 'Veg Pickles'], ['non-veg-pickles', 'Non-Veg Pickles'], ['powders', 'Podis & Powders'],
+  ['snacks', 'Snacks'], ['sweets', 'Sweets'], ['ghee', 'Ghee'], ['gift-hampers', 'Gift Hampers'],
+];
 
 const Footer = () => {
   const cats = useCategories();
@@ -51,13 +57,9 @@ const Footer = () => {
             <h4 className="footer-heading">Quick Links</h4>
             <ul className="footer-links">
               <li><Link to="/products">All Products</Link></li>
-              <li><Link to="/collections/veg-pickles">Veg Pickles</Link></li>
-              <li><Link to="/collections/non-veg-pickles">Non-Veg Pickles</Link></li>
-              <li><Link to="/collections/powders">Podis &amp; Powders</Link></li>
-              <li><Link to="/collections/snacks">Snacks</Link></li>
-              <li><Link to="/collections/sweets">Sweets</Link></li>
-              <li><Link to="/collections/ghee">Ghee</Link></li>
-              <li><Link to="/collections/gift-hampers">Gift Hampers</Link></li>
+              {FOOTER_COLLECTIONS.filter(([slug]) => isCategoryOn(cats, slug)).map(([slug, label]) => (
+                <li key={slug}><Link to={`/collections/${slug}`}>{label}</Link></li>
+              ))}
               {customCategories(cats).map((c) => <li key={c.value}><Link to={`/collections/${c.value}`}>{c.label}</Link></li>)}
               <li><Link to="/about">Our Story</Link></li>
             </ul>

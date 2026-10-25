@@ -4,7 +4,7 @@ import api from '../utils/api';
 import ProductCard from '../components/ProductCard';
 import Seo from '../components/Seo';
 import { SITE_URL, categoryPath, categorySeoFor, collectionApiFilters } from '../utils/seo';
-import { useCategories, customCategories } from '../utils/categories';
+import { useCategories, customCategories, isCategoryOn } from '../utils/categories';
 import './Products.css';
 
 const CATEGORIES = [
@@ -43,8 +43,9 @@ const Products = ({ collectionPage = false }) => {
   const maxPrice = searchParams.get('maxPrice') || '';
   const cats = useCategories();
   // Built-in filters, then any categories the admin has added.
-  const categoryOptions = useMemo(() => [...CATEGORIES, ...customCategories(cats).map((c) => ({ value: c.value, label: c.label }))], [cats]);
-  const categorySeo = categorySeoFor(category, cats);
+  const categoryOptions = useMemo(() => [...CATEGORIES.filter((o) => !o.value || isCategoryOn(cats, o.value)), ...customCategories(cats).map((c) => ({ value: c.value, label: c.label }))], [cats]);
+  // A disabled category's page has nothing to show and isn't a page search engines should keep.
+  const categorySeo = isCategoryOn(cats, category) ? categorySeoFor(category, cats) : null;
   const validCollection = !collectionPage || Boolean(categorySeo);
   const canonicalPath = categorySeo ? categoryPath(category) : '/products';
   const isFilteredPage = Boolean(search || minPrice || maxPrice || page > 1 || sort !== 'newest');

@@ -5249,6 +5249,9 @@
 
 /* ══ Actions + last order share a row; offers fills the band ══ */
 .shop-band-row { display: flex; flex-direction: column; gap: 12px; }
+
+/* Offers alone in the band (the shortcut tiles were removed): use the full width. */
+.shop-band--offers-only .shop-band-side { flex: 1 1 100%; max-width: none; }
 .shop-band-row .quick-actions,
 .shop-band-row .buy-again { padding: 0; margin: 0; }
 

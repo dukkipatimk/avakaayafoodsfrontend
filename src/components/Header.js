@@ -8,7 +8,7 @@ import OffersPanel from './OffersPanel';
 import api from '../utils/api';
 import toast from 'react-hot-toast';
 import { trackEvent } from '../utils/tracking';
-import { useCategories, customCategories } from '../utils/categories';
+import { useCategories, customCategories, isCategoryOn } from '../utils/categories';
 import './Header.css';
 
 const Header = () => {
@@ -105,7 +105,7 @@ const Header = () => {
     // Categories added in Admin → Products → Categories
     ...customCategories(cats).map((c) => ({ label: c.label, path: `/collections/${c.value}` })),
     { label: 'Build a Hamper', path: '/gift-hamper' },
-  ];
+  ].filter((c) => !c.path.startsWith('/collections/') || isCategoryOn(cats, c.path.split('/').pop()));
 
   const WA = 'https://wa.me/919115595959?text=Hi%2C%20I%20have%20a%20question%20about%20Avakaaya%20Foods';
 

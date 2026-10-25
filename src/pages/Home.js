@@ -2,13 +2,10 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../utils/api';
 import ProductCard from '../components/ProductCard';
-import QuickActions from '../components/QuickActions';
 import { ShopByCategory, CravingRow } from '../components/HomeDiscovery';
-import BuyAgain from '../components/BuyAgain';
 import Combos from '../components/Combos';
 import OffersStrip from '../components/OffersStrip';
-import { useUI } from '../context/UIContext';
-import useLastOrder from '../hooks/useLastOrder';
+import { useCategories, isCategoryOn } from '../utils/categories';
 import { collectionApiFilters } from '../utils/seo';
 import './Home.css';
 import '../components/ShoppingHub.css';
@@ -139,11 +136,10 @@ const TESTIMONIALS = [
 ];
 
 const Home = () => {
-  const { openQuickOrder } = useUI();
-  const hasLastOrder = Boolean(useLastOrder());
   const [igPosts, setIgPosts] = useState([]);
   const [igLoading, setIgLoading] = useState(true);
   const [bannerIdx, setBannerIdx] = useState(0);
+  const cats = useCategories();
   // Festive slides first while their festival is still ahead, then the regulars.
   const [banners] = useState(() => [
     ...FESTIVE_BANNERS.filter(b => Date.now() <= Date.parse(b.showUntil)),
@@ -253,7 +249,7 @@ const Home = () => {
 
   const handleSubscribe = e => { e.preventDefault(); if (email) { setSubscribed(true); setEmail(''); } };
 
-  const categoryTabs = ['all', ...CATEGORIES.map(c => c.slug)];
+  const categoryTabs = ['all', ...CATEGORIES.filter(c => isCategoryOn(cats, c.slug)).map(c => c.slug)];
 
   return (
     <div className="home">
@@ -366,25 +362,16 @@ const Home = () => {
       {/* Stacked on phones; one horizontal band on laptops. */}
       {/* Shop band: categories and shortcuts on the left, live offers and the
           last-order card on the right. */}
-      <section className={`shop-band shopping-hub${hasLastOrder ? ' shop-band--with-order' : ''}${hasOffers === false ? ' shop-band--no-offers' : ''}`}>
-      <div className="shop-band-main">
-
-        {/* Shortcuts and the last order share one row under the circles. */}
-        <div className="shop-band-row">
-          <QuickActions onQuickOrder={openQuickOrder} />
-          <BuyAgain />
-        </div>
-      </div>
-
-      {/* Offers run the full height of the categories + actions column — and
-          when there are none live, the column goes rather than standing empty
-          with the band ending two-thirds of the way across the screen. */}
+      {/* The Quick Order / Combos shortcuts and the "Your favourites, again" card
+          were taken off the homepage; the band now carries just the live offers,
+          full width, and goes entirely when there are none. */}
       {hasOffers !== false && (
-        <div className="shop-band-side">
-          <OffersStrip onLoaded={setHasOffers} />
-        </div>
+        <section className="shop-band shopping-hub shop-band--offers-only">
+          <div className="shop-band-side">
+            <OffersStrip onLoaded={setHasOffers} />
+          </div>
+        </section>
       )}
-      </section>
 
       {/* The two ways into the catalogue, shared with the 2026 homepage: by name,
           then by mood. These replace the band's own circle row — it showed the

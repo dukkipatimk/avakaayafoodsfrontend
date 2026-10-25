@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useCategories, isCategoryOn } from '../utils/categories';
 import './HomeDiscovery.css';
 
 // ── The two ways into the catalogue ─────────────────────────────────────────
@@ -28,14 +29,17 @@ export const CRAVINGS = [
   { label: 'Festival Gifts', note: 'Share happiness', to: '/gift-hamper', img: '/images/festivals/diwali.jpg' },
 ];
 
-export const ShopByCategory = () => (
+export const ShopByCategory = () => {
+  const cats = useCategories();
+  const shown = CATEGORIES.filter((c) => isCategoryOn(cats, c.to.split('/').pop()));   // disabled categories drop out
+  return (
   <section className="hd-sec hd-sec--categories" aria-label="Shop by category">
     <header className="hd-head">
       <div className="hd-heading-group"><span className="hd-eyebrow">THE PANTRY</span><h2>Shop by Category</h2><p>Find your everyday favourites.</p></div>
       <Link to="/products" className="hd-more">View all categories →</Link>
     </header>
     <div className="hd-cats">
-      {CATEGORIES.map(c => (
+      {shown.map(c => (
         <Link key={c.label} to={c.to} className="hd-cat">
           <span className="hd-cat-disc"><img src={c.img} alt="" loading="lazy" /></span>
           <span className="hd-cat-name">{c.label}</span>
@@ -51,7 +55,8 @@ export const ShopByCategory = () => (
       </Link>
     </div>
   </section>
-);
+  );
+};
 
 export const CravingRow = () => (
   <section className="hd-sec hd-sec--cravings" aria-label="Explore food collections">

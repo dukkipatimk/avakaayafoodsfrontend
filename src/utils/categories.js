@@ -43,5 +43,13 @@ export const useCategories = () => {
   return list;
 };
 
-// Only the ones the admin added — menus already list the built-ins by hand.
-export const customCategories = (list) => (list || []).filter((c) => !c.builtIn);
+// Is a collection shown in the shop? Disabled categories (Admin → Products →
+// Categories) are hidden with their products. veg / non-veg pickles follow "pickles".
+export const isCategoryOn = (list, slug) => {
+  const value = slug === 'veg-pickles' || slug === 'non-veg-pickles' ? 'pickles' : slug;
+  const c = (list || []).find((x) => x.value === value);
+  return !c || c.enabled !== false;
+};
+
+// Only the ones the admin added and left on — menus already list the built-ins by hand.
+export const customCategories = (list) => (list || []).filter((c) => !c.builtIn && c.enabled !== false);

@@ -30,6 +30,7 @@ const CategoriesModal = ({ categories, onClose }) => {
     const desc = window.prompt('Short description for the category page (optional)', c.description || '');
     run(() => api.put(`/settings/categories/${c.value}`, { label: next.trim(), description: desc ?? c.description }));
   };
+  const toggle = (c) => run(() => api.put(`/settings/categories/${c.value}/enabled`, { enabled: c.enabled === false }));
   const remove = (c) => {
     if (!window.confirm(`Remove the "${c.label}" category?`)) return;
     run(() => api.delete(`/settings/categories/${c.value}`));
@@ -44,11 +45,15 @@ const CategoriesModal = ({ categories, onClose }) => {
         <div style={{ padding: '0 1.5rem 1.5rem' }}>
           <p style={{ marginTop: 0, color: '#6b6b6b', fontSize: '.9rem' }}>
             Categories you add appear in the shop menu, the footer and the Products filter, each with its own page at /collections/&lt;name&gt;.
+            Turn a category <strong>off</strong> to hide it and all its products from the shop; turn it back on to bring them back.
           </p>
           <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 1rem' }}>
             {categories.map((c) => (
               <li key={c.value} style={{ display: 'flex', alignItems: 'center', gap: '.5rem', padding: '.45rem 0', borderBottom: '1px solid #eee' }}>
-                <span style={{ flex: 1 }}><strong>{c.label}</strong> <span style={{ color: '#999', fontSize: '.8rem' }}>/collections/{c.value}</span></span>
+                <span style={{ flex: 1, opacity: c.enabled === false ? 0.55 : 1 }}><strong>{c.label}</strong> <span style={{ color: '#999', fontSize: '.8rem' }}>/collections/{c.value}</span>{c.enabled === false && <span style={{ color: '#b45309', fontSize: '.8rem', marginLeft: '.4rem' }}>hidden from shop</span>}</span>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '.3rem', fontSize: '.85rem', cursor: 'pointer' }} title="Show this category and its products in the shop">
+                  <input type="checkbox" checked={c.enabled !== false} disabled={busy} onChange={() => toggle(c)} /> {c.enabled === false ? 'Off' : 'On'}
+                </label>
                 {c.builtIn ? <span style={{ color: '#999', fontSize: '.8rem' }}>built-in</span> : (<>
                   <button type="button" className="btn btn-outline" disabled={busy} onClick={() => rename(c)}>Edit</button>
                   <button type="button" className="btn btn-outline" disabled={busy} onClick={() => remove(c)}>Remove</button>
@@ -581,7 +586,7 @@ const AdminProducts = () => {
                   <label>Category *</label>
                   <select value={form.category}
                     onChange={e => setForm({ ...form, category: e.target.value })}>
-                    {categories.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
+                    {categories.map(c => <option key={c.value} value={c.value}>{c.label}{c.enabled === false ? ' (hidden from shop)' : ''}</option>)}
                     {form.category && !categories.some(c => c.value === form.category) && <option value={form.category}>{form.category}</option>}
                   </select>
                 </div>
